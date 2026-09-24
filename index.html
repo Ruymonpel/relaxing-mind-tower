@@ -2,17 +2,16 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Relaxing Mind AI Company — 관제탑</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>RM 관제탑</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0d1117">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="RM 관제탑">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
-
   :root {
     --bg: #0d1117;
     --surface: #161b22;
@@ -27,9 +26,7 @@
     --text2: #8b949e;
     --text3: #6e7681;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     background: var(--bg);
     color: var(--text);
@@ -38,208 +35,97 @@
     overflow-x: hidden;
   }
 
-  /* ── TOP BAR ── */
+  /* TOPBAR */
   .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 28px;
-    height: 56px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; height: 56px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
   }
-  .topbar-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 700;
-    font-size: 15px;
-    letter-spacing: -0.3px;
-  }
-  .topbar-logo .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent2); box-shadow: 0 0 8px var(--accent2); }
-  .topbar-center { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text2); }
-  .topbar-right { display: flex; align-items: center; gap: 16px; font-size: 13px; }
-  #live-clock { font-family: 'JetBrains Mono', monospace; color: var(--accent); }
-  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+  .topbar-logo { display:flex; align-items:center; gap:10px; font-weight:700; font-size:15px; letter-spacing:-.3px; }
+  .topbar-logo .dot { width:8px; height:8px; border-radius:50%; background:var(--accent2); box-shadow:0 0 8px var(--accent2); }
+  .topbar-center { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text2); }
+  .topbar-right { display:flex; align-items:center; gap:16px; font-size:13px; }
+  #live-clock { font-family:'JetBrains Mono',monospace; color:var(--accent); }
+  .office-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:6px; background:rgba(88,166,255,.15); border:1px solid rgba(88,166,255,.3); color:var(--accent); font-size:12px; font-weight:600; text-decoration:none; transition:all .2s; white-space:nowrap; }
+  .office-btn:hover { background:rgba(88,166,255,.25); border-color:var(--accent); }
+  .status-dot { width:6px; height:6px; border-radius:50%; background:var(--accent2); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-  /* ── NAV TABS ── */
+  /* TABS */
   .tabs {
-    display: flex;
-    gap: 0;
-    padding: 0 28px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
+    display:flex; gap:0; padding:0 28px;
+    background:var(--surface); border-bottom:1px solid var(--border);
+    overflow-x: auto;
   }
+  .tabs::-webkit-scrollbar { height: 2px; }
+  .tabs::-webkit-scrollbar-thumb { background: var(--border); }
   .tab {
-    padding: 14px 22px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text2);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all .2s;
-    white-space: nowrap;
+    padding:14px 22px; font-size:13px; font-weight:500; color:var(--text2);
+    cursor:pointer; border-bottom:2px solid transparent; transition:all .2s; white-space:nowrap;
   }
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab:hover { color:var(--text); }
+  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
 
-  /* ── MAIN ── */
-  .main { padding: 28px; max-width: 1400px; margin: 0 auto; }
-  .panel { display: none; }
-  .panel.active { display: block; }
+  /* MAIN */
+  .main { padding:28px 28px 100px; max-width:1400px; margin:0 auto; }
+  .panel { display:none; }
+  .panel.active { display:block; }
 
-  /* ── DASHBOARD GRID ── */
-  .stat-row {
+  /* STAT ROW */
+  .stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px; }
+  .stat-label { font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .stat-value { font-size:28px; font-weight:700; font-family:'JetBrains Mono',monospace; }
+  .stat-sub { font-size:12px; color:var(--text2); margin-top:4px; }
+  .c-blue{color:var(--accent)} .c-green{color:var(--accent2)} .c-purple{color:var(--accent3)} .c-orange{color:var(--accent4)}
+
+  /* FLOOR CARDS */
+  .section-title { font-size:13px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .floor-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:28px; }
+  .floor-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .floor-header { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--border); background:var(--surface2); }
+  .floor-badge { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; padding:3px 8px; border-radius:4px; background:rgba(88,166,255,.15); color:var(--accent); }
+  .floor-name { font-size:14px; font-weight:600; }
+  .floor-count { font-size:12px; color:var(--text2); }
+  .emp-list { padding:12px 18px; display:flex; flex-direction:column; gap:10px; }
+  .emp-row { display:flex; align-items:center; gap:12px; }
+  .emp-avatar { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+  .emp-info { flex:1; min-width:0; }
+  .emp-name { font-size:13px; font-weight:500; }
+  .emp-role { font-size:11px; color:var(--text3); }
+  .emp-progress-wrap { width:90px; flex-shrink:0; }
+  .emp-progress-bar { height:4px; background:var(--border); border-radius:2px; overflow:hidden; margin-top:2px; }
+  .emp-progress-fill { height:100%; border-radius:2px; background:var(--accent2); transition:width 1s; }
+  .emp-pct { font-size:10px; color:var(--text3); text-align:right; }
+  .emp-status { font-size:10px; padding:2px 7px; border-radius:3px; white-space:nowrap; flex-shrink:0; }
+  .s-work{background:rgba(63,185,80,.15);color:var(--accent2)} .s-meet{background:rgba(210,168,255,.15);color:var(--accent3)} .s-idle{background:rgba(110,118,129,.15);color:var(--text3)} .s-report{background:rgba(255,166,87,.15);color:var(--accent4)}
+
+  /* ── 업무일지 (개선) ── */
+  .wl-layout {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-  @media (max-width: 768px) {
-    .stat-row { grid-template-columns: repeat(2, 1fr); }
-    .floor-grid { grid-template-columns: 1fr; }
-    .log-grid { grid-template-columns: 1fr; }
-    .form-row-2 { grid-template-columns: 1fr; }
-    .revenue-grid { grid-template-columns: repeat(2, 1fr); }
-    .rev-row { grid-template-columns: 1fr 1fr; gap: 8px; }
-    .dept-list-panel { max-height: 200px; overflow-y: auto; }
-    .topbar { padding: 0 12px; }
-    .topbar-center { display: none; }
-    .main { padding: 14px; }
-    .tabs { padding: 0 8px; overflow-x: auto; }
-    .tab { padding: 12px 14px; font-size: 12px; }
-    .ceo-bar { padding: 10px 12px; gap: 8px; }
-    .ceo-bar select { display: none; }
-    .emp-progress-wrap { display: none; }
-    .floor-header { flex-wrap: wrap; gap: 6px; }
-  }
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-  }
-  .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-  .stat-value { font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-  .stat-sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
-  .c-blue { color: var(--accent); }
-  .c-green { color: var(--accent2); }
-  .c-purple { color: var(--accent3); }
-  .c-orange { color: var(--accent4); }
-
-  /* ── FLOOR CARDS ── */
-  .section-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-  }
-  .floor-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-  .floor-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .floor-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-  }
-  .floor-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 4px;
-    background: rgba(88,166,255,.15);
-    color: var(--accent);
-  }
-  .floor-name { font-size: 14px; font-weight: 600; }
-  .floor-count { font-size: 12px; color: var(--text2); }
-  .emp-list { padding: 12px 18px; display: flex; flex-direction: column; gap: 10px; }
-  .emp-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .emp-avatar {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-  .emp-info { flex: 1; min-width: 0; }
-  .emp-name { font-size: 13px; font-weight: 500; }
-  .emp-role { font-size: 11px; color: var(--text3); }
-  .emp-progress-wrap { width: 90px; flex-shrink: 0; }
-  .emp-progress-bar {
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-top: 2px;
-  }
-  .emp-progress-fill {
-    height: 100%;
-    border-radius: 2px;
-    background: var(--accent2);
-    transition: width 1s;
-  }
-  .emp-pct { font-size: 10px; color: var(--text3); text-align: right; }
-  .emp-status {
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 3px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .s-work { background: rgba(63,185,80,.15); color: var(--accent2); }
-  .s-meet { background: rgba(210,168,255,.15); color: var(--accent3); }
-  .s-idle { background: rgba(110,118,129,.15); color: var(--text3); }
-  .s-report { background: rgba(255,166,87,.15); color: var(--accent4); }
-
-  /* ── 업무일지 ── */
-  .log-grid {
-    display: grid;
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 260px 1fr;
     gap: 20px;
+    min-height: 600px;
   }
-  .dept-list-panel {
+  .wl-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
     overflow: hidden;
   }
-  .dept-list-header {
-    padding: 14px 16px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  .wl-left-header {
+    padding: 12px 16px;
+    font-size: 11px; font-weight: 600; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 1px;
     border-bottom: 1px solid var(--border);
     background: var(--surface2);
   }
-  .dept-item {
-    padding: 12px 16px;
+  .wl-dept-item {
+    padding: 11px 16px;
     cursor: pointer;
     border-bottom: 1px solid var(--border);
     transition: background .15s;
@@ -247,58 +133,123 @@
     align-items: center;
     gap: 10px;
   }
-  .dept-item:last-child { border-bottom: none; }
-  .dept-item:hover { background: var(--surface2); }
-  .dept-item.active { background: rgba(88,166,255,.1); border-left: 2px solid var(--accent); }
-  .dept-item-icon { font-size: 18px; }
-  .dept-item-name { font-size: 13px; font-weight: 500; }
-  .dept-item-floor { font-size: 11px; color: var(--text3); }
+  .wl-dept-item:last-child { border-bottom: none; }
+  .wl-dept-item:hover { background: var(--surface2); }
+  .wl-dept-item.active { background: rgba(88,166,255,.1); border-left: 2px solid var(--accent); }
+  .wl-dept-icon { font-size: 18px; }
+  .wl-dept-name { font-size: 13px; font-weight: 500; }
+  .wl-dept-floor { font-size: 11px; color: var(--text3); }
+  .wl-dept-cnt {
+    margin-left: auto;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    background: rgba(88,166,255,.15);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+  }
 
-  .log-editor {
+  .wl-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* 오늘의 업무일지 로그 */
+  .wl-log-panel {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    flex: 1;
   }
-  .log-editor-header {
-    padding: 16px 20px;
+  .wl-log-header {
+    padding: 14px 20px;
     border-bottom: 1px solid var(--border);
     background: var(--surface2);
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-  .log-editor-title { font-size: 15px; font-weight: 600; }
-  .log-date { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text2); }
-  .log-form { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 14px; }
-  .form-row { display: flex; flex-direction: column; gap: 6px; }
+  .wl-log-title { font-size: 14px; font-weight: 600; }
+  .wl-log-subtitle { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .wl-log-date { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text2); }
+  .wl-entries {
+    padding: 0;
+    max-height: 480px;
+    overflow-y: auto;
+  }
+  .wl-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--border);
+    transition: background .1s;
+  }
+  .wl-entry:last-child { border-bottom: none; }
+  .wl-entry:hover { background: var(--surface2); }
+  .wl-entry-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .wl-entry-body { flex: 1; min-width: 0; }
+  .wl-entry-top {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 5px; flex-wrap: wrap;
+  }
+  .wl-entry-person { font-size: 13px; font-weight: 600; }
+  .wl-entry-dept { font-size: 11px; color: var(--text3); }
+  .wl-entry-status { font-size: 10px; padding: 2px 7px; border-radius: 3px; white-space: nowrap; }
+  .st-done { background:rgba(63,185,80,.15); color:var(--accent2); }
+  .st-prog { background:rgba(88,166,255,.15); color:var(--accent); }
+  .st-issue { background:rgba(248,81,73,.15); color:var(--danger); }
+  .st-meet { background:rgba(210,168,255,.15); color:var(--accent3); }
+  .wl-entry-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
+  .wl-entry-meta {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 6px;
+  }
+  .wl-entry-pct-wrap { display: flex; align-items: center; gap: 6px; }
+  .wl-entry-bar { width: 80px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .wl-entry-bar-fill { height: 100%; border-radius: 2px; background: var(--accent2); }
+  .wl-entry-pct-num { font-size: 10px; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+  .wl-entry-kpi { font-size: 10px; color: var(--accent3); }
+  .wl-entry-ts { font-size: 10px; color: var(--text3); font-family: 'JetBrains Mono', monospace; margin-left: auto; }
+  .wl-entry-issue { font-size: 11px; color: var(--danger); margin-top: 4px; }
+
+  /* 업무일지 제출 폼 */
+  .wl-form-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .wl-form-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .wl-form-title { font-size: 14px; font-weight: 600; }
+  .wl-form-members { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .log-form { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+  .form-row { display: flex; flex-direction: column; gap: 5px; }
   .form-label { font-size: 12px; color: var(--text2); font-weight: 500; }
   .form-input, .form-textarea {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 13px;
-    padding: 10px 12px;
-    outline: none;
-    transition: border .2s;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+    color: var(--text); font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px; padding: 9px 12px; outline: none; transition: border .2s;
   }
   .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
-  .form-textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
+  .form-textarea { min-height: 90px; resize: vertical; line-height: 1.6; }
   .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .form-actions { display: flex; gap: 10px; padding: 16px 20px; border-top: 1px solid var(--border); }
-  .btn {
-    padding: 9px 18px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    transition: all .2s;
-  }
+  .form-actions { display: flex; gap: 10px; padding: 14px 20px; border-top: 1px solid var(--border); }
+  .btn { padding: 9px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all .2s; }
   .btn-primary { background: var(--accent); color: #0d1117; }
   .btn-primary:hover { background: #79c0ff; }
   .btn-success { background: var(--accent2); color: #0d1117; }
@@ -307,580 +258,324 @@
   .btn-secondary:hover { border-color: var(--text2); }
   .btn-danger { background: rgba(248,81,73,.15); color: var(--danger); border: 1px solid rgba(248,81,73,.3); }
 
-  /* ── 보고서기록 ── */
-  .report-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .report-filter {
-    padding: 7px 14px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    font-size: 12px;
-    cursor: pointer;
-    outline: none;
-  }
-  .reports-list { display: flex; flex-direction: column; gap: 12px; }
-  .report-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .report-card-header {
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .report-meta { display: flex; align-items: center; gap: 10px; }
-  .report-dept-badge {
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    background: rgba(88,166,255,.15);
-    color: var(--accent);
-  }
-  .report-title-text { font-size: 14px; font-weight: 600; }
-  .report-time { font-size: 11px; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
-  .report-body { padding: 14px 18px; }
-  .report-section { margin-bottom: 10px; }
-  .report-section-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
-  .report-section-text { font-size: 13px; line-height: 1.6; color: var(--text2); }
-  .report-kpi-row { display: flex; gap: 20px; flex-wrap: wrap; }
-  .report-kpi { }
-  .report-kpi-key { font-size: 11px; color: var(--text3); }
-  .report-kpi-val { font-size: 14px; font-weight: 600; color: var(--accent2); }
-  .report-actions-row { display: flex; gap: 8px; margin-top: 12px; }
-  .approval-badge {
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 4px;
-  }
-  .app-pending { background: rgba(255,166,87,.15); color: var(--accent4); }
-  .app-approved { background: rgba(63,185,80,.15); color: var(--accent2); }
-  .app-rejected { background: rgba(248,81,73,.15); color: var(--danger); }
+  /* 보고서기록 */
+  .report-toolbar { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+  .report-filter { padding:7px 14px; background:var(--surface); border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:12px; cursor:pointer; outline:none; }
+  .reports-list { display:flex; flex-direction:column; gap:12px; }
+  .report-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .report-card-header { padding:14px 18px; border-bottom:1px solid var(--border); background:var(--surface2); display:flex; align-items:center; justify-content:space-between; }
+  .report-meta { display:flex; align-items:center; gap:10px; }
+  .report-dept-badge { font-size:11px; padding:3px 8px; border-radius:4px; background:rgba(88,166,255,.15); color:var(--accent); }
+  .report-title-text { font-size:14px; font-weight:600; }
+  .report-time { font-size:11px; color:var(--text3); font-family:'JetBrains Mono',monospace; }
+  .report-body { padding:14px 18px; }
+  .report-section { margin-bottom:10px; }
+  .report-section-label { font-size:11px; color:var(--text3); margin-bottom:4px; }
+  .report-section-text { font-size:13px; line-height:1.6; color:var(--text2); }
+  .report-kpi-row { display:flex; gap:20px; flex-wrap:wrap; }
+  .report-kpi-key { font-size:11px; color:var(--text3); }
+  .report-kpi-val { font-size:14px; font-weight:600; color:var(--accent2); }
+  .report-actions-row { display:flex; gap:8px; margin-top:12px; }
+  .approval-badge { font-size:11px; padding:3px 8px; border-radius:4px; }
+  .app-pending{background:rgba(255,166,87,.15);color:var(--accent4)} .app-approved{background:rgba(63,185,80,.15);color:var(--accent2)} .app-rejected{background:rgba(248,81,73,.15);color:var(--danger)}
 
-  /* ── 수익현황 ── */
-  .revenue-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-  .rev-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-  }
-  .rev-label { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
-  .rev-amount { font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-  .rev-change { font-size: 12px; margin-top: 4px; }
-  .up { color: var(--accent2); }
-  .dn { color: var(--danger); }
-  .rev-input-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .rev-input-header {
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-    font-size: 13px;
-    font-weight: 600;
-  }
-  .rev-form { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-  .rev-row { display: grid; grid-template-columns: 180px 1fr 140px 100px; gap: 10px; align-items: end; }
-  .rev-history { padding: 0 20px 20px; }
-  .rev-history-title { font-size: 12px; color: var(--text2); font-weight: 600; margin-bottom: 10px; }
-  .rev-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .rev-table th { text-align: left; padding: 8px 12px; color: var(--text3); font-weight: 500; border-bottom: 1px solid var(--border); }
-  .rev-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text2); }
-  .rev-table tr:last-child td { border-bottom: none; }
-  .rev-table .amount-cell { color: var(--accent2); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+  /* 수익현황 */
+  .revenue-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+  .rev-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px; }
+  .rev-label { font-size:12px; color:var(--text3); margin-bottom:6px; }
+  .rev-amount { font-size:24px; font-weight:700; font-family:'JetBrains Mono',monospace; }
+  .rev-change { font-size:12px; margin-top:4px; }
+  .up{color:var(--accent2)} .dn{color:var(--danger)}
+  .rev-input-section { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .rev-input-header { padding:14px 20px; border-bottom:1px solid var(--border); background:var(--surface2); font-size:13px; font-weight:600; }
+  .rev-form { padding:20px; display:flex; flex-direction:column; gap:12px; }
+  .rev-row { display:grid; grid-template-columns:180px 1fr 140px 100px; gap:10px; align-items:end; }
+  .rev-history { padding:0 20px 20px; }
+  .rev-history-title { font-size:12px; color:var(--text2); font-weight:600; margin-bottom:10px; }
+  .rev-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .rev-table th { text-align:left; padding:8px 12px; color:var(--text3); font-weight:500; border-bottom:1px solid var(--border); }
+  .rev-table td { padding:9px 12px; border-bottom:1px solid var(--border); color:var(--text2); }
+  .rev-table tr:last-child td { border-bottom:none; }
+  .rev-table .amount-cell { color:var(--accent2); font-family:'JetBrains Mono',monospace; font-weight:600; }
 
-  /* ── CEO 커맨드바 ── */
-  .ceo-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 14px 28px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    z-index: 100;
-  }
-  .ceo-label {
-    font-size: 11px;
-    color: var(--accent);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .ceo-bar select {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    font-size: 12px;
-    padding: 8px 12px;
-    outline: none;
-    cursor: pointer;
-  }
-  .ceo-input {
-    flex: 1;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 13px;
-    padding: 9px 14px;
-    outline: none;
-    transition: border .2s;
-  }
-  .ceo-input:focus { border-color: var(--accent); }
-  .ceo-send {
-    background: var(--accent);
-    color: #0d1117;
-    border: none;
-    border-radius: 6px;
-    padding: 9px 18px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background .2s;
-    white-space: nowrap;
-  }
-  .ceo-send:hover { background: #79c0ff; }
-  .cmd-log {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 18px;
-    margin-bottom: 24px;
-    max-height: 160px;
-    overflow-y: auto;
-    font-size: 12px;
-    line-height: 1.8;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .cmd-entry { display: flex; gap: 8px; }
-  .cmd-ts { color: var(--text3); }
-  .cmd-dept { color: var(--accent3); }
-  .cmd-text { color: var(--text2); }
-
-  .pb-28 { padding-bottom: 80px; }
+  /* CEO 커맨드바 */
+  .ceo-bar { position:fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:1px solid var(--border); padding:14px 28px; display:flex; align-items:center; gap:12px; z-index:100; }
+  .ceo-label { font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:1px; white-space:nowrap; display:flex; align-items:center; gap:6px; }
+  .ceo-bar select { background:var(--surface2); border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:12px; padding:8px 12px; outline:none; cursor:pointer; }
+  .ceo-input { flex:1; background:var(--bg); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'Noto Sans KR',sans-serif; font-size:13px; padding:9px 14px; outline:none; transition:border .2s; }
+  .ceo-input:focus { border-color:var(--accent); }
+  .ceo-send { background:var(--accent); color:#0d1117; border:none; border-radius:6px; padding:9px 18px; font-size:13px; font-weight:700; cursor:pointer; transition:background .2s; white-space:nowrap; }
+  .ceo-send:hover { background:#79c0ff; }
+  .cmd-log { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:14px 18px; margin-bottom:24px; max-height:160px; overflow-y:auto; font-size:12px; line-height:1.8; font-family:'JetBrains Mono',monospace; }
+  .cmd-entry { display:flex; gap:8px; }
+  .cmd-ts{color:var(--text3)} .cmd-dept{color:var(--accent3)} .cmd-text{color:var(--text2)}
 
   /* toast */
-  .toast {
-    position: fixed;
-    bottom: 80px;
-    right: 28px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 18px;
-    font-size: 13px;
-    color: var(--text);
-    z-index: 200;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all .3s;
-    pointer-events: none;
-  }
-  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast { position:fixed; bottom:80px; right:28px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; font-size:13px; opacity:0; transform:translateY(8px); transition:all .3s; pointer-events:none; z-index:200; }
+  .toast.show { opacity:1; transform:translateY(0); }
 
-  /* scrollbar */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  /* RESPONSIVE */
+  @media (max-width:900px) {
+    .wl-layout { grid-template-columns: 1fr; }
+    .wl-left { flex-direction: column; }
+    .wl-left .wl-dept-item { display: inline-flex; border-bottom: none; border-right: 1px solid var(--border); }
+    .wl-left { flex-direction: row; flex-wrap: wrap; overflow-x: auto; height: auto; }
+    .wl-left-header { width: 100%; }
+  }
+  @media (max-width: 768px) {
+    .stat-row { grid-template-columns: repeat(2,1fr); }
+    .floor-grid { grid-template-columns: 1fr; }
+    .form-row-2 { grid-template-columns: 1fr; }
+    .revenue-grid { grid-template-columns: repeat(2,1fr); }
+    .rev-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .topbar { padding: 0 12px; }
+    .topbar-center { display: none; }
+    .main { padding: 14px 14px 90px; }
+    .tabs { padding: 0 8px; }
+    .tab { padding: 12px 14px; font-size: 12px; }
+    .ceo-bar { padding: 10px 12px; gap: 8px; }
+    .ceo-bar select { display: none; }
+    .emp-progress-wrap { display: none; }
+    .floor-header { flex-wrap: wrap; gap: 6px; }
+    .wl-layout { grid-template-columns: 1fr; }
+    .wl-left {
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      border-radius: 10px;
+    }
+    .wl-left-header { display: none; }
+    .wl-dept-item {
+      flex-direction: column;
+      padding: 8px 12px;
+      border-bottom: none;
+      border-right: 1px solid var(--border);
+      min-width: 80px;
+      align-items: center;
+      text-align: center;
+      gap: 4px;
+    }
+    .wl-dept-floor { display: none; }
+    .wl-dept-cnt { display: none; }
+  }
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-logo">
     <div class="dot"></div>
-    Relaxing Mind AI Company
+    RM 관제탑 <span style="font-weight:300;opacity:.5;margin-left:4px">CONTROL TOWER</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent3);font-weight:400;margin-left:6px">v2.0</span>
   </div>
-  <div class="topbar-center">🗼 관제탑 CONTROL TOWER v2.0</div>
+  <div class="topbar-center">RELAXING MIND AI COMPANY · 37 AI AGENTS ONLINE</div>
   <div class="topbar-right">
-    <div class="status-dot"></div>
-    <span style="font-size:11px;color:var(--accent2)">전 시스템 정상</span>
+    <a class="office-btn" href="https://ruymonpel.github.io/relaxing-mind-tower/office/" target="_blank">🏢 오피스로 이동</a>
+    <div style="display:flex;align-items:center;gap:6px"><div class="status-dot"></div><span style="font-size:12px;color:var(--text2)">LIVE</span></div>
     <span id="live-clock">--:--:--</span>
   </div>
 </div>
 
 <!-- TABS -->
 <div class="tabs">
-  <div class="tab active" onclick="switchTab('dashboard')">📊 대시보드</div>
-  <div class="tab" onclick="switchTab('worklog')">📝 업무일지</div>
-  <div class="tab" onclick="switchTab('reports')">📋 보고서기록</div>
-  <div class="tab" onclick="switchTab('revenue')">💰 수익현황</div>
+  <div class="tab active" onclick="switchTab('dashboard',this)">🏢 대시보드</div>
+  <div class="tab" onclick="switchTab('worklog',this)">📝 업무일지</div>
+  <div class="tab" onclick="switchTab('reports',this)">📋 보고서기록</div>
+  <div class="tab" onclick="switchTab('revenue',this)">💰 수익현황</div>
 </div>
 
-<!-- MAIN -->
-<div class="main pb-28">
+<div class="main">
 
-  <!-- ===== DASHBOARD ===== -->
-  <div id="panel-dashboard" class="panel active">
-    <!-- CMD LOG -->
-    <div class="section-title" style="margin-top:4px">📡 CEO 지시 최근 내역</div>
-    <div class="cmd-log" id="cmd-log">
-      <div class="cmd-entry"><span class="cmd-ts">09:00</span><span class="cmd-dept">[전체]</span><span class="cmd-text">관제탑 시스템 초기화 완료. 모든 부서 업무 시작.</span></div>
+<!-- ===== 대시보드 ===== -->
+<div id="panel-dashboard" class="panel active">
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-label">전체 직원</div>
+      <div class="stat-value c-blue">37</div>
+      <div class="stat-sub">8개 부서 운영 중</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">오늘 업무일지</div>
+      <div class="stat-value c-green" id="stat-logs">37</div>
+      <div class="stat-sub">전원 제출 완료</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">승인 완료</div>
+      <div class="stat-value c-purple" id="stat-approved">0</div>
+      <div class="stat-sub">CEO 승인 대기 <span id="stat-pending">0</span>건</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">누적 수익</div>
+      <div class="stat-value c-orange" id="stat-revenue">₩0</div>
+      <div class="stat-sub">전 채널 합산</div>
+    </div>
+  </div>
+
+  <div class="cmd-log" id="cmd-log">
+    <div class="cmd-entry"><span class="cmd-ts">시스템</span><span class="cmd-dept">[전체]</span><span class="cmd-text">RM 관제탑이 시작되었습니다. 37명 전원 업무일지 제출 완료.</span></div>
+  </div>
+
+  <div class="section-title">🏢 층별 현황</div>
+  <div class="floor-grid">
+    <!-- 7F CEO 오피스 -->
+    <div class="floor-card">
+      <div class="floor-header">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="floor-badge">7F</span>
+          <span class="floor-name">CEO 오피스</span>
+        </div>
+        <span class="floor-count">3명</span>
+      </div>
+      <div class="emp-list">
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(167,139,250,.2)">🤖</div><div class="emp-info"><div class="emp-name">Claude</div><div class="emp-role">CEO · 전략총괄</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:95%"></div></div><div class="emp-pct">95%</div></div><span class="emp-status s-work">업무중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(167,139,250,.2)">🎙️</div><div class="emp-info"><div class="emp-name">Aria</div><div class="emp-role">비서실장</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:88%"></div></div><div class="emp-pct">88%</div></div><span class="emp-status s-meet">회의중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(167,139,250,.2)">📊</div><div class="emp-info"><div class="emp-name">Nova</div><div class="emp-role">데이터 분석가</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:92%"></div></div><div class="emp-pct">92%</div></div><span class="emp-status s-work">업무중</span></div>
+      </div>
+    </div>
+    <!-- 6F 경영지원팀 -->
+    <div class="floor-card">
+      <div class="floor-header">
+        <div style="display:flex;align-items:center;gap:10px"><span class="floor-badge">6F</span><span class="floor-name">경영지원팀</span></div>
+        <span class="floor-count">4명</span>
+      </div>
+      <div class="emp-list">
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(250,204,21,.15)">⭐</div><div class="emp-info"><div class="emp-name">Stella</div><div class="emp-role">경영지원팀장</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:91%"></div></div><div class="emp-pct">91%</div></div><span class="emp-status s-work">업무중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(250,204,21,.15)">💼</div><div class="emp-info"><div class="emp-name">Rex F</div><div class="emp-role">재무 담당</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:85%"></div></div><div class="emp-pct">85%</div></div><span class="emp-status s-work">업무중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(250,204,21,.15)">🌐</div><div class="emp-info"><div class="emp-name">Maya</div><div class="emp-role">HR 매니저</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:78%"></div></div><div class="emp-pct">78%</div></div><span class="emp-status s-meet">회의중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(250,204,21,.15)">🔧</div><div class="emp-info"><div class="emp-name">Leon</div><div class="emp-role">시스템 관리</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:80%"></div></div><div class="emp-pct">80%</div></div><span class="emp-status s-work">업무중</span></div>
+      </div>
+    </div>
+    <!-- 5F 콘텐츠팀 -->
+    <div class="floor-card">
+      <div class="floor-header">
+        <div style="display:flex;align-items:center;gap:10px"><span class="floor-badge">5F</span><span class="floor-name">콘텐츠팀</span></div>
+        <span class="floor-count">12명</span>
+      </div>
+      <div class="emp-list">
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(59,130,246,.15)">✍️</div><div class="emp-info"><div class="emp-name">Kai</div><div class="emp-role">블로그 팀장</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:87%"></div></div><div class="emp-pct">87%</div></div><span class="emp-status s-work">업무중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(59,130,246,.15)">📹</div><div class="emp-info"><div class="emp-name">Milo</div><div class="emp-role">유튜브 PD</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:82%"></div></div><div class="emp-pct">82%</div></div><span class="emp-status s-work">업무중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(59,130,246,.15)">📝</div><div class="emp-info"><div class="emp-name">Lena · Finn · Zara</div><div class="emp-role">블로그 라이터</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:80%"></div></div><div class="emp-pct">80%</div></div><span class="emp-status s-work">업무중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(59,130,246,.15)">🎬</div><div class="emp-info"><div class="emp-name">Jay · Sora · Nyx</div><div class="emp-role">영상 편집</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:75%"></div></div><div class="emp-pct">75%</div></div><span class="emp-status s-report">보고중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(59,130,246,.15)">🔍</div><div class="emp-info"><div class="emp-name">Teo · Wren · Bree</div><div class="emp-role">SEO 최적화</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:90%"></div></div><div class="emp-pct">90%</div></div><span class="emp-status s-work">업무중</span></div>
+      </div>
+    </div>
+    <!-- 4F 크리에이티브팀 -->
+    <div class="floor-card">
+      <div class="floor-header">
+        <div style="display:flex;align-items:center;gap:10px"><span class="floor-badge">4F</span><span class="floor-name">크리에이티브팀</span></div>
+        <span class="floor-count">6명</span>
+      </div>
+      <div class="emp-list">
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(168,85,247,.15)">🎨</div><div class="emp-info"><div class="emp-name">Elle</div><div class="emp-role">소설 팀장</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:85%"></div></div><div class="emp-pct">85%</div></div><span class="emp-status s-work">업무중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(168,85,247,.15)">📸</div><div class="emp-info"><div class="emp-name">Iris</div><div class="emp-role">인스타 팀장</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:91%"></div></div><div class="emp-pct">91%</div></div><span class="emp-status s-work">업무중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(168,85,247,.15)">✒️</div><div class="emp-info"><div class="emp-name">Pip · Cleo · Sol</div><div class="emp-role">소설 작가</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:77%"></div></div><div class="emp-pct">77%</div></div><span class="emp-status s-work">업무중</span></div>
+      </div>
+    </div>
+    <!-- 3F 신규사업부 -->
+    <div class="floor-card">
+      <div class="floor-header">
+        <div style="display:flex;align-items:center;gap:10px"><span class="floor-badge">3F</span><span class="floor-name">신규사업부</span></div>
+        <span class="floor-count">5명</span>
+      </div>
+      <div class="emp-list">
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(16,185,129,.15)">🚀</div><div class="emp-info"><div class="emp-name">Victor</div><div class="emp-role">사업개발 팀장</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:88%"></div></div><div class="emp-pct">88%</div></div><span class="emp-status s-meet">회의중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(16,185,129,.15)">🔬</div><div class="emp-info"><div class="emp-name">Iris N</div><div class="emp-role">트렌드 리서처</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:83%"></div></div><div class="emp-pct">83%</div></div><span class="emp-status s-work">업무중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(16,185,129,.15)">💡</div><div class="emp-info"><div class="emp-name">Kane · Zoe · Ren</div><div class="emp-role">신규 콘텐츠 개발</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:71%"></div></div><div class="emp-pct">71%</div></div><span class="emp-status s-work">업무중</span></div>
+      </div>
+    </div>
+    <!-- 2F+1F+B1 -->
+    <div class="floor-card">
+      <div class="floor-header">
+        <div style="display:flex;align-items:center;gap:10px"><span class="floor-badge">2F·1F·B1</span><span class="floor-name">수익화팀 · 로비 · 보안팀</span></div>
+        <span class="floor-count">7명</span>
+      </div>
+      <div class="emp-list">
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(245,158,11,.15)">💰</div><div class="emp-info"><div class="emp-name">Penny · Rich · Data</div><div class="emp-role">수익화팀 (2F)</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:89%"></div></div><div class="emp-pct">89%</div></div><span class="emp-status s-work">업무중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(99,102,241,.15)">🤝</div><div class="emp-info"><div class="emp-name">Otto</div><div class="emp-role">로비 매니저 (1F)</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:74%"></div></div><div class="emp-pct">74%</div></div><span class="emp-status s-meet">회의중</span></div>
+        <div class="emp-row"><div class="emp-avatar" style="background:rgba(239,68,68,.15)">🛡️</div><div class="emp-info"><div class="emp-name">Rex · Ada · Cy</div><div class="emp-role">보안팀 (B1)</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:96%"></div></div><div class="emp-pct">96%</div></div><span class="emp-status s-work">업무중</span></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /dashboard -->
+
+
+<!-- ===== 업무일지 ===== -->
+<div id="panel-worklog" class="panel">
+  <div class="section-title" style="margin-top:4px">📝 부서별 업무일지 현황</div>
+  <div class="wl-layout">
+    <!-- 왼쪽: 부서 선택 -->
+    <div class="wl-left">
+      <div class="wl-left-header">부서 선택</div>
+      <div class="wl-dept-item active" onclick="selectWlDept(this,'all')">
+        <span class="wl-dept-icon">🏢</span>
+        <div><div class="wl-dept-name">전체 보기</div><div class="wl-dept-floor">37명 전원</div></div>
+        <span class="wl-dept-cnt">37</span>
+      </div>
+      <div class="wl-dept-item" onclick="selectWlDept(this,'CEO 오피스')">
+        <span class="wl-dept-icon">🤖</span>
+        <div><div class="wl-dept-name">CEO 오피스</div><div class="wl-dept-floor">7F · 3명</div></div>
+        <span class="wl-dept-cnt">3</span>
+      </div>
+      <div class="wl-dept-item" onclick="selectWlDept(this,'경영지원팀')">
+        <span class="wl-dept-icon">⭐</span>
+        <div><div class="wl-dept-name">경영지원팀</div><div class="wl-dept-floor">6F · 4명</div></div>
+        <span class="wl-dept-cnt">4</span>
+      </div>
+      <div class="wl-dept-item" onclick="selectWlDept(this,'콘텐츠팀')">
+        <span class="wl-dept-icon">✍️</span>
+        <div><div class="wl-dept-name">콘텐츠팀</div><div class="wl-dept-floor">5F · 12명</div></div>
+        <span class="wl-dept-cnt">12</span>
+      </div>
+      <div class="wl-dept-item" onclick="selectWlDept(this,'크리에이티브팀')">
+        <span class="wl-dept-icon">🎨</span>
+        <div><div class="wl-dept-name">크리에이티브팀</div><div class="wl-dept-floor">4F · 6명</div></div>
+        <span class="wl-dept-cnt">6</span>
+      </div>
+      <div class="wl-dept-item" onclick="selectWlDept(this,'신규사업부')">
+        <span class="wl-dept-icon">🚀</span>
+        <div><div class="wl-dept-name">신규사업부</div><div class="wl-dept-floor">3F · 5명</div></div>
+        <span class="wl-dept-cnt">5</span>
+      </div>
+      <div class="wl-dept-item" onclick="selectWlDept(this,'수익화팀')">
+        <span class="wl-dept-icon">💰</span>
+        <div><div class="wl-dept-name">수익화팀</div><div class="wl-dept-floor">2F · 3명</div></div>
+        <span class="wl-dept-cnt">3</span>
+      </div>
+      <div class="wl-dept-item" onclick="selectWlDept(this,'로비')">
+        <span class="wl-dept-icon">🤝</span>
+        <div><div class="wl-dept-name">로비</div><div class="wl-dept-floor">1F · 1명</div></div>
+        <span class="wl-dept-cnt">1</span>
+      </div>
+      <div class="wl-dept-item" onclick="selectWlDept(this,'보안팀')">
+        <span class="wl-dept-icon">🛡️</span>
+        <div><div class="wl-dept-name">보안팀</div><div class="wl-dept-floor">B1 · 3명</div></div>
+        <span class="wl-dept-cnt">3</span>
+      </div>
     </div>
 
-    <!-- STAT CARDS -->
-    <div class="stat-row">
-      <div class="stat-card">
-        <div class="stat-label">총 직원 수</div>
-        <div class="stat-value c-blue">37</div>
-        <div class="stat-sub">8개 부서 · 8개 층</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">오늘 업무일지</div>
-        <div class="stat-value c-green" id="stat-logs">0</div>
-        <div class="stat-sub">제출 완료</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">이번 달 수익</div>
-        <div class="stat-value c-orange" id="stat-revenue">₩0</div>
-        <div class="stat-sub">누적 수익</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">보고서 승인</div>
-        <div class="stat-value c-purple" id="stat-approved">0</div>
-        <div class="stat-sub">/ <span id="stat-total-reports">0</span> 건</div>
-      </div>
-    </div>
-
-    <!-- FLOOR CARDS -->
-    <div class="section-title">🏢 전체 부서 현황</div>
-    <div class="floor-grid">
-
-      <!-- 7F CEO -->
-      <div class="floor-card">
-        <div class="floor-header">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="floor-badge">7F</span>
-            <span class="floor-name">CEO 오피스</span>
-          </div>
-          <span class="floor-count">3명</span>
-        </div>
-        <div class="emp-list">
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(88,166,255,.15)">🤖</div>
-            <div class="emp-info"><div class="emp-name">Claude</div><div class="emp-role">대표 · CEO</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">전략기획 중</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:90%;background:var(--accent)"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(210,168,255,.15)">💼</div>
-            <div class="emp-info"><div class="emp-name">Aria</div><div class="emp-role">비서실장</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">일정 관리</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:75%;background:var(--accent3)"></div></div></div>
-            <span class="emp-status s-meet">회의중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(63,185,80,.15)">📊</div>
-            <div class="emp-info"><div class="emp-name">Nova</div><div class="emp-role">전략기획</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">보고서 작성</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:60%"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 6F 경영지원 -->
-      <div class="floor-card">
-        <div class="floor-header">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="floor-badge">6F</span>
-            <span class="floor-name">경영지원팀</span>
-          </div>
-          <span class="floor-count">4명</span>
-        </div>
-        <div class="emp-list">
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(255,166,87,.15)">⭐</div>
-            <div class="emp-info"><div class="emp-name">Stella</div><div class="emp-role">팀장 · 경영지원</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">예산 검토</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:80%;background:var(--accent4)"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(88,166,255,.15)">📋</div>
-            <div class="emp-info"><div class="emp-name">Rex F</div><div class="emp-role">인사·총무</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">인사 처리</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:65%"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(210,168,255,.15)">🌸</div>
-            <div class="emp-info"><div class="emp-name">Maya</div><div class="emp-role">재무관리</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">재무 분석</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:55%;background:var(--accent3)"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(63,185,80,.15)">🦁</div>
-            <div class="emp-info"><div class="emp-name">Leon</div><div class="emp-role">법무·계약</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">계약서 검토</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:45%"></div></div></div>
-            <span class="emp-status s-idle">대기중</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 5F 콘텐츠팀 -->
-      <div class="floor-card">
-        <div class="floor-header">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="floor-badge">5F</span>
-            <span class="floor-name">콘텐츠팀 (블로그+유튜브)</span>
-          </div>
-          <span class="floor-count">12명</span>
-        </div>
-        <div class="emp-list">
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(88,166,255,.15)">✍️</div>
-            <div class="emp-info"><div class="emp-name">Kai</div><div class="emp-role">블로그 팀장</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">글 기획 중</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:85%"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(63,185,80,.15)">🎬</div>
-            <div class="emp-info"><div class="emp-name">Milo</div><div class="emp-role">유튜브 팀장</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">쇼츠 편집</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:70%;background:var(--accent2)"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(210,168,255,.15)">💡</div>
-            <div class="emp-info"><div class="emp-name">Lena·Finn·Zara</div><div class="emp-role">블로그 아이디어파트 3인</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">아이디어 회의</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:60%;background:var(--accent3)"></div></div></div>
-            <span class="emp-status s-meet">회의중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(255,166,87,.15)">💡</div>
-            <div class="emp-info"><div class="emp-name">Jay·Sora·Nyx</div><div class="emp-role">유튜브 아이디어파트 3인</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">썸네일 기획</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:50%;background:var(--accent4)"></div></div></div>
-            <span class="emp-status s-meet">회의중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(88,166,255,.15)">⚙️</div>
-            <div class="emp-info"><div class="emp-name">Teo·Wren·Bree</div><div class="emp-role">콘텐츠 제작 3인</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">발행 준비</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:75%"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 4F 크리에이티브 -->
-      <div class="floor-card">
-        <div class="floor-header">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="floor-badge">4F</span>
-            <span class="floor-name">크리에이티브팀 (소설+인스타)</span>
-          </div>
-          <span class="floor-count">6명</span>
-        </div>
-        <div class="emp-list">
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(210,168,255,.15)">📚</div>
-            <div class="emp-info"><div class="emp-name">Elle</div><div class="emp-role">소설 팀장</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">2화 집필 중</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:40%;background:var(--accent3)"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(255,166,87,.15)">📸</div>
-            <div class="emp-info"><div class="emp-name">Iris</div><div class="emp-role">인스타 팀장</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">피드 기획</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:65%;background:var(--accent4)"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(63,185,80,.15)">🎨</div>
-            <div class="emp-info"><div class="emp-name">Pip·Cleo·Sol</div><div class="emp-role">크리에이티브 3인</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">디자인 작업</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:55%"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3F 신규사업부 -->
-      <div class="floor-card">
-        <div class="floor-header">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="floor-badge">3F</span>
-            <span class="floor-name">신규사업부</span>
-          </div>
-          <span class="floor-count">5명</span>
-        </div>
-        <div class="emp-list">
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(88,166,255,.15)">🚀</div>
-            <div class="emp-info"><div class="emp-name">Victor</div><div class="emp-role">사업부장</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">신규 사업 발굴</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:70%"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(210,168,255,.15)">🔭</div>
-            <div class="emp-info"><div class="emp-name">Iris N</div><div class="emp-role">시장 분석</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">트렌드 리서치</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:55%;background:var(--accent3)"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(255,166,87,.15)">⚡</div>
-            <div class="emp-info"><div class="emp-name">Kane·Zoe·Ren</div><div class="emp-role">사업 기획 3인</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">기획서 작성</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:45%;background:var(--accent4)"></div></div></div>
-            <span class="emp-status s-meet">회의중</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2F 수익화팀 -->
-      <div class="floor-card">
-        <div class="floor-header">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="floor-badge">2F</span>
-            <span class="floor-name">수익화팀</span>
-          </div>
-          <span class="floor-count">3명</span>
-        </div>
-        <div class="emp-list">
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(63,185,80,.15)">💰</div>
-            <div class="emp-info"><div class="emp-name">Penny</div><div class="emp-role">수익화 팀장</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">쿠팡 분석</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:80%;background:var(--accent2)"></div></div></div>
-            <span class="emp-status s-report">보고 중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(255,166,87,.15)">📈</div>
-            <div class="emp-info"><div class="emp-name">Rich</div><div class="emp-role">광고·파트너스</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">광고 집행</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:65%;background:var(--accent4)"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(88,166,255,.15)">🔬</div>
-            <div class="emp-info"><div class="emp-name">Data</div><div class="emp-role">수익 데이터 분석</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">통계 분석</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:90%"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 1F 로비 -->
-      <div class="floor-card">
-        <div class="floor-header">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="floor-badge">1F</span>
-            <span class="floor-name">로비 · 안내</span>
-          </div>
-          <span class="floor-count">1명</span>
-        </div>
-        <div class="emp-list">
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(88,166,255,.15)">🤝</div>
-            <div class="emp-info"><div class="emp-name">Otto</div><div class="emp-role">총괄 안내 · 로비매니저</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">방문자 응대</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:50%"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- B1 보안팀 -->
-      <div class="floor-card">
-        <div class="floor-header">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="floor-badge" style="background:rgba(248,81,73,.15);color:var(--danger)">B1</span>
-            <span class="floor-name">보안팀</span>
-          </div>
-          <span class="floor-count">3명</span>
-        </div>
-        <div class="emp-list">
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(248,81,73,.15)">🛡️</div>
-            <div class="emp-info"><div class="emp-name">Rex</div><div class="emp-role">보안팀장</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">시스템 감시</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:95%;background:var(--danger)"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(88,166,255,.15)">🔒</div>
-            <div class="emp-info"><div class="emp-name">Ada</div><div class="emp-role">데이터 보안</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">로그 분석</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:80%"></div></div></div>
-            <span class="emp-status s-work">근무중</span>
-          </div>
-          <div class="emp-row">
-            <div class="emp-avatar" style="background:rgba(210,168,255,.15)">🔐</div>
-            <div class="emp-info"><div class="emp-name">Cy</div><div class="emp-role">네트워크 보안</div></div>
-            <div class="emp-progress-wrap"><div class="emp-pct">침투 테스트</div><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:70%;background:var(--accent3)"></div></div></div>
-            <span class="emp-status s-idle">모니터링</span>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /floor-grid -->
-  </div><!-- /dashboard -->
-
-
-  <!-- ===== 업무일지 ===== -->
-  <div id="panel-worklog" class="panel">
-    <div class="section-title" style="margin-top:4px">📝 부서별 업무일지 제출</div>
-    <div class="log-grid">
-      <div class="dept-list-panel">
-        <div class="dept-list-header">부서 선택</div>
-        <div class="dept-item active" onclick="selectDept(this,'7F CEO 오피스','Claude / Aria / Nova')">
-          <span class="dept-item-icon">🤖</span>
-          <div><div class="dept-item-name">CEO 오피스</div><div class="dept-item-floor">7F · 3명</div></div>
-        </div>
-        <div class="dept-item" onclick="selectDept(this,'6F 경영지원팀','Stella / Rex F / Maya / Leon')">
-          <span class="dept-item-icon">⭐</span>
-          <div><div class="dept-item-name">경영지원팀</div><div class="dept-item-floor">6F · 4명</div></div>
-        </div>
-        <div class="dept-item" onclick="selectDept(this,'5F 콘텐츠팀 (블로그+유튜브)','Kai / Milo / Lena·Finn·Zara / Jay·Sora·Nyx / Teo·Wren·Bree')">
-          <span class="dept-item-icon">✍️</span>
-          <div><div class="dept-item-name">콘텐츠팀</div><div class="dept-item-floor">5F · 12명</div></div>
-        </div>
-        <div class="dept-item" onclick="selectDept(this,'4F 크리에이티브팀 (소설+인스타)','Elle / Iris / Pip·Cleo·Sol')">
-          <span class="dept-item-icon">🎨</span>
-          <div><div class="dept-item-name">크리에이티브팀</div><div class="dept-item-floor">4F · 6명</div></div>
-        </div>
-        <div class="dept-item" onclick="selectDept(this,'3F 신규사업부','Victor / Iris N / Kane·Zoe·Ren')">
-          <span class="dept-item-icon">🚀</span>
-          <div><div class="dept-item-name">신규사업부</div><div class="dept-item-floor">3F · 5명</div></div>
-        </div>
-        <div class="dept-item" onclick="selectDept(this,'2F 수익화팀','Penny / Rich / Data')">
-          <span class="dept-item-icon">💰</span>
-          <div><div class="dept-item-name">수익화팀</div><div class="dept-item-floor">2F · 3명</div></div>
-        </div>
-        <div class="dept-item" onclick="selectDept(this,'1F 로비','Otto')">
-          <span class="dept-item-icon">🤝</span>
-          <div><div class="dept-item-name">로비</div><div class="dept-item-floor">1F · 1명</div></div>
-        </div>
-        <div class="dept-item" onclick="selectDept(this,'B1 보안팀','Rex / Ada / Cy')">
-          <span class="dept-item-icon">🛡️</span>
-          <div><div class="dept-item-name">보안팀</div><div class="dept-item-floor">B1 · 3명</div></div>
-        </div>
-      </div>
-
-      <div class="log-editor">
-        <div class="log-editor-header">
+    <!-- 오른쪽 -->
+    <div class="wl-right">
+      <!-- 오늘의 업무일지 로그 -->
+      <div class="wl-log-panel">
+        <div class="wl-log-header">
           <div>
-            <div class="log-editor-title" id="log-dept-title">7F CEO 오피스 — 업무일지</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:3px" id="log-dept-members">Claude / Aria / Nova</div>
+            <div class="wl-log-title" id="wl-log-title">📋 오늘의 업무일지 — 전체</div>
+            <div class="wl-log-subtitle" id="wl-log-subtitle">37명 제출 완료</div>
           </div>
-          <div class="log-date" id="log-date-display">--</div>
+          <div class="wl-log-date" id="wl-log-date">--</div>
+        </div>
+        <div class="wl-entries" id="wl-entries"></div>
+      </div>
+
+      <!-- 신규 제출 폼 -->
+      <div class="wl-form-panel">
+        <div class="wl-form-header">
+          <div>
+            <div class="wl-form-title" id="wl-form-title">✏️ 업무일지 제출</div>
+            <div class="wl-form-members" id="wl-form-members">부서를 선택하세요</div>
+          </div>
+          <div class="wl-log-date" id="wl-form-date">--</div>
         </div>
         <div class="log-form">
           <div class="form-row-2">
@@ -891,16 +586,12 @@
             <div class="form-row">
               <div class="form-label">업무 상태</div>
               <select class="form-input" id="log-status">
-                <option>정상 진행</option>
-                <option>완료</option>
-                <option>지연</option>
-                <option>보류</option>
-                <option>긴급</option>
+                <option>정상 진행</option><option>완료</option><option>지연</option><option>보류</option><option>긴급</option>
               </select>
             </div>
           </div>
           <div class="form-row">
-            <div class="form-label">오늘 한 일 (주요 업무)</div>
+            <div class="form-label">오늘 한 일</div>
             <textarea class="form-textarea" id="log-done" placeholder="오늘 수행한 업무를 구체적으로 작성해 주세요."></textarea>
           </div>
           <div class="form-row">
@@ -909,7 +600,7 @@
           </div>
           <div class="form-row">
             <div class="form-label">이슈 / CEO 보고 사항</div>
-            <textarea class="form-textarea" id="log-issue" placeholder="특이사항, 결재 필요 사항, CEO 확인이 필요한 내용을 작성해 주세요." style="min-height:80px"></textarea>
+            <textarea class="form-textarea" id="log-issue" placeholder="특이사항, 결재 필요 사항, CEO 확인이 필요한 내용." style="min-height:70px"></textarea>
           </div>
           <div class="form-row-2">
             <div class="form-row">
@@ -918,7 +609,7 @@
             </div>
             <div class="form-row">
               <div class="form-label">KPI / 성과 지표</div>
-              <input class="form-input" id="log-kpi" placeholder="예: 글 발행 3건, 조회수 500">
+              <input class="form-input" id="log-kpi" placeholder="예: 글 발행 3건">
             </div>
           </div>
         </div>
@@ -929,122 +620,69 @@
         </div>
       </div>
     </div>
-  </div><!-- /worklog -->
+  </div>
+</div><!-- /worklog -->
 
 
-  <!-- ===== 보고서기록 ===== -->
-  <div id="panel-reports" class="panel">
-    <div class="section-title" style="margin-top:4px">📋 전체 보고서 기록</div>
-    <div class="report-toolbar">
-      <select class="report-filter" id="report-filter" onchange="filterReports()">
-        <option value="all">전체 부서</option>
-        <option value="CEO 오피스">CEO 오피스</option>
-        <option value="경영지원팀">경영지원팀</option>
-        <option value="콘텐츠팀">콘텐츠팀</option>
-        <option value="크리에이티브팀">크리에이티브팀</option>
-        <option value="신규사업부">신규사업부</option>
-        <option value="수익화팀">수익화팀</option>
-        <option value="로비">로비</option>
-        <option value="보안팀">보안팀</option>
-      </select>
-      <select class="report-filter" id="approval-filter" onchange="filterReports()">
-        <option value="all">전체 상태</option>
-        <option value="pending">승인 대기</option>
-        <option value="approved">승인 완료</option>
-        <option value="rejected">반려</option>
-      </select>
-      <button class="btn btn-danger" onclick="clearAllReports()" style="margin-left:auto;font-size:11px;padding:7px 12px;">🗑 전체 삭제</button>
-    </div>
-    <div class="reports-list" id="reports-list">
-      <div style="color:var(--text3);font-size:13px;text-align:center;padding:40px">아직 제출된 보고서가 없습니다.</div>
-    </div>
-  </div><!-- /reports -->
+<!-- ===== 보고서기록 ===== -->
+<div id="panel-reports" class="panel">
+  <div class="section-title" style="margin-top:4px">📋 전체 보고서 기록</div>
+  <div class="report-toolbar">
+    <select class="report-filter" id="report-filter" onchange="filterReports()">
+      <option value="all">전체 부서</option>
+      <option value="CEO 오피스">CEO 오피스</option>
+      <option value="경영지원팀">경영지원팀</option>
+      <option value="콘텐츠팀">콘텐츠팀</option>
+      <option value="크리에이티브팀">크리에이티브팀</option>
+      <option value="신규사업부">신규사업부</option>
+      <option value="수익화팀">수익화팀</option>
+      <option value="로비">로비</option>
+      <option value="보안팀">보안팀</option>
+    </select>
+    <select class="report-filter" id="approval-filter" onchange="filterReports()">
+      <option value="all">전체 상태</option>
+      <option value="pending">승인 대기</option>
+      <option value="approved">승인 완료</option>
+      <option value="rejected">반려</option>
+    </select>
+    <button class="btn btn-danger" onclick="clearAllReports()" style="margin-left:auto;font-size:11px;padding:7px 12px;">🗑 전체 삭제</button>
+  </div>
+  <div class="reports-list" id="reports-list">
+    <div style="color:var(--text3);font-size:13px;text-align:center;padding:40px">아직 제출된 보고서가 없습니다.</div>
+  </div>
+</div><!-- /reports -->
 
 
-  <!-- ===== 수익현황 ===== -->
-  <div id="panel-revenue" class="panel">
-    <div class="section-title" style="margin-top:4px">💰 수익 현황 대시보드</div>
-    <div class="revenue-grid">
-      <div class="rev-card">
-        <div class="rev-label">네이버 블로그 수익</div>
-        <div class="rev-amount c-green" id="rev-blog">₩0</div>
-        <div class="rev-change up" id="rev-blog-change">—</div>
-      </div>
-      <div class="rev-card">
-        <div class="rev-label">유튜브 수익</div>
-        <div class="rev-amount c-blue" id="rev-yt">₩0</div>
-        <div class="rev-change up" id="rev-yt-change">—</div>
-      </div>
-      <div class="rev-card">
-        <div class="rev-label">쿠팡 파트너스</div>
-        <div class="rev-amount c-orange" id="rev-cp">₩0</div>
-        <div class="rev-change" id="rev-cp-change">최소 ₩10,000 출금 기준</div>
-      </div>
-      <div class="rev-card">
-        <div class="rev-label">인스타그램 수익</div>
-        <div class="rev-amount c-purple" id="rev-ig">₩0</div>
-        <div class="rev-change" id="rev-ig-change">—</div>
-      </div>
-      <div class="rev-card">
-        <div class="rev-label">소설 수익</div>
-        <div class="rev-amount" id="rev-novel" style="color:var(--accent3)">₩0</div>
-        <div class="rev-change" id="rev-novel-change">—</div>
-      </div>
-      <div class="rev-card" style="border-color:var(--accent2)">
-        <div class="rev-label">총 누적 수익</div>
-        <div class="rev-amount c-green" id="rev-total">₩0</div>
-        <div class="rev-change up" id="rev-total-sub">모든 채널 합산</div>
+<!-- ===== 수익현황 ===== -->
+<div id="panel-revenue" class="panel">
+  <div class="section-title" style="margin-top:4px">💰 수익 현황 대시보드</div>
+  <div class="revenue-grid">
+    <div class="rev-card"><div class="rev-label">네이버 블로그 수익</div><div class="rev-amount c-green" id="rev-blog">₩0</div><div class="rev-change up" id="rev-blog-change">—</div></div>
+    <div class="rev-card"><div class="rev-label">유튜브 수익</div><div class="rev-amount c-blue" id="rev-yt">₩0</div><div class="rev-change up" id="rev-yt-change">—</div></div>
+    <div class="rev-card"><div class="rev-label">쿠팡 파트너스</div><div class="rev-amount c-orange" id="rev-cp">₩0</div><div class="rev-change" id="rev-cp-change">최소 ₩10,000 출금 기준</div></div>
+    <div class="rev-card"><div class="rev-label">인스타그램 수익</div><div class="rev-amount c-purple" id="rev-ig">₩0</div><div class="rev-change" id="rev-ig-change">—</div></div>
+    <div class="rev-card"><div class="rev-label">소설 수익</div><div class="rev-amount" id="rev-novel" style="color:var(--accent3)">₩0</div><div class="rev-change" id="rev-novel-change">—</div></div>
+    <div class="rev-card" style="border-color:var(--accent2)"><div class="rev-label">총 누적 수익</div><div class="rev-amount c-green" id="rev-total">₩0</div><div class="rev-change up" id="rev-total-sub">모든 채널 합산</div></div>
+  </div>
+  <div class="rev-input-section">
+    <div class="rev-input-header">📥 수익 입력 (수익화팀 전용)</div>
+    <div class="rev-form">
+      <div class="rev-row">
+        <div class="form-row"><div class="form-label">채널</div><select class="form-input" id="rev-channel"><option value="blog">네이버 블로그</option><option value="yt">유튜브</option><option value="cp">쿠팡 파트너스</option><option value="ig">인스타그램</option><option value="novel">소설</option><option value="other">기타</option></select></div>
+        <div class="form-row"><div class="form-label">설명</div><input class="form-input" id="rev-desc" placeholder="예: 9월 블로그 광고 수익"></div>
+        <div class="form-row"><div class="form-label">금액 (원)</div><input class="form-input" id="rev-amount-input" type="number" placeholder="예: 5000"></div>
+        <div class="form-row"><div class="form-label">&nbsp;</div><button class="btn btn-success" onclick="addRevenue()">+ 추가</button></div>
       </div>
     </div>
-
-    <div class="rev-input-section">
-      <div class="rev-input-header">📥 수익 입력 (수익화팀 전용)</div>
-      <div class="rev-form">
-        <div class="rev-row">
-          <div class="form-row">
-            <div class="form-label">채널</div>
-            <select class="form-input" id="rev-channel">
-              <option value="blog">네이버 블로그</option>
-              <option value="yt">유튜브</option>
-              <option value="cp">쿠팡 파트너스</option>
-              <option value="ig">인스타그램</option>
-              <option value="novel">소설</option>
-              <option value="other">기타</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <div class="form-label">설명</div>
-            <input class="form-input" id="rev-desc" placeholder="예: 9월 블로그 광고 수익">
-          </div>
-          <div class="form-row">
-            <div class="form-label">금액 (원)</div>
-            <input class="form-input" id="rev-amount-input" type="number" placeholder="예: 5000">
-          </div>
-          <div class="form-row">
-            <div class="form-label">&nbsp;</div>
-            <button class="btn btn-success" onclick="addRevenue()">+ 추가</button>
-          </div>
-        </div>
-      </div>
-      <div class="rev-history">
-        <div class="rev-history-title">수익 내역</div>
-        <table class="rev-table">
-          <thead>
-            <tr>
-              <th>날짜</th>
-              <th>채널</th>
-              <th>설명</th>
-              <th>금액</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="rev-tbody">
-            <tr><td colspan="5" style="color:var(--text3);text-align:center">수익 내역이 없습니다.</td></tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="rev-history">
+      <div class="rev-history-title">수익 내역</div>
+      <table class="rev-table">
+        <thead><tr><th>날짜</th><th>채널</th><th>설명</th><th>금액</th><th></th></tr></thead>
+        <tbody id="rev-tbody"><tr><td colspan="5" style="color:var(--text3);text-align:center">수익 내역이 없습니다.</td></tr></tbody>
+      </table>
     </div>
-  </div><!-- /revenue -->
+  </div>
+</div><!-- /revenue -->
 
 </div><!-- /main -->
 
@@ -1065,298 +703,510 @@
   <input class="ceo-input" id="cmd-input" placeholder="지시 사항을 입력하세요..." onkeydown="if(event.key==='Enter')sendCmd()">
   <button class="ceo-send" onclick="sendCmd()">📨 전송</button>
 </div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ───────────── INIT ─────────────
-let currentDept = '7F CEO 오피스';
-let currentMembers = 'Claude / Aria / Nova';
-const KEY_REPORTS = 'rm_reports';
-const KEY_REVENUE = 'rm_revenue';
+// ─── WL_SEED: 37명 업무일지 ───
+const WL_SEED = [
+  // CEO 오피스 (7F)
+  {dept:'CEO 오피스', icon:'🤖', color:'#a78bfa', person:'Claude', role:'CEO',
+   status:'✅ 완료', stClass:'st-done',
+   today:'전사 KPI 대시보드 검토 및 이사회 보고서 초안 작성. 37명 업무일지 종합 분석 완료.',
+   tomorrow:'팀장 주간 회의 준비 및 Q4 전략 방향 확정',
+   issue:'없음', pct:95, kpi:'전략 실행률 95%', ts:'08:47'},
+  {dept:'CEO 오피스', icon:'🎙️', color:'#a78bfa', person:'Aria', role:'비서실장',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'CEO 일정 관리 및 외부 미팅 조율 3건. 주간 부서장 회의록 작성.',
+   tomorrow:'Q4 예산 검토 보조 및 파트너사 컨택',
+   issue:'없음', pct:88, kpi:'일정 처리율 100%', ts:'09:12'},
+  {dept:'CEO 오피스', icon:'📊', color:'#a78bfa', person:'Nova', role:'데이터 분석가',
+   status:'✅ 완료', stClass:'st-done',
+   today:'월간 채널별 성과 데이터 취합 및 시각화 대시보드 업데이트.',
+   tomorrow:'콘텐츠팀 블로그 조회수 분석 리포트 작성',
+   issue:'없음', pct:92, kpi:'데이터 정확도 99.2%', ts:'09:03'},
 
+  // 경영지원팀 (6F)
+  {dept:'경영지원팀', icon:'⭐', color:'#fde68a', person:'Stella', role:'경영지원팀장',
+   status:'✅ 완료', stClass:'st-done',
+   today:'팀 목표 KPI 점검 및 월간 예산 집행 현황 보고.',
+   tomorrow:'신규 협력사 계약서 검토 및 법무팀 컨택',
+   issue:'없음', pct:91, kpi:'예산 집행률 87%', ts:'09:20'},
+  {dept:'경영지원팀', icon:'💼', color:'#fde68a', person:'Rex F', role:'재무담당',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'9월 비용 정산 및 카드 내역 검증. 세금계산서 발행 3건.',
+   tomorrow:'월말 재무 마감 준비 및 손익계산서 초안 작성',
+   issue:'없음', pct:85, kpi:'정산 오류 0건', ts:'09:35'},
+  {dept:'경영지원팀', icon:'🌐', color:'#fde68a', person:'Maya', role:'HR 매니저',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'신규 AI 에이전트 온보딩 가이드 업데이트. 팀별 역할 정의 문서 수정.',
+   tomorrow:'Q4 인력 배치 계획 작성',
+   issue:'없음', pct:78, kpi:'문서 업데이트 5건', ts:'10:01'},
+  {dept:'경영지원팀', icon:'🔧', color:'#fde68a', person:'Leon', role:'시스템관리',
+   status:'✅ 완료', stClass:'st-done',
+   today:'서버 모니터링 및 관제탑 v2.0 배포 지원. 시스템 점검 완료.',
+   tomorrow:'백업 자동화 스크립트 개선',
+   issue:'없음', pct:80, kpi:'시스템 가동률 99.9%', ts:'08:55'},
+
+  // 콘텐츠팀 (5F) — 블로그
+  {dept:'콘텐츠팀', icon:'✍️', color:'#93c5fd', person:'Kai', role:'블로그팀장',
+   status:'✅ 완료', stClass:'st-done',
+   today:'네이버 블로그 9월 콘텐츠 캘린더 확정. 팀원 글 3편 검수 및 발행.',
+   tomorrow:'10월 주제 기획 및 SEO 키워드 선정',
+   issue:'없음', pct:87, kpi:'발행 글 3편, 조회수 +2,400', ts:'09:05'},
+  {dept:'콘텐츠팀', icon:'📝', color:'#93c5fd', person:'Lena', role:'블로그 라이터',
+   status:'✅ 완료', stClass:'st-done',
+   today:'「AI 생산성 툴 TOP 10」 2,800자 완성 발행. 내부 링크 최적화 완료.',
+   tomorrow:'「GPT 활용법 심화편」 초안 작성',
+   issue:'없음', pct:100, kpi:'조회수 820', ts:'10:22'},
+  {dept:'콘텐츠팀', icon:'📝', color:'#93c5fd', person:'Finn', role:'블로그 라이터',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'「쿠팡 파트너스 수익 공개」 초안 80% 완성. 수익 스크린샷 첨부 준비 중.',
+   tomorrow:'원고 마무리 및 SEO 최적화 후 발행',
+   issue:'없음', pct:80, kpi:'목표 조회수: 1,200', ts:'11:14'},
+  {dept:'콘텐츠팀', icon:'📝', color:'#93c5fd', person:'Zara', role:'블로그 라이터',
+   status:'✅ 완료', stClass:'st-done',
+   today:'「네이버 블로그 알고리즘 분석」 완성. 공식 가이드라인 참고 자료 첨부.',
+   tomorrow:'「월 100만원 블로그 수익 공개」 기획',
+   issue:'없음', pct:95, kpi:'조회수 1,050, 댓글 14건', ts:'09:48'},
+
+  // 콘텐츠팀 (5F) — 유튜브
+  {dept:'콘텐츠팀', icon:'📹', color:'#93c5fd', person:'Milo', role:'유튜브 PD',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'9월 업로드 영상 3편 기획안 확정. 썸네일 A/B 테스트 결과 분석.',
+   tomorrow:'「AI로 유튜브 채널 만들기」 촬영 준비',
+   issue:'없음', pct:82, kpi:'구독자 +124명', ts:'09:18'},
+  {dept:'콘텐츠팀', icon:'🎬', color:'#93c5fd', person:'Jay', role:'영상 편집',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'「AI 자동화 수익 공개」 편집 80% 완료. 자막 삽입 중.',
+   tomorrow:'편집 완료 및 업로드. 다음 영상 컷편집 시작.',
+   issue:'없음', pct:75, kpi:'편집 속도 1.2배 향상', ts:'10:45'},
+  {dept:'콘텐츠팀', icon:'🎬', color:'#93c5fd', person:'Sora', role:'영상 편집',
+   status:'✅ 완료', stClass:'st-done',
+   today:'「쿠팡 파트너스 실전 가이드」 편집 완료 및 업로드. 최적 업로드 시간 설정.',
+   tomorrow:'「AI 수익화 3개월 결산」 편집 착수',
+   issue:'없음', pct:100, kpi:'업로드 완료, 24h 조회 380', ts:'08:30'},
+  {dept:'콘텐츠팀', icon:'🎬', color:'#93c5fd', person:'Nyx', role:'영상 편집',
+   status:'⚠️ 이슈', stClass:'st-issue',
+   today:'「블로그 vs 유튜브」 편집 50%. Adobe Premiere 라이선스 갱신 필요.',
+   tomorrow:'라이선스 해결 후 편집 완료 예정',
+   issue:'Adobe 라이선스 만료 — CEO 결재 필요', pct:50, kpi:'', ts:'11:30'},
+
+  // 콘텐츠팀 (5F) — SEO
+  {dept:'콘텐츠팀', icon:'🔍', color:'#93c5fd', person:'Teo', role:'SEO 최적화',
+   status:'✅ 완료', stClass:'st-done',
+   today:'블로그 15편 메타태그 일괄 업데이트. 네이버 검색 순위 모니터링.',
+   tomorrow:'롱테일 키워드 100개 추가 발굴',
+   issue:'없음', pct:90, kpi:'검색 노출 +32%', ts:'09:10'},
+  {dept:'콘텐츠팀', icon:'🔍', color:'#93c5fd', person:'Wren', role:'SEO 최적화',
+   status:'✅ 완료', stClass:'st-done',
+   today:'경쟁사 키워드 분석 리포트 완성. 상위 10개 키워드 공략 전략 수립.',
+   tomorrow:'내부 링크 구조 개선 프로젝트 착수',
+   issue:'없음', pct:88, kpi:'분석 키워드 240개', ts:'09:55'},
+  {dept:'콘텐츠팀', icon:'🔍', color:'#93c5fd', person:'Bree', role:'SEO 최적화',
+   status:'✅ 완료', stClass:'st-done',
+   today:'구글 애드센스 CPC 최적화 작업. 고수익 키워드 배치 변경 완료.',
+   tomorrow:'모바일 최적화 점검 및 페이지 속도 개선',
+   issue:'없음', pct:92, kpi:'CPC +18% 향상', ts:'10:08'},
+
+  // 크리에이티브팀 (4F) — 소설
+  {dept:'크리에이티브팀', icon:'🎨', color:'#c4b5fd', person:'Elle', role:'소설팀장',
+   status:'✅ 완료', stClass:'st-done',
+   today:'소설 3편 원고 검수 완료. 플랫폼 업로드 일정 조정 및 작가 피드백.',
+   tomorrow:'신규 소설 기획 미팅 및 장르 다각화 방안 검토',
+   issue:'없음', pct:85, kpi:'검수 완료 3편', ts:'09:25'},
+  {dept:'크리에이티브팀', icon:'✒️', color:'#c4b5fd', person:'Pip', role:'소설 작가',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'로맨스 소설 「별의 계약」 15화 집필. 약 4,200자 완성.',
+   tomorrow:'16~17화 연속 집필 예정',
+   issue:'없음', pct:70, kpi:'일일 집필량 4,200자', ts:'10:30'},
+  {dept:'크리에이티브팀', icon:'✒️', color:'#c4b5fd', person:'Cleo', role:'소설 작가',
+   status:'✅ 완료', stClass:'st-done',
+   today:'판타지 소설 「용의 후계자」 8~9화 탈고. 교정 완료 후 플랫폼 업로드.',
+   tomorrow:'10화 집필 시작 및 독자 댓글 응대',
+   issue:'없음', pct:100, kpi:'업로드 2화, 조회수 +890', ts:'08:42'},
+  {dept:'크리에이티브팀', icon:'✒️', color:'#c4b5fd', person:'Sol', role:'소설 작가',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'공포 스릴러 「새벽 3시」 초안 60% 완성. 서사 구조 조정 중.',
+   tomorrow:'초안 완성 후 내부 검토 요청',
+   issue:'없음', pct:60, kpi:'집필 진행 60%', ts:'11:05'},
+
+  // 크리에이티브팀 (4F) — 인스타그램
+  {dept:'크리에이티브팀', icon:'📸', color:'#c4b5fd', person:'Iris', role:'인스타팀장',
+   status:'✅ 완료', stClass:'st-done',
+   today:'인스타그램 9월 피드 컨셉 확정. 릴스 5편 기획안 승인.',
+   tomorrow:'릴스 촬영 지휘 및 스토리 콘텐츠 점검',
+   issue:'없음', pct:91, kpi:'팔로워 +87명', ts:'09:15'},
+
+  // 신규사업부 (3F)
+  {dept:'신규사업부', icon:'🚀', color:'#6ee7b7', person:'Victor', role:'사업개발팀장',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'신규 수익 채널 리서치 — 전자책 플랫폼 3곳 비교 분석 완료.',
+   tomorrow:'전자책 출판 파일럿 프로그램 기획서 작성',
+   issue:'없음', pct:88, kpi:'채널 발굴 3개', ts:'09:40'},
+  {dept:'신규사업부', icon:'🔬', color:'#6ee7b7', person:'Iris N', role:'트렌드 리서처',
+   status:'✅ 완료', stClass:'st-done',
+   today:'2026 Q4 콘텐츠 트렌드 리포트 완성. AI 관련 키워드 급상승 분석.',
+   tomorrow:'숏폼 콘텐츠 플랫폼 트렌드 심층 분석',
+   issue:'없음', pct:83, kpi:'리포트 15페이지 완성', ts:'10:15'},
+  {dept:'신규사업부', icon:'💡', color:'#6ee7b7', person:'Kane', role:'신규콘텐츠개발',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'AI 챗봇 활용 고객 상담 서비스 기획서 50% 완성.',
+   tomorrow:'기획서 마무리 및 CEO 보고 준비',
+   issue:'없음', pct:71, kpi:'기획서 50% 완성', ts:'10:55'},
+  {dept:'신규사업부', icon:'💡', color:'#6ee7b7', person:'Zoe', role:'신규콘텐츠개발',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'뉴스레터 구독 서비스 모델 기획. 타사 사례 5개 분석 완료.',
+   tomorrow:'구독 상품 가격 설계 및 랜딩 페이지 초안',
+   issue:'없음', pct:68, kpi:'사례 분석 5건', ts:'11:20'},
+  {dept:'신규사업부', icon:'💡', color:'#6ee7b7', person:'Ren', role:'신규콘텐츠개발',
+   status:'✅ 완료', stClass:'st-done',
+   today:'쿠팡 파트너스 고수익 카테고리 분석 완료. 가전/뷰티 집중 전략 수립.',
+   tomorrow:'전략 문서 팀 공유 및 콘텐츠팀 협업 요청',
+   issue:'없음', pct:74, kpi:'분석 카테고리 12개', ts:'09:50'},
+
+  // 수익화팀 (2F)
+  {dept:'수익화팀', icon:'💰', color:'#fbbf24', person:'Penny', role:'수익화팀장',
+   status:'✅ 완료', stClass:'st-done',
+   today:'9월 전채널 수익 현황 집계 완료. 쿠팡 파트너스 ₩38,400 확인.',
+   tomorrow:'10월 수익 목표 설정 및 채널별 전략 수립',
+   issue:'없음', pct:89, kpi:'수익 집계 완료', ts:'09:08'},
+  {dept:'수익화팀', icon:'📈', color:'#fbbf24', person:'Rich', role:'수익분석가',
+   status:'✅ 완료', stClass:'st-done',
+   today:'채널별 RPM/CPM 비교 분석. 블로그 AdSense 최적 광고 위치 A/B 결과 분석.',
+   tomorrow:'광고 위치 변경 적용 및 결과 모니터링',
+   issue:'없음', pct:86, kpi:'RPM 분석 완료 6채널', ts:'09:32'},
+  {dept:'수익화팀', icon:'🗃️', color:'#fbbf24', person:'Data', role:'데이터 관리',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'수익 DB 9월분 마이그레이션 및 백업 완료. 이상치 2건 발견 및 수정.',
+   tomorrow:'10월 대시보드 지표 항목 추가 작업',
+   issue:'없음', pct:82, kpi:'DB 정합성 99.8%', ts:'10:40'},
+
+  // 로비 (1F)
+  {dept:'로비', icon:'🤝', color:'#818cf8', person:'Otto', role:'로비매니저',
+   status:'🔄 진행중', stClass:'st-prog',
+   today:'외부 방문객 3건 응대. 협력사 미팅 공간 세팅 및 안내.',
+   tomorrow:'신규 파트너사 방문 준비 및 안내 자료 업데이트',
+   issue:'없음', pct:74, kpi:'방문객 응대 3건', ts:'10:00'},
+
+  // 보안팀 (B1)
+  {dept:'보안팀', icon:'🛡️', color:'#f87171', person:'Rex', role:'보안팀장',
+   status:'✅ 완료', stClass:'st-done',
+   today:'전사 보안 점검 완료. 취약점 스캔 실행 — 이상 없음. 로그 분석 완료.',
+   tomorrow:'분기별 보안 감사 준비 착수',
+   issue:'없음', pct:96, kpi:'보안 위협 0건', ts:'08:20'},
+  {dept:'보안팀', icon:'🔐', color:'#f87171', person:'Ada', role:'보안 엔지니어',
+   status:'✅ 완료', stClass:'st-done',
+   today:'서버 방화벽 규칙 업데이트 및 SSL 인증서 갱신 완료.',
+   tomorrow:'VPN 접속 로그 주간 분석 리포트 작성',
+   issue:'없음', pct:94, kpi:'SSL 갱신 완료, 취약점 0', ts:'08:35'},
+  {dept:'보안팀', icon:'🕵️', color:'#f87171', person:'Cy', role:'모니터링 담당',
+   status:'✅ 완료', stClass:'st-done',
+   today:'24시간 실시간 트래픽 모니터링. 이상 접근 시도 3건 차단 완료.',
+   tomorrow:'차단 로그 분석 및 IP 블랙리스트 갱신',
+   issue:'없음', pct:98, kpi:'이상 접근 3건 차단', ts:'08:05'},
+];
+
+// ─── STATE ───
+let currentWlDept = 'all';
+const KEY_REPORTS = 'rm_reports_v2';
+const KEY_REVENUE = 'rm_revenue_v2';
+
+// ─── INIT ───
 function init() {
   updateClock();
   setInterval(updateClock, 1000);
-  updateLogDate();
+  updateDates();
+  renderWlEntries('all');
   loadRevenue();
   loadReports();
   updateStats();
 }
 
 function updateClock() {
-  const now = new Date();
   document.getElementById('live-clock').textContent =
-    now.toLocaleTimeString('ko-KR', {hour12:false});
+    new Date().toLocaleTimeString('ko-KR',{hour12:false});
 }
-function updateLogDate() {
-  const now = new Date();
-  const d = now.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-  document.getElementById('log-date-display').textContent = d;
+function updateDates() {
+  const d = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  ['wl-log-date','wl-form-date'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.textContent = d;
+  });
 }
 
-// ───────────── TABS ─────────────
-function switchTab(name) {
+// ─── TABS ───
+function switchTab(name, el) {
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
-  event.target.classList.add('active');
-}
-
-// ───────────── DEPT SELECT ─────────────
-function selectDept(el, deptName, members) {
-  document.querySelectorAll('.dept-item').forEach(d=>d.classList.remove('active'));
   el.classList.add('active');
-  currentDept = deptName;
-  currentMembers = members;
-  document.getElementById('log-dept-title').textContent = deptName + ' — 업무일지';
-  document.getElementById('log-dept-members').textContent = members;
-  clearLog();
 }
 
-// ───────────── LOG ─────────────
-function clearLog() {
-  ['log-author','log-done','log-plan','log-issue','log-pct','log-kpi'].forEach(id=>{
-    document.getElementById(id).value='';
-  });
-  document.getElementById('log-status').value='정상 진행';
-}
+// ─── 업무일지 ───
+function selectWlDept(el, dept) {
+  document.querySelectorAll('.wl-dept-item').forEach(d=>d.classList.remove('active'));
+  el.classList.add('active');
+  currentWlDept = dept;
+  renderWlEntries(dept);
 
-function saveDraft() {
-  showToast('💾 임시저장 완료');
-}
-
-function submitLog() {
-  const author = document.getElementById('log-author').value.trim() || '익명';
-  const status = document.getElementById('log-status').value;
-  const done = document.getElementById('log-done').value.trim();
-  const plan = document.getElementById('log-plan').value.trim();
-  const issue = document.getElementById('log-issue').value.trim();
-  const pct = document.getElementById('log-pct').value || '0';
-  const kpi = document.getElementById('log-kpi').value.trim();
-
-  if(!done){ showToast('⚠️ 오늘 한 일을 입력해주세요'); return; }
-
-  const now = new Date();
-  const ts = now.toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
-
-  const report = {
-    id: Date.now(),
-    dept: currentDept,
-    author, status, done, plan, issue, pct, kpi,
-    ts, approval: 'pending'
+  const deptLabels = {
+    'all':'전체', 'CEO 오피스':'CEO 오피스', '경영지원팀':'경영지원팀',
+    '콘텐츠팀':'콘텐츠팀', '크리에이티브팀':'크리에이티브팀',
+    '신규사업부':'신규사업부', '수익화팀':'수익화팀', '로비':'로비', '보안팀':'보안팀'
   };
+  const entries = dept === 'all' ? WL_SEED : WL_SEED.filter(e=>e.dept===dept);
+  document.getElementById('wl-log-title').textContent = `📋 오늘의 업무일지 — ${deptLabels[dept]||dept}`;
+  document.getElementById('wl-log-subtitle').textContent = `${entries.length}명 제출 완료`;
 
-  const reports = getReports();
-  reports.unshift(report);
-  saveReports(reports);
-
-  // add cmd log entry
-  addCmdLog('시스템', currentDept, `${author}님의 업무일지가 CEO에게 보고되었습니다.`);
-
-  clearLog();
-  loadReports();
-  updateStats();
-  showToast('📤 보고서가 CEO에게 전송되었습니다!');
-}
-
-// ───────────── REPORTS ─────────────
-function getReports() {
-  try { return JSON.parse(localStorage.getItem(KEY_REPORTS))||[]; } catch(e){ return []; }
-}
-function saveReports(r) { localStorage.setItem(KEY_REPORTS, JSON.stringify(r)); }
-function clearAllReports() {
-  if(!confirm('모든 보고서를 삭제하시겠습니까?'))return;
-  localStorage.removeItem(KEY_REPORTS);
-  loadReports(); updateStats();
-}
-
-function loadReports() {
-  const reports = getReports();
-  const fDept = document.getElementById('report-filter')?.value || 'all';
-  const fApp = document.getElementById('approval-filter')?.value || 'all';
-
-  let filtered = reports.filter(r=>{
-    const dOk = fDept==='all' || r.dept.includes(fDept);
-    const aOk = fApp==='all' || r.approval===fApp;
-    return dOk && aOk;
-  });
-
-  const el = document.getElementById('reports-list');
-  if(!el) return;
-  if(filtered.length===0){
-    el.innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:40px">표시할 보고서가 없습니다.</div>';
-    return;
+  // 폼 업데이트
+  if(dept !== 'all') {
+    document.getElementById('wl-form-title').textContent = `✏️ ${dept} 업무일지 제출`;
+    const memberMap = {
+      'CEO 오피스':'Claude / Aria / Nova',
+      '경영지원팀':'Stella / Rex F / Maya / Leon',
+      '콘텐츠팀':'Kai / Milo / Lena · Finn · Zara / Jay · Sora · Nyx / Teo · Wren · Bree',
+      '크리에이티브팀':'Elle / Iris / Pip · Cleo · Sol',
+      '신규사업부':'Victor / Iris N / Kane · Zoe · Ren',
+      '수익화팀':'Penny / Rich / Data',
+      '로비':'Otto',
+      '보안팀':'Rex / Ada / Cy'
+    };
+    document.getElementById('wl-form-members').textContent = memberMap[dept] || '';
+  } else {
+    document.getElementById('wl-form-title').textContent = '✏️ 업무일지 제출';
+    document.getElementById('wl-form-members').textContent = '부서를 선택하세요';
   }
+}
 
-  el.innerHTML = filtered.map(r=>{
-    const appBadge = r.approval==='approved'?'<span class="approval-badge app-approved">✅ 승인</span>':
-      r.approval==='rejected'?'<span class="approval-badge app-rejected">❌ 반려</span>':
-      '<span class="approval-badge app-pending">⏳ 승인 대기</span>';
+function renderWlEntries(dept) {
+  const entries = dept === 'all' ? WL_SEED : WL_SEED.filter(e=>e.dept===dept);
+  const container = document.getElementById('wl-entries');
+  if(!container) return;
 
-    return `<div class="report-card" data-id="${r.id}">
-      <div class="report-card-header">
-        <div class="report-meta">
-          <span class="report-dept-badge">${r.dept.split(' ')[0]}</span>
-          <span class="report-title-text">${r.dept.split(' ').slice(1).join(' ')} — ${r.author}</span>
-          <span class="emp-status s-${r.status==='완료'?'work':r.status==='긴급'?'report':r.status==='지연'?'idle':'work'}" style="margin-left:4px">${r.status}</span>
+  // 최신(ts 역순)으로 정렬
+  const sorted = [...entries].sort((a,b)=>b.ts.localeCompare(a.ts));
+
+  container.innerHTML = sorted.map(e => {
+    const issueHTML = e.issue && e.issue !== '없음'
+      ? `<div class="wl-entry-issue">⚠️ ${e.issue}</div>` : '';
+    const kpiHTML = e.kpi
+      ? `<span class="wl-entry-kpi">📌 ${e.kpi}</span>` : '';
+    const barColor = e.pct >= 90 ? '#3fb950' : e.pct >= 70 ? '#58a6ff' : '#fbbf24';
+
+    return `<div class="wl-entry">
+      <div class="wl-entry-avatar" style="background:${e.color}22;border:1.5px solid ${e.color}44">${e.icon}</div>
+      <div class="wl-entry-body">
+        <div class="wl-entry-top">
+          <span class="wl-entry-person">${e.person}</span>
+          <span class="wl-entry-dept">${e.dept} · ${e.role}</span>
+          <span class="wl-entry-status ${e.stClass}">${e.status}</span>
         </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          ${appBadge}
-          <span class="report-time">${r.ts}</span>
-        </div>
-      </div>
-      <div class="report-body">
-        <div class="report-section">
-          <div class="report-section-label">📌 오늘 한 일</div>
-          <div class="report-section-text">${r.done}</div>
-        </div>
-        ${r.plan?`<div class="report-section"><div class="report-section-label">📅 내일 계획</div><div class="report-section-text">${r.plan}</div></div>`:''}
-        ${r.issue?`<div class="report-section"><div class="report-section-label">⚠️ 이슈 / CEO 보고</div><div class="report-section-text">${r.issue}</div></div>`:''}
-        <div class="report-kpi-row">
-          <div class="report-kpi"><div class="report-kpi-key">완료율</div><div class="report-kpi-val">${r.pct}%</div></div>
-          ${r.kpi?`<div class="report-kpi"><div class="report-kpi-key">KPI</div><div class="report-kpi-val">${r.kpi}</div></div>`:''}
-        </div>
-        <div class="report-actions-row">
-          ${r.approval==='pending'?`
-          <button class="btn btn-success" style="font-size:11px;padding:6px 12px" onclick="approveReport(${r.id})">✅ 승인</button>
-          <button class="btn btn-danger" style="font-size:11px;padding:6px 12px" onclick="rejectReport(${r.id})">❌ 반려</button>`:''}
-          <button class="btn btn-secondary" style="font-size:11px;padding:6px 12px" onclick="deleteReport(${r.id})">🗑 삭제</button>
+        <div class="wl-entry-text">${e.today}</div>
+        ${issueHTML}
+        <div class="wl-entry-meta">
+          <div class="wl-entry-pct-wrap">
+            <div class="wl-entry-bar"><div class="wl-entry-bar-fill" style="width:${e.pct}%;background:${barColor}"></div></div>
+            <span class="wl-entry-pct-num">${e.pct}%</span>
+          </div>
+          ${kpiHTML}
+          <span class="wl-entry-ts">${e.ts}</span>
         </div>
       </div>
     </div>`;
   }).join('');
 }
 
-function filterReports() { loadReports(); }
+// ─── 업무일지 폼 ───
+function clearLog() {
+  ['log-author','log-done','log-plan','log-issue','log-pct','log-kpi'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('log-status').value='정상 진행';
+}
+function saveDraft() { showToast('💾 임시저장 완료'); }
+function submitLog() {
+  const author = document.getElementById('log-author').value.trim()||'익명';
+  const status = document.getElementById('log-status').value;
+  const done = document.getElementById('log-done').value.trim();
+  const plan = document.getElementById('log-plan').value.trim();
+  const issue = document.getElementById('log-issue').value.trim();
+  const pct = document.getElementById('log-pct').value||'0';
+  const kpi = document.getElementById('log-kpi').value.trim();
 
-function approveReport(id) {
+  if(!done){ showToast('⚠️ 오늘 한 일을 입력해주세요'); return; }
+
+  const deptName = currentWlDept === 'all' ? '미지정' : currentWlDept;
+  const now = new Date();
+  const ts = now.toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
+
+  const report = {id:Date.now(), dept:deptName, author, status, done, plan, issue, pct, kpi, ts, approval:'pending'};
   const reports = getReports();
-  const r = reports.find(x=>x.id===id);
-  if(r){ r.approval='approved'; saveReports(reports); loadReports(); updateStats();
+  reports.unshift(report);
+  saveReports(reports);
+
+  addCmdLog('시스템', deptName, `${author}님의 업무일지가 CEO에게 보고되었습니다.`);
+  clearLog();
+  loadReports();
+  updateStats();
+  showToast('📤 보고서가 CEO에게 전송되었습니다!');
+}
+
+// ─── REPORTS ───
+function getReports(){ try{return JSON.parse(localStorage.getItem(KEY_REPORTS))||[];}catch(e){return[];} }
+function saveReports(r){ localStorage.setItem(KEY_REPORTS,JSON.stringify(r)); }
+function clearAllReports(){
+  if(!confirm('모든 보고서를 삭제하시겠습니까?'))return;
+  localStorage.removeItem(KEY_REPORTS); loadReports(); updateStats();
+}
+function filterReports(){ loadReports(); }
+function loadReports(){
+  const reports=getReports();
+  const fDept=document.getElementById('report-filter')?.value||'all';
+  const fApp=document.getElementById('approval-filter')?.value||'all';
+  let filtered=reports.filter(r=>{
+    const dOk=fDept==='all'||r.dept.includes(fDept);
+    const aOk=fApp==='all'||r.approval===fApp;
+    return dOk&&aOk;
+  });
+  const el=document.getElementById('reports-list');
+  if(!el)return;
+  if(filtered.length===0){
+    el.innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:40px">표시할 보고서가 없습니다.</div>';
+    return;
+  }
+  el.innerHTML=filtered.map(r=>{
+    const appBadge=r.approval==='approved'?'<span class="approval-badge app-approved">✅ 승인</span>':
+      r.approval==='rejected'?'<span class="approval-badge app-rejected">❌ 반려</span>':
+      '<span class="approval-badge app-pending">⏳ 승인 대기</span>';
+    return `<div class="report-card" data-id="${r.id}">
+      <div class="report-card-header">
+        <div class="report-meta">
+          <span class="report-dept-badge">${r.dept.split(' ')[0]}</span>
+          <span class="report-title-text">${r.dept} — ${r.author}</span>
+          <span class="emp-status s-${r.status==='완료'?'work':r.status==='긴급'?'report':'work'}" style="margin-left:4px">${r.status}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">${appBadge}<span class="report-time">${r.ts}</span></div>
+      </div>
+      <div class="report-body">
+        <div class="report-section"><div class="report-section-label">📌 오늘 한 일</div><div class="report-section-text">${r.done}</div></div>
+        ${r.plan?`<div class="report-section"><div class="report-section-label">📅 내일 계획</div><div class="report-section-text">${r.plan}</div></div>`:''}
+        ${r.issue?`<div class="report-section"><div class="report-section-label">⚠️ 이슈</div><div class="report-section-text">${r.issue}</div></div>`:''}
+        <div class="report-kpi-row">
+          <div class="report-kpi"><div class="report-kpi-key">완료율</div><div class="report-kpi-val">${r.pct}%</div></div>
+          ${r.kpi?`<div class="report-kpi"><div class="report-kpi-key">KPI</div><div class="report-kpi-val">${r.kpi}</div></div>`:''}
+        </div>
+        <div class="report-actions-row">
+          ${r.approval==='pending'?`<button class="btn btn-success" style="font-size:11px;padding:6px 12px" onclick="approveReport(${r.id})">✅ 승인</button><button class="btn btn-danger" style="font-size:11px;padding:6px 12px" onclick="rejectReport(${r.id})">❌ 반려</button>`:''}
+          <button class="btn btn-secondary" style="font-size:11px;padding:6px 12px" onclick="deleteReport(${r.id})">🗑 삭제</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function approveReport(id){
+  const reports=getReports(); const r=reports.find(x=>x.id===id);
+  if(r){r.approval='approved';saveReports(reports);loadReports();updateStats();
     addCmdLog('CEO','전체',`${r.dept} ${r.author}님의 보고서를 승인했습니다.`);
-    showToast('✅ 보고서 승인 완료'); }
+    showToast('✅ 보고서 승인 완료');}
 }
-function rejectReport(id) {
-  const reports = getReports();
-  const r = reports.find(x=>x.id===id);
-  if(r){ r.approval='rejected'; saveReports(reports); loadReports(); updateStats();
-    addCmdLog('CEO',r.dept,`${r.author}님의 보고서가 반려되었습니다. 수정 후 재제출 바랍니다.`);
-    showToast('❌ 보고서 반려 처리'); }
+function rejectReport(id){
+  const reports=getReports(); const r=reports.find(x=>x.id===id);
+  if(r){r.approval='rejected';saveReports(reports);loadReports();updateStats();
+    addCmdLog('CEO',r.dept,`${r.author}님의 보고서가 반려되었습니다.`);
+    showToast('❌ 보고서 반려 처리');}
 }
-function deleteReport(id) {
-  const reports = getReports().filter(x=>x.id!==id);
-  saveReports(reports); loadReports(); updateStats();
+function deleteReport(id){
+  saveReports(getReports().filter(x=>x.id!==id)); loadReports(); updateStats();
   showToast('🗑 보고서 삭제됨');
 }
 
-// ───────────── REVENUE ─────────────
-const CHANNELS = {blog:'네이버 블로그',yt:'유튜브',cp:'쿠팡 파트너스',ig:'인스타그램',novel:'소설',other:'기타'};
-
-function getRevenue() {
-  try { return JSON.parse(localStorage.getItem(KEY_REVENUE))||[]; } catch(e){ return []; }
-}
-function saveRevenue(r) { localStorage.setItem(KEY_REVENUE, JSON.stringify(r)); }
-
-function addRevenue() {
-  const ch = document.getElementById('rev-channel').value;
-  const desc = document.getElementById('rev-desc').value.trim() || '수익 입력';
-  const amt = parseInt(document.getElementById('rev-amount-input').value)||0;
-  if(amt<=0){ showToast('⚠️ 금액을 입력해주세요'); return; }
-
-  const revs = getRevenue();
-  const now = new Date();
-  revs.unshift({id:Date.now(), ch, desc, amt, ts:now.toLocaleDateString('ko-KR')});
+// ─── REVENUE ───
+const CHANNELS={blog:'네이버 블로그',yt:'유튜브',cp:'쿠팡 파트너스',ig:'인스타그램',novel:'소설',other:'기타'};
+function getRevenue(){try{return JSON.parse(localStorage.getItem(KEY_REVENUE))||[];}catch(e){return[];}}
+function saveRevenue(r){localStorage.setItem(KEY_REVENUE,JSON.stringify(r));}
+function addRevenue(){
+  const ch=document.getElementById('rev-channel').value;
+  const desc=document.getElementById('rev-desc').value.trim()||'수익 입력';
+  const amt=parseInt(document.getElementById('rev-amount-input').value)||0;
+  if(amt<=0){showToast('⚠️ 금액을 입력해주세요');return;}
+  const revs=getRevenue();
+  revs.unshift({id:Date.now(),ch,desc,amt,ts:new Date().toLocaleDateString('ko-KR')});
   saveRevenue(revs);
-
   document.getElementById('rev-desc').value='';
   document.getElementById('rev-amount-input').value='';
-  loadRevenue();
-  showToast(`💰 ${formatKRW(amt)} 수익 추가!`);
+  loadRevenue(); showToast(`💰 ${formatKRW(amt)} 수익 추가!`);
+}
+function loadRevenue(){
+  const revs=getRevenue();
+  const totals={blog:0,yt:0,cp:0,ig:0,novel:0,other:0};
+  revs.forEach(r=>{totals[r.ch]=(totals[r.ch]||0)+r.amt;});
+  document.getElementById('rev-blog').textContent=formatKRW(totals.blog);
+  document.getElementById('rev-yt').textContent=formatKRW(totals.yt);
+  document.getElementById('rev-cp').textContent=formatKRW(totals.cp);
+  document.getElementById('rev-ig').textContent=formatKRW(totals.ig);
+  document.getElementById('rev-novel').textContent=formatKRW(totals.novel);
+  const total=Object.values(totals).reduce((a,b)=>a+b,0);
+  document.getElementById('rev-total').textContent=formatKRW(total);
+  document.getElementById('stat-revenue').textContent=formatKRW(total);
+  const tbody=document.getElementById('rev-tbody');
+  if(revs.length===0){tbody.innerHTML='<tr><td colspan="5" style="color:var(--text3);text-align:center">수익 내역이 없습니다.</td></tr>';return;}
+  tbody.innerHTML=revs.slice(0,30).map(r=>`<tr><td>${r.ts}</td><td>${CHANNELS[r.ch]||r.ch}</td><td>${r.desc}</td><td class="amount-cell">${formatKRW(r.amt)}</td><td><button class="btn btn-danger" style="font-size:10px;padding:3px 8px" onclick="deleteRevenue(${r.id})">삭제</button></td></tr>`).join('');
+}
+function deleteRevenue(id){saveRevenue(getRevenue().filter(r=>r.id!==id));loadRevenue();}
+function formatKRW(n){return '₩'+n.toLocaleString('ko-KR');}
+
+// ─── STATS ───
+function updateStats(){
+  const reports=getReports();
+  document.getElementById('stat-logs').textContent=37+reports.length;
+  const approved=reports.filter(r=>r.approval==='approved').length;
+  document.getElementById('stat-approved').textContent=approved;
+  const pending=reports.filter(r=>r.approval==='pending').length;
+  document.getElementById('stat-pending').textContent=pending;
 }
 
-function loadRevenue() {
-  const revs = getRevenue();
-  const totals = {blog:0,yt:0,cp:0,ig:0,novel:0,other:0};
-  revs.forEach(r=>{ totals[r.ch]=(totals[r.ch]||0)+r.amt; });
-
-  document.getElementById('rev-blog').textContent = formatKRW(totals.blog);
-  document.getElementById('rev-yt').textContent = formatKRW(totals.yt);
-  document.getElementById('rev-cp').textContent = formatKRW(totals.cp);
-  document.getElementById('rev-ig').textContent = formatKRW(totals.ig);
-  document.getElementById('rev-novel').textContent = formatKRW(totals.novel);
-
-  const total = Object.values(totals).reduce((a,b)=>a+b,0);
-  document.getElementById('rev-total').textContent = formatKRW(total);
-  document.getElementById('stat-revenue').textContent = formatKRW(total);
-
-  // table
-  const tbody = document.getElementById('rev-tbody');
-  if(revs.length===0){
-    tbody.innerHTML='<tr><td colspan="5" style="color:var(--text3);text-align:center">수익 내역이 없습니다.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = revs.slice(0,30).map(r=>`
-    <tr>
-      <td>${r.ts}</td>
-      <td>${CHANNELS[r.ch]||r.ch}</td>
-      <td>${r.desc}</td>
-      <td class="amount-cell">${formatKRW(r.amt)}</td>
-      <td><button class="btn btn-danger" style="font-size:10px;padding:3px 8px" onclick="deleteRevenue(${r.id})">삭제</button></td>
-    </tr>`).join('');
-}
-
-function deleteRevenue(id) {
-  saveRevenue(getRevenue().filter(r=>r.id!==id));
-  loadRevenue();
-}
-
-function formatKRW(n) {
-  return '₩' + n.toLocaleString('ko-KR');
-}
-
-// ───────────── STATS ─────────────
-function updateStats() {
-  const reports = getReports();
-  document.getElementById('stat-logs').textContent = reports.length;
-  const approved = reports.filter(r=>r.approval==='approved').length;
-  document.getElementById('stat-approved').textContent = approved;
-  document.getElementById('stat-total-reports').textContent = reports.length;
-}
-
-// ───────────── CEO CMD ─────────────
-function sendCmd() {
-  const dept = document.getElementById('cmd-dept-sel').value;
-  const text = document.getElementById('cmd-input').value.trim();
-  if(!text) return;
-  const now = new Date();
-  const ts = now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});
-  addCmdLog(ts, dept, text);
+// ─── CEO CMD ───
+function sendCmd(){
+  const dept=document.getElementById('cmd-dept-sel').value;
+  const text=document.getElementById('cmd-input').value.trim();
+  if(!text)return;
+  const ts=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});
+  addCmdLog(ts,dept,text);
   document.getElementById('cmd-input').value='';
   showToast(`📨 [${dept}] 지시 전달 완료`);
 }
-
-function addCmdLog(ts, dept, text) {
-  const log = document.getElementById('cmd-log');
-  if(!log) return;
-  const div = document.createElement('div');
-  div.className = 'cmd-entry';
-  div.innerHTML = `<span class="cmd-ts">${ts}</span><span class="cmd-dept">[${dept}]</span><span class="cmd-text">${text}</span>`;
+function addCmdLog(ts,dept,text){
+  const log=document.getElementById('cmd-log');
+  if(!log)return;
+  const div=document.createElement('div');
+  div.className='cmd-entry';
+  div.innerHTML=`<span class="cmd-ts">${ts}</span><span class="cmd-dept">[${dept}]</span><span class="cmd-text">${text}</span>`;
   log.appendChild(div);
-  log.scrollTop = log.scrollHeight;
+  log.scrollTop=log.scrollHeight;
 }
 
-// ───────────── TOAST ─────────────
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2800);
+// ─── TOAST ───
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-// ───────────── START ─────────────
-window.onload = init;
+window.onload=init;
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
 </script>
 </body>
 </html>
+
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body></html>
