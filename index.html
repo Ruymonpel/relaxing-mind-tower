@@ -99,6 +99,24 @@
     gap: 16px;
     margin-bottom: 24px;
   }
+  @media (max-width: 768px) {
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+    .floor-grid { grid-template-columns: 1fr; }
+    .log-grid { grid-template-columns: 1fr; }
+    .form-row-2 { grid-template-columns: 1fr; }
+    .revenue-grid { grid-template-columns: repeat(2, 1fr); }
+    .rev-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .dept-list-panel { max-height: 200px; overflow-y: auto; }
+    .topbar { padding: 0 12px; }
+    .topbar-center { display: none; }
+    .main { padding: 14px; }
+    .tabs { padding: 0 8px; overflow-x: auto; }
+    .tab { padding: 12px 14px; font-size: 12px; }
+    .ceo-bar { padding: 10px 12px; gap: 8px; }
+    .ceo-bar select { display: none; }
+    .emp-progress-wrap { display: none; }
+    .floor-header { flex-wrap: wrap; gap: 6px; }
+  }
   .stat-card {
     background: var(--surface);
     border: 1px solid var(--border);
