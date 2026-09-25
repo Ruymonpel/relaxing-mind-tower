@@ -1,0 +1,2489 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RM 오피스">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Relaxing Mind Office</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Inter:wght@300;400;600;700&display=swap">
+<style>
+:root {
+  --bg: #07050f;
+  --surface: #0d0a1a;
+  --border: rgba(139,92,246,0.18);
+  --accent: #7c3aed;
+  --accent2: #58a6ff;
+  --text: #e4d8ff;
+  --muted: #6a5a9a;
+  --floor-h: 175px;
+  color-scheme: dark;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  font-family: 'Inter', 'Noto Sans KR', sans-serif;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0 32px;
+  min-height: 100%;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  width: 980px;
+  background: linear-gradient(135deg,#0f0c22,#160b30);
+  border: 1.5px solid var(--border);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  padding: 13px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo { display:flex; align-items:center; gap:11px; }
+.logo-icon {
+  width:40px; height:40px; border-radius:10px;
+  background: linear-gradient(135deg,#7c3aed,#2563eb);
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+}
+.logo-name { font-size:15px; font-weight:700; color:#e4d8ff; letter-spacing:-.3px; }
+.logo-sub  { font-size:9px; color:var(--muted); letter-spacing:2.5px; margin-top:2px; }
+.topbar-right { display:flex; align-items:center; gap:10px; }
+.badge-live {
+  display:flex; align-items:center; gap:5px;
+  background:rgba(139,92,246,.14); border:1px solid rgba(139,92,246,.32);
+  border-radius:20px; padding:4px 12px; font-size:9px; font-weight:700; color:#a78bfa;
+}
+.dot-pulse { width:6px; height:6px; border-radius:50%; background:#a78bfa; animation:pulse 1.4s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.1} }
+#clock { font-family:monospace; font-size:11px; color:var(--muted); background:rgba(0,0,0,.3); padding:3px 8px; border-radius:6px; }
+.tower-btn {
+  display:flex; align-items:center; gap:6px;
+  background:linear-gradient(135deg,rgba(88,166,255,.18),rgba(88,166,255,.06));
+  border:1.5px solid rgba(88,166,255,.5);
+  border-radius:20px; padding:7px 16px; font-size:11px; font-weight:700; color:#93c5fd;
+  text-decoration:none; transition:.2s;
+  box-shadow:0 0 12px rgba(88,166,255,.18), inset 0 1px 0 rgba(255,255,255,.06);
+  letter-spacing:.3px;
+}
+.tower-btn:hover {
+  background:linear-gradient(135deg,rgba(88,166,255,.3),rgba(88,166,255,.12));
+  box-shadow:0 0 20px rgba(88,166,255,.35), inset 0 1px 0 rgba(255,255,255,.1);
+  color:#bfdbfe; border-color:#60a5fa;
+  transform:translateY(-1px);
+}
+
+/* ── BUILDING ── */
+.building {
+  width:980px; position:relative;
+  border-left:2px solid #1a0a3a;
+  border-right:2px solid #1a0a3a;
+}
+.floor {
+  width:100%; height:var(--floor-h);
+  position:relative; border-bottom:3px solid #0c0818;
+  overflow:hidden; display:flex;
+}
+
+/* floor BG per dept */
+.f-7  { background: linear-gradient(180deg,#18103a 0%,#100c2a 100%); }
+.f-6  { background: linear-gradient(180deg,#0e1620 0%,#0a1018 100%); }
+.f-5  { background: linear-gradient(180deg,#0a1020 0%,#080c18 100%); }
+.f-4  { background: linear-gradient(180deg,#0a1608 0%,#071008 100%); }
+.f-3  { background: linear-gradient(180deg,#180e08 0%,#100908 100%); }
+.f-2  { background: linear-gradient(180deg,#080c18 0%,#060810 100%); }
+.f-1  { background: linear-gradient(180deg,#1a1510 0%,#100e0c 100%); }
+.f-b1 { background: linear-gradient(180deg,#100808 0%,#080404 100%); }
+
+/* floor label */
+.fl-label {
+  position:absolute; left:0; top:0; bottom:0; width:54px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  border-right:1px solid rgba(255,255,255,.04); gap:3px; z-index:2;
+}
+.fl-num  { font-size:12px; font-weight:700; font-family:monospace; }
+.fl-dept { font-size:6.5px; writing-mode:vertical-rl; color:rgba(255,255,255,.22); letter-spacing:2px; }
+
+/* city view */
+.city-panel {
+  position:absolute; right:0; top:0; bottom:0; width:290px;
+  border-left:2px solid rgba(255,255,255,.05);
+}
+.city-panel canvas { display:block; width:100%; height:100%; }
+
+/* canvas layers */
+.bg-canvas   { position:absolute; left:54px; right:290px; top:0; bottom:0; z-index:1; }
+.char-canvas { position:absolute; left:54px; right:290px; top:0; bottom:0; z-index:3; pointer-events:none; }
+
+/* dept label */
+.dept-tag {
+  position:absolute; left:60px; top:8px;
+  font-size:9px; font-weight:600; letter-spacing:.4px; z-index:4; pointer-events:none; opacity:.8;
+}
+
+/* status & cmd */
+.status-bar {
+  width:980px; background:#060410; border:1.5px solid var(--border);
+  border-top:none; padding:8px 18px;
+  display:flex; gap:20px; align-items:center;
+}
+.s-item { display:flex; align-items:center; gap:5px; }
+.s-dot  { width:6px; height:6px; border-radius:50%; }
+.s-lbl  { font-size:9px; color:var(--muted); }
+.s-val  { font-size:10px; font-weight:700; color:#a78bfa; }
+/* ── BOTTOM PANEL ── */
+.bottom-panel {
+  width:980px; background:#050312; border:1.5px solid var(--border);
+  border-top:none; border-radius:0 0 12px 12px;
+}
+.panel-tabs {
+  display:flex; border-bottom:1px solid rgba(139,92,246,.14);
+}
+.ptab {
+  padding:9px 20px; font-size:10px; font-weight:700; cursor:pointer; border:none;
+  background:transparent; color:var(--muted); letter-spacing:.8px;
+  font-family:'Noto Sans KR',sans-serif; border-bottom:2px solid transparent;
+  transition:.15s; margin-bottom:-1px;
+}
+.ptab.active { color:#a78bfa; border-bottom-color:#7c3aed; background:rgba(124,58,237,.06); }
+.ptab:hover:not(.active) { color:#7c6aaa; }
+.panel-body { padding:14px 18px 18px; }
+
+/* worklog two-column layout */
+.wl-grid { display:grid; grid-template-columns:220px 1fr; gap:14px; }
+.wl-dept-panel {
+  background:#08061a; border:1px solid rgba(139,92,246,.18); border-radius:10px; overflow:hidden;
+}
+.wl-dept-header {
+  padding:10px 14px; font-size:9px; font-weight:700; letter-spacing:1.5px;
+  color:var(--muted); border-bottom:1px solid rgba(139,92,246,.1); background:#0a0820;
+}
+.wl-dept-item {
+  display:flex; align-items:center; gap:10px; padding:10px 14px;
+  cursor:pointer; border-bottom:1px solid rgba(139,92,246,.06); transition:.12s;
+  border-left:2px solid transparent;
+}
+.wl-dept-item:last-child { border-bottom:none; }
+.wl-dept-item:hover { background:rgba(124,58,237,.08); }
+.wl-dept-item.active { background:rgba(124,58,237,.12); border-left-color:#7c3aed; }
+.wl-dept-item .di-icon { font-size:16px; flex-shrink:0; }
+.wl-dept-item .di-name { font-size:11px; font-weight:700; color:#c4b5fd; }
+.wl-dept-item .di-floor { font-size:9px; color:var(--muted); }
+.wl-form-panel {
+  background:#08061a; border:1px solid rgba(139,92,246,.18); border-radius:10px;
+  padding:16px 18px; display:flex; flex-direction:column; gap:11px;
+}
+.wl-dept-title {
+  font-size:13px; font-weight:700; color:#e4d8ff; margin-bottom:2px;
+}
+.wl-dept-date { font-size:10px; color:var(--muted); }
+.wl-dept-members { font-size:9px; color:#7c3aed; margin-top:3px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.form-group { display:flex; flex-direction:column; gap:5px; }
+.form-group.full { grid-column:1/-1; }
+.form-lbl { font-size:9px; font-weight:700; color:var(--muted); letter-spacing:.8px; }
+.form-inp, .form-sel, .form-txt {
+  background:#0d0b22; border:1px solid #2a1a5a; border-radius:6px;
+  padding:7px 10px; color:#d0c8ff; font-size:11px; outline:none;
+  font-family:'Noto Sans KR',sans-serif; transition:.15s;
+}
+.form-inp:focus, .form-sel:focus, .form-txt:focus { border-color:#7c3aed; }
+.form-inp::placeholder, .form-txt::placeholder { color:#3a2a5a; }
+.form-txt { resize:vertical; min-height:62px; line-height:1.6; }
+.form-txt.short { min-height:46px; }
+.form-sel { cursor:pointer; }
+.wl-actions { display:flex; gap:8px; padding-top:4px; }
+.btn-report {
+  background:linear-gradient(135deg,#7c3aed,#5b21b6); border:none;
+  border-radius:6px; padding:8px 18px; color:#fff; font-size:11px;
+  font-weight:700; cursor:pointer; font-family:'Noto Sans KR',sans-serif;
+}
+.btn-save {
+  background:rgba(124,58,237,.14); border:1px solid rgba(124,58,237,.3);
+  border-radius:6px; padding:8px 14px; color:#a78bfa; font-size:11px;
+  font-weight:700; cursor:pointer; font-family:'Noto Sans KR',sans-serif;
+}
+.btn-reset {
+  background:transparent; border:1px solid #2a1a5a;
+  border-radius:6px; padding:8px 14px; color:var(--muted); font-size:11px;
+  cursor:pointer; font-family:'Noto Sans KR',sans-serif; margin-left:auto;
+}
+.wl-submitted { background:#0a0820; border-radius:8px; padding:12px 14px; margin-top:4px; font-size:10px; }
+.wl-submitted-title { font-size:9px; font-weight:700; color:var(--muted); letter-spacing:1px; margin-bottom:8px; }
+.wl-sub-entry { display:flex; gap:8px; padding:5px 0; border-bottom:1px solid rgba(139,92,246,.06); }
+.wl-sub-entry:last-child { border-bottom:none; }
+.wl-ts   { color:#3a2a5a; font-family:monospace; flex-shrink:0; font-size:10px; }
+.wl-dept { color:#7c3aed; font-weight:700; flex-shrink:0; }
+.wl-text { color:#8a7aaa; line-height:1.5; }
+.wl-empty { color:#3a2a5a; font-size:11px; text-align:center; padding:20px 0; }
+/* cmd log reuse */
+.wl-entry {
+  display:flex; gap:10px; align-items:baseline;
+  padding:5px 0; border-bottom:1px solid rgba(139,92,246,.07); font-size:10.5px;
+}
+.wl-entry:last-child { border-bottom:none; }
+/* cmd sel/inp reuse */
+.wl-sel {
+  background:#0c0920; border:1px solid #3a2a6a; border-radius:6px;
+  padding:6px 10px; color:#a78bfa; font-size:11px; outline:none;
+  font-family:'Noto Sans KR',sans-serif;
+}
+.wl-submit {
+  background:linear-gradient(135deg,#7c3aed,#5b21b6); border:none;
+  border-radius:6px; padding:8px 18px; color:#fff; font-size:11px;
+  font-weight:700; cursor:pointer; font-family:'Noto Sans KR',sans-serif;
+  align-self:flex-end; white-space:nowrap;
+}
+.wl-log { max-height:100px; overflow-y:auto; }
+
+/* team chat */
+.chat-wrap { display:flex; gap:12px; height:192px; }
+.chat-feed {
+  flex:1; background:#0a0820; border:1px solid #1e1040; border-radius:8px;
+  overflow-y:auto; padding:10px 12px; display:flex; flex-direction:column; gap:6px;
+}
+.chat-msg { display:flex; gap:8px; align-items:flex-start; }
+.chat-av {
+  width:22px; height:22px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700;
+}
+.chat-bubble { background:#0f0c24; border:1px solid #2a1a5a; border-radius:0 8px 8px 8px; padding:5px 9px; max-width:78%; }
+.chat-bubble .ch-name { font-size:9px; font-weight:700; margin-bottom:2px; }
+.chat-bubble .ch-text { font-size:10.5px; color:#9a8ac0; line-height:1.5; }
+.chat-bubble .ch-time { font-size:8.5px; color:#3a2a5a; margin-top:2px; text-align:right; }
+.chat-me .chat-bubble { background:#1a0a40; border-color:#3a1a7a; border-radius:8px 0 8px 8px; }
+.chat-compose {
+  width:220px; display:flex; flex-direction:column; gap:6px;
+}
+.chat-ch-sel {
+  background:#0c0920; border:1px solid #3a2a6a; border-radius:6px;
+  padding:6px 10px; color:#a78bfa; font-size:10px; outline:none;
+  font-family:'Noto Sans KR',sans-serif;
+}
+.chat-inp {
+  flex:1; background:#0c0920; border:1px solid #3a2a6a; border-radius:6px;
+  padding:7px 10px; color:#d0c8ff; font-size:11px; outline:none; resize:none;
+  font-family:'Noto Sans KR',sans-serif; line-height:1.5;
+}
+.chat-inp::placeholder { color:#3a2a5a; }
+.chat-send {
+  background:linear-gradient(135deg,#7c3aed,#5b21b6); border:none;
+  border-radius:6px; padding:7px; color:#fff; font-size:10px;
+  font-weight:700; cursor:pointer; font-family:'Noto Sans KR',sans-serif;
+}
+
+/* employee history */
+.emp-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px;
+  max-height:200px; overflow-y:auto;
+}
+.emp-card {
+  background:#0a0820; border:1px solid #1e1040; border-radius:8px;
+  padding:10px 12px; cursor:pointer; transition:.15s; position:relative;
+}
+.emp-card:hover { border-color:#3a1a7a; background:#0f0c2c; }
+.emp-card .ec-color { width:8px; height:8px; border-radius:50%; display:inline-block; margin-bottom:5px; }
+.emp-card .ec-name { font-size:12px; font-weight:700; color:#d0c8ff; margin-bottom:2px; }
+.emp-card .ec-role { font-size:9px; color:var(--muted); }
+.emp-card .ec-floor { font-size:8px; color:#3a2a5a; margin-top:4px; }
+
+/* modal */
+.emp-modal-bg {
+  position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200;
+  display:flex; align-items:center; justify-content:center;
+}
+.emp-modal {
+  background:#0d0920; border:1.5px solid rgba(139,92,246,.3); border-radius:16px;
+  padding:28px 32px; width:380px; position:relative;
+}
+.em-close {
+  position:absolute; right:16px; top:14px; background:none; border:none;
+  color:var(--muted); cursor:pointer; font-size:18px; line-height:1;
+}
+.em-header { display:flex; gap:14px; align-items:center; margin-bottom:18px; }
+.em-avatar {
+  width:56px; height:56px; border-radius:50%; border:2px solid rgba(139,92,246,.4);
+  display:flex; align-items:center; justify-content:center; font-size:24px;
+  background:rgba(124,58,237,.12);
+}
+.em-name { font-size:18px; font-weight:700; color:#e4d8ff; }
+.em-role { font-size:11px; color:var(--muted); margin-top:2px; }
+.em-dept { font-size:9px; margin-top:3px; }
+.em-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+.em-stat { background:#0a0820; border:1px solid #1e1040; border-radius:8px; padding:10px 12px; }
+.em-stat-lbl { font-size:8.5px; color:var(--muted); margin-bottom:3px; }
+.em-stat-val { font-size:14px; font-weight:700; color:#a78bfa; }
+.em-log { font-size:10px; color:#5a4a8a; line-height:1.8; }
+.em-log div { border-left:2px solid #2a1a5a; padding-left:8px; margin-bottom:4px; }
+
+/* elevator shaft */
+#elev-shaft {
+  position:absolute; right:293px; top:0; bottom:0; width:26px;
+  background:rgba(0,0,0,.45);
+  border-left:1px solid #2a1a5a; border-right:1px solid #2a1a5a; z-index:5;
+}
+
+/* ══════════════════════════════════════
+   MOBILE RESPONSIVE  ≤ 680px
+══════════════════════════════════════ */
+@media (max-width:680px){
+  :root { --floor-h: 140px; }
+
+  body { padding: 0 0 28px; }
+
+  .topbar, .building, .status-bar, .bottom-panel {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  /* topbar compact */
+  .topbar { padding: 10px 14px; gap: 6px; flex-wrap: wrap; }
+  .logo-icon { width:32px; height:32px; font-size:16px; border-radius:8px; }
+  .logo-name { font-size:12px; }
+  .logo-sub  { display:none; }
+  .tower-btn { padding:5px 11px; font-size:10px; }
+  #clock     { font-size:9px; }
+
+  /* building floors */
+  .building { border:none; }
+  .fl-label  { width:38px; }
+  .fl-num    { font-size:10px; }
+  .fl-dept   { display:none; }
+  .dept-tag  { font-size:7.5px; left:44px; }
+
+  /* hide city panel on mobile — too narrow */
+  .city-panel, #elev-shaft { display:none; }
+  .bg-canvas, .char-canvas { left:38px; right:0; }
+
+  /* status bar scroll */
+  .status-bar {
+    overflow-x: auto; white-space: nowrap;
+    gap: 14px; padding: 7px 14px;
+    scrollbar-width: none;
+  }
+  .status-bar::-webkit-scrollbar { display:none; }
+
+  /* bottom panel tabs — scroll horizontally */
+  .panel-tabs { overflow-x:auto; scrollbar-width:none; flex-wrap:nowrap; }
+  .panel-tabs::-webkit-scrollbar { display:none; }
+  .ptab { padding:8px 14px; font-size:9px; white-space:nowrap; }
+  .panel-body { padding:10px 12px 14px; }
+
+  /* worklog two-col → single col */
+  .wl-grid { grid-template-columns: 1fr; gap:10px; }
+
+  /* dept list → horizontal scrollable chips */
+  .wl-dept-panel { overflow:visible; background:none; border:none; border-radius:0; }
+  .wl-dept-header { display:none; }
+  .wl-dept-list-inner {
+    display:flex; gap:6px; overflow-x:auto; padding-bottom:4px;
+    scrollbar-width:none;
+  }
+  .wl-dept-list-inner::-webkit-scrollbar { display:none; }
+  .wl-dept-item {
+    flex-shrink:0; flex-direction:row; align-items:center; gap:5px;
+    padding:6px 10px; border-radius:20px;
+    background:rgba(124,58,237,.08); border:1px solid rgba(139,92,246,.18);
+    border-left:1px solid rgba(139,92,246,.18) !important;
+    border-bottom:1px solid rgba(139,92,246,.18) !important;
+    min-width:unset;
+  }
+  .wl-dept-item.active {
+    background:rgba(124,58,237,.22); border-color:#7c3aed !important;
+  }
+  .wl-dept-item .di-floor { display:none; }
+  .wl-dept-item .di-name  { font-size:10px; }
+  .di-icon { font-size:13px; }
+
+  /* form two-col → single col */
+  .form-row { grid-template-columns:1fr; }
+  .form-group.full { grid-column:1; }
+  .wl-actions { flex-wrap:wrap; gap:7px; }
+  .btn-report, .btn-save, .btn-reset { font-size:10px; padding:7px 13px; }
+  .btn-reset { margin-left:0; }
+
+  /* team chat */
+  .chat-wrap { flex-direction:column; height:auto; }
+  .chat-feed { height:160px; }
+  .chat-members { height:100px; }
+  .chat-inp-row { flex-wrap:wrap; }
+
+  /* employee grid */
+  .emp-grid { grid-template-columns: repeat(3, 1fr) !important; gap:8px !important; }
+  .emp-card .ec-name { font-size:9.5px; }
+
+  /* employee modal */
+  .emp-modal { width:calc(100vw - 32px); padding:20px 18px; }
+  .em-stats  { grid-template-columns:1fr 1fr; }
+
+  /* wl log height */
+  .wl-log { max-height:160px; }
+
+  /* cmd panel */
+  .cmd-row { flex-wrap:wrap; }
+}
+
+@media (max-width:400px){
+  .emp-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .topbar-right { gap:6px; }
+}
+</style>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">🏢</div>
+    <div>
+      <div class="logo-name">Relaxing Mind AI Company</div>
+      <div class="logo-sub">LIVE OFFICE · 37 EMPLOYEES · 8 FLOORS</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="badge-live"><div class="dot-pulse"></div>LIVE</div>
+    <span id="clock">--:--:--</span>
+    <a class="tower-btn" href="https://ruymonpel.github.io/relaxing-mind-tower/" target="_blank">🗼 관제탑으로 이동</a>
+  </div>
+</div>
+
+<!-- BUILDING -->
+<div class="building" id="building">
+
+  <div class="floor f-7" id="f7">
+    <div class="fl-label"><span class="fl-num" style="color:#a78bfa">7F</span><span class="fl-dept" style="color:#7c3aed">CEO</span></div>
+    <canvas class="bg-canvas"   id="bg7"></canvas>
+    <div class="dept-tag" style="color:#a78bfa">👑 CEO 오피스 — Claude · Aria · Nova</div>
+    <canvas class="char-canvas" id="c7"></canvas>
+    <div class="city-panel"><canvas id="city7"></canvas></div>
+  </div>
+
+  <div class="floor f-6" id="f6">
+    <div class="fl-label"><span class="fl-num" style="color:#fbbf24">6F</span><span class="fl-dept" style="color:#d97706">MGMT</span></div>
+    <canvas class="bg-canvas"   id="bg6"></canvas>
+    <div class="dept-tag" style="color:#fbbf24">⭐ 경영지원팀 — Stella · Rex F · Maya · Leon</div>
+    <canvas class="char-canvas" id="c6"></canvas>
+    <div class="city-panel"><canvas id="city6"></canvas></div>
+  </div>
+
+  <div class="floor f-5" id="f5">
+    <div class="fl-label"><span class="fl-num" style="color:#60a5fa">5F</span><span class="fl-dept" style="color:#3b82f6">CONTENT</span></div>
+    <canvas class="bg-canvas"   id="bg5"></canvas>
+    <div class="dept-tag" style="color:#60a5fa">✍️ 콘텐츠팀 (블로그+유튜브) — 6명</div>
+    <canvas class="char-canvas" id="c5"></canvas>
+    <div class="city-panel"><canvas id="city5"></canvas></div>
+  </div>
+
+  <div class="floor f-4" id="f4">
+    <div class="fl-label"><span class="fl-num" style="color:#34d399">4F</span><span class="fl-dept" style="color:#059669">CREATIVE</span></div>
+    <canvas class="bg-canvas"   id="bg4"></canvas>
+    <div class="dept-tag" style="color:#34d399">🎨 크리에이티브팀 (소설+인스타) — 5명</div>
+    <canvas class="char-canvas" id="c4"></canvas>
+    <div class="city-panel"><canvas id="city4"></canvas></div>
+  </div>
+
+  <div class="floor f-3" id="f3">
+    <div class="fl-label"><span class="fl-num" style="color:#fb923c">3F</span><span class="fl-dept" style="color:#ea580c">NEW BIZ</span></div>
+    <canvas class="bg-canvas"   id="bg3"></canvas>
+    <div class="dept-tag" style="color:#fb923c">🚀 신규사업부 — Victor · Iris N · Kane · Zoe · Ren</div>
+    <canvas class="char-canvas" id="c3"></canvas>
+    <div class="city-panel"><canvas id="city3"></canvas></div>
+  </div>
+
+  <div class="floor f-2" id="f2">
+    <div class="fl-label"><span class="fl-num" style="color:#4ade80">2F</span><span class="fl-dept" style="color:#22c55e">REVENUE</span></div>
+    <canvas class="bg-canvas"   id="bg2"></canvas>
+    <div class="dept-tag" style="color:#4ade80">💰 수익화팀 — Penny · Rich · Data</div>
+    <canvas class="char-canvas" id="c2"></canvas>
+    <div class="city-panel"><canvas id="city2"></canvas></div>
+  </div>
+
+  <div class="floor f-1" id="f1">
+    <div class="fl-label"><span class="fl-num" style="color:#e4d8ff">1F</span><span class="fl-dept" style="color:#a78bfa">LOBBY</span></div>
+    <canvas class="bg-canvas"   id="bg1"></canvas>
+    <div class="dept-tag" style="color:#c4b5fd">🤝 로비 — Otto</div>
+    <canvas class="char-canvas" id="c1"></canvas>
+    <div class="city-panel"><canvas id="city1"></canvas></div>
+  </div>
+
+  <div class="floor f-b1" id="fb1">
+    <div class="fl-label"><span class="fl-num" style="color:#f87171">B1</span><span class="fl-dept" style="color:#dc2626">SECURITY</span></div>
+    <canvas class="bg-canvas"   id="bgb1"></canvas>
+    <div class="dept-tag" style="color:#f87171">🛡️ 보안/서버팀 — Rex · Ada · Cy</div>
+    <canvas class="char-canvas" id="cb1"></canvas>
+    <div class="city-panel"><canvas id="cityb1"></canvas></div>
+  </div>
+
+  <div id="elev-shaft"><canvas id="elev-c"></canvas></div>
+</div>
+
+<!-- STATUS -->
+<div class="status-bar">
+  <div class="s-item"><div class="s-dot" style="background:#a78bfa"></div><span class="s-lbl">전체</span><span class="s-val">37명</span></div>
+  <div class="s-item"><div class="s-dot" style="background:#4ade80"></div><span class="s-lbl">업무중</span><span class="s-val" id="sv-work">0</span></div>
+  <div class="s-item"><div class="s-dot" style="background:#60a5fa"></div><span class="s-lbl">회의중</span><span class="s-val" id="sv-meet">0</span></div>
+  <div class="s-item"><div class="s-dot" style="background:#fbbf24"></div><span class="s-lbl">이동중</span><span class="s-val" id="sv-move">0</span></div>
+  <div class="s-item" style="margin-left:auto"><div class="s-dot" style="background:#34d399;animation:pulse 2s infinite"></div><span class="s-lbl">시스템</span><span class="s-val">정상</span></div>
+</div>
+
+<!-- BOTTOM PANEL -->
+<div class="bottom-panel">
+  <div class="panel-tabs">
+    <button class="ptab active" onclick="switchTab('chat',this)">💬 팀 채팅</button>
+    <button class="ptab" onclick="switchTab('history',this)">👤 직원 이력</button>
+    <button class="ptab" onclick="switchTab('cmd',this)">📢 CEO 지시</button>
+  </div>
+
+  <!-- 팀 채팅 -->
+  <div class="panel-body" id="tab-chat">
+    <div class="chat-wrap">
+      <div class="chat-feed" id="chat-feed"></div>
+      <div class="chat-compose">
+        <select class="chat-ch-sel" id="chat-ch">
+          <option value="전체">📢 전체 채널</option>
+          <option value="CEO 오피스">👑 CEO 오피스</option>
+          <option value="경영지원팀">⭐ 경영지원팀</option>
+          <option value="콘텐츠팀">✍️ 콘텐츠팀</option>
+          <option value="크리에이티브팀">🎨 크리에이티브팀</option>
+          <option value="신규사업부">🚀 신규사업부</option>
+          <option value="수익화팀">💰 수익화팀</option>
+        </select>
+        <textarea class="chat-inp" id="chat-inp" placeholder="메시지 입력..." rows="4"></textarea>
+        <button class="chat-send" onclick="sendChatMsg()">📨 전송</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 직원 이력 -->
+  <div class="panel-body" id="tab-history" hidden>
+    <div class="emp-grid" id="emp-grid"></div>
+  </div>
+
+  <!-- CEO 지시 -->
+  <div class="panel-body" id="tab-cmd" hidden>
+    <div class="wl-form" style="margin-bottom:10px">
+      <select class="wl-sel" id="cmd-dept">
+        <option>📢 전체</option><option>👑 CEO 오피스</option><option>⭐ 경영지원팀</option>
+        <option>✍️ 콘텐츠팀</option><option>🎨 크리에이티브팀</option><option>🚀 신규사업부</option>
+        <option>💰 수익화팀</option><option>🤝 로비</option><option>🛡️ 보안팀</option>
+      </select>
+      <input class="wl-ta" id="cmd-inp" style="height:auto;padding:7px 10px" placeholder="CEO 지시사항 입력 후 Enter..." onkeydown="if(event.key==='Enter')sendCmd()">
+      <button class="wl-submit" onclick="sendCmd()">📨 전송</button>
+    </div>
+    <div class="wl-log" id="cmd-log" style="max-height:120px">
+      <div class="wl-entry"><span class="wl-ts">--:--</span><span class="wl-dept">[시스템]</span><span class="wl-text">Relaxing Mind AI Company 오피스 가동.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Employee modal -->
+<div class="emp-modal-bg" id="emp-modal" hidden onclick="if(event.target===this)closeEmpModal()">
+  <div class="emp-modal">
+    <button class="em-close" onclick="closeEmpModal()">✕</button>
+    <div class="em-header">
+      <div class="em-avatar" id="em-av">👤</div>
+      <div>
+        <div class="em-name" id="em-name"></div>
+        <div class="em-role" id="em-role"></div>
+        <div class="em-dept" id="em-dept"></div>
+      </div>
+    </div>
+    <div class="em-stats" id="em-stats"></div>
+    <div class="em-log" id="em-log"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// CLOCK
+// ══════════════════════════════════════
+(function tickClock(){
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('ko-KR',{hour12:false});
+  setTimeout(tickClock,1000);
+})();
+
+// ══════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════
+const FH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--floor-h')) || 210;
+const FLOOR_IDS = ['7','6','5','4','3','2','1','b1'];
+const NUM_FLOORS = 8;
+
+// ══════════════════════════════════════
+// EMPLOYEE DATA
+// ══════════════════════════════════════
+const FLOORS_DATA = [
+  { id:'7', color:'#a78bfa', accent:'#7c3aed',
+    emps:[
+      { name:'Claude', role:'CEO',   skin:'#fde8cc', shirt:'#4c1d95', color:'#a78bfa',
+        hairColor:'#1a0a3a', hairStyle:'swept',     eyeColor:'#7c3aed', irisColor:'#5b21b6',
+        faceW:12,   faceH:13.5, eyeSize:[4.2,4.6], eyeSpacing:4,
+        browStyle:'strong',  mouthStyle:'calm',     blushColor:'rgba(220,170,255,.2)',
+        glasses:true,  accessory:'tie',    frameOffset:0 },
+      { name:'Aria',   role:'COO',   skin:'#f5cba7', shirt:'#0e7490', color:'#22d3ee',
+        hairColor:'#c0740a', hairStyle:'side_braid', eyeColor:'#0891b2', irisColor:'#06b6d4',
+        faceW:10.5, faceH:12.5, eyeSize:[3.8,4.3], eyeSpacing:3.5,
+        browStyle:'arched',  mouthStyle:'smile',    blushColor:'rgba(255,200,160,.28)',
+        glasses:false, accessory:'scarf',   outfit:'blazer',   outfitColor:'#0e7490', outfitAccent:'#fff', frameOffset:23 },
+      { name:'Nova',   role:'CTO',   skin:'#f0d0a0', shirt:'#065f46', color:'#34d399',
+        hairColor:'#1e6b35', hairStyle:'twin_tails', eyeColor:'#059669', irisColor:'#10b981',
+        faceW:11,   faceH:11.5, eyeSize:[4.8,5.2], eyeSpacing:4.2,
+        browStyle:'round',   mouthStyle:'open_smile', blushColor:'rgba(160,255,200,.3)',
+        glasses:false, accessory:'headband', outfit:'hoodie', outfitColor:'#065f46', outfitAccent:'#34d399', frameOffset:46 },
+    ]},
+  { id:'6', color:'#fbbf24', accent:'#d97706',
+    emps:[
+      { name:'Stella', role:'팀장',  skin:'#fde8cc', shirt:'#78350f', color:'#fbbf24',
+        hairColor:'#92400e', hairStyle:'half_up',   eyeColor:'#d97706', irisColor:'#f59e0b',
+        faceW:11.5, faceH:13,   eyeSize:[4.0,4.5], eyeSpacing:3.8,
+        browStyle:'gentle',  mouthStyle:'slight_smile', blushColor:'rgba(255,210,130,.28)',
+        glasses:false, accessory:'earring', outfit:'cardigan', outfitColor:'#78350f', outfitAccent:'#fbbf24', frameOffset:69 },
+      { name:'Rex F',  role:'재무',  skin:'#f5cba7', shirt:'#92400e', color:'#fbbf24',
+        hairColor:'#451a03', hairStyle:'swept',     eyeColor:'#b45309', irisColor:'#d97706',
+        faceW:12,   faceH:12,   eyeSize:[3.5,3.8], eyeSpacing:3.8,
+        browStyle:'bold',    mouthStyle:'neutral',  blushColor:'rgba(220,180,120,.15)',
+        glasses:true,  accessory:'tie',    frameOffset:140 },
+      { name:'Maya',   role:'HR',    skin:'#f0d0a0', shirt:'#b45309', color:'#fbbf24',
+        hairColor:'#7c2d12', hairStyle:'loose_curls', eyeColor:'#b45309', irisColor:'#d97706',
+        faceW:10.5, faceH:13,   eyeSize:[4.2,4.6], eyeSpacing:3.5,
+        browStyle:'arched',  mouthStyle:'smile',    blushColor:'rgba(255,200,150,.28)',
+        glasses:false, accessory:'earring', outfit:'cardigan', outfitColor:'#b45309', outfitAccent:'#fbbf24', frameOffset:88 },
+      { name:'Leon',   role:'법무',  skin:'#e8c090', shirt:'#78350f', color:'#fbbf24',
+        hairColor:'#1c0f05', hairStyle:'messy',     eyeColor:'#92400e', irisColor:'#b45309',
+        faceW:12.5, faceH:12,   eyeSize:[3.2,3.5], eyeSpacing:3.8,
+        browStyle:'strong',  mouthStyle:'calm',     blushColor:'rgba(200,160,100,.12)',
+        glasses:true,  accessory:'tie',    frameOffset:170 },
+      { name:'Nora',   role:'회계',  skin:'#fde8cc', shirt:'#92400e', color:'#fbbf24',
+        hairColor:'#7c2d12', hairStyle:'half_up',   eyeColor:'#d97706', irisColor:'#f59e0b',
+        faceW:10.5, faceH:13,   eyeSize:[4.0,4.4], eyeSpacing:3.4,
+        browStyle:'gentle',  mouthStyle:'slight_smile', blushColor:'rgba(255,215,150,.28)',
+        glasses:true,  accessory:'earring', outfit:'cardigan', outfitColor:'#92400e', outfitAccent:'#fde68a', frameOffset:195 },
+    ]},
+  { id:'5', color:'#60a5fa', accent:'#2563eb',
+    emps:[
+      { name:'Kai',    role:'블로그', skin:'#f5cba7', shirt:'#1e3a8a', color:'#60a5fa',
+        hairColor:'#1e1e2e', hairStyle:'swept',      eyeColor:'#1d4ed8', irisColor:'#3b82f6',
+        faceW:12,   faceH:12,   eyeSize:[3.4,3.7], eyeSpacing:3.8,
+        browStyle:'bold',    mouthStyle:'slight_smile', blushColor:'rgba(150,180,255,.15)',
+        glasses:false, accessory:'headphones', frameOffset:10 },
+      { name:'Milo',   role:'유튜브', skin:'#f0d0a0', shirt:'#1d4ed8', color:'#60a5fa',
+        hairColor:'#1e3a5a', hairStyle:'messy',     eyeColor:'#2563eb', irisColor:'#60a5fa',
+        faceW:12.5, faceH:11.5, eyeSize:[3.2,3.5], eyeSpacing:4,
+        browStyle:'strong',  mouthStyle:'open_smile', blushColor:'rgba(130,160,255,.2)',
+        glasses:false, accessory:'headband', outfit:'hoodie', outfitColor:'#1d4ed8', outfitAccent:'#60a5fa', frameOffset:55 },
+      { name:'Lena',   role:'기획',   skin:'#fde8cc', shirt:'#2563eb', color:'#60a5fa',
+        hairColor:'#1e1b4b', hairStyle:'long_wavy', eyeColor:'#2563eb', irisColor:'#60a5fa',
+        faceW:10.5, faceH:13,   eyeSize:[4.0,4.5], eyeSpacing:3.5,
+        browStyle:'gentle',  mouthStyle:'smile',    blushColor:'rgba(160,190,255,.28)',
+        glasses:false, accessory:'scarf', outfit:'blazer', outfitColor:'#2563eb', outfitAccent:'#bfdbfe', frameOffset:33 },
+      { name:'Finn',   role:'편집',   skin:'#e8c090', shirt:'#1e40af', color:'#60a5fa',
+        hairColor:'#292524', hairStyle:'swept',     eyeColor:'#1e40af', irisColor:'#3b82f6',
+        faceW:12,   faceH:12,   eyeSize:[3.5,3.8], eyeSpacing:4,
+        browStyle:'bold',    mouthStyle:'neutral',  blushColor:'rgba(120,150,220,.15)',
+        glasses:true,  accessory:'headphones', frameOffset:77 },
+      { name:'Zara',   role:'SEO',    skin:'#f5cba7', shirt:'#1d4ed8', color:'#60a5fa',
+        hairColor:'#4c1d95', hairStyle:'side_braid', eyeColor:'#1d4ed8', irisColor:'#93c5fd',
+        faceW:10,   faceH:13,   eyeSize:[4.3,4.8], eyeSpacing:3.5,
+        browStyle:'thin',    mouthStyle:'pout',     blushColor:'rgba(160,180,255,.3)',
+        glasses:false, accessory:'bow', outfit:'dress', outfitColor:'#1d4ed8', outfitAccent:'#93c5fd', frameOffset:99 },
+      { name:'Jay',    role:'분석',   skin:'#f0d0a0', shirt:'#2563eb', color:'#60a5fa',
+        hairColor:'#172554', hairStyle:'swept',     eyeColor:'#1d4ed8', irisColor:'#60a5fa',
+        faceW:11.5, faceH:12,   eyeSize:[3.5,3.8], eyeSpacing:4,
+        browStyle:'arched',  mouthStyle:'calm',     blushColor:'rgba(140,170,250,.18)',
+        glasses:true,  accessory:'tie', frameOffset:120 },
+      { name:'Vera',   role:'번역',   skin:'#fde8cc', shirt:'#1e40af', color:'#60a5fa',
+        hairColor:'#312e81', hairStyle:'bun',       eyeColor:'#1e40af', irisColor:'#93c5fd',
+        faceW:11,   faceH:13,   eyeSize:[4.1,4.6], eyeSpacing:3.6,
+        browStyle:'thin',    mouthStyle:'smile',    blushColor:'rgba(180,200,255,.3)',
+        glasses:false, accessory:'bow', outfit:'dress', outfitColor:'#1e40af', outfitAccent:'#bfdbfe', frameOffset:145 },
+    ]},
+  { id:'4', color:'#34d399', accent:'#059669',
+    emps:[
+      { name:'Elle',   role:'디자인', skin:'#fde8cc', shirt:'#065f46', color:'#34d399',
+        hairColor:'#064e3b', hairStyle:'half_up',   eyeColor:'#059669', irisColor:'#34d399',
+        faceW:10.5, faceH:13,   eyeSize:[4.3,4.7], eyeSpacing:3.5,
+        browStyle:'arched',  mouthStyle:'smile',    blushColor:'rgba(150,255,200,.3)',
+        glasses:false, accessory:'earring', outfit:'dress', outfitColor:'#065f46', outfitAccent:'#6ee7b7', frameOffset:15 },
+      { name:'Iris',   role:'소설',   skin:'#f5cba7', shirt:'#047857', color:'#34d399',
+        hairColor:'#3b0764', hairStyle:'long_wavy', eyeColor:'#047857', irisColor:'#10b981',
+        faceW:10,   faceH:13,   eyeSize:[4.5,5.0], eyeSpacing:3.4,
+        browStyle:'thin',    mouthStyle:'pout',     blushColor:'rgba(160,255,220,.3)',
+        glasses:false, accessory:'bow', outfit:'cardigan', outfitColor:'#047857', outfitAccent:'#a7f3d0', frameOffset:60 },
+      { name:'Pip',    role:'인스타', skin:'#f0d0a0', shirt:'#059669', color:'#34d399',
+        hairColor:'#065f46', hairStyle:'twin_tails', eyeColor:'#059669', irisColor:'#6ee7b7',
+        faceW:11,   faceH:11.5, eyeSize:[4.8,5.2], eyeSpacing:4,
+        browStyle:'round',   mouthStyle:'open_smile', blushColor:'rgba(100,255,190,.35)',
+        glasses:false, accessory:'headband', outfit:'hoodie', outfitColor:'#059669', outfitAccent:'#6ee7b7', frameOffset:38 },
+      { name:'Cleo',   role:'일러스트', skin:'#e8c090', shirt:'#065f46', color:'#34d399',
+        hairColor:'#422006', hairStyle:'loose_curls', eyeColor:'#065f46', irisColor:'#34d399',
+        faceW:10.5, faceH:13,   eyeSize:[4.2,4.6], eyeSpacing:3.5,
+        browStyle:'gentle',  mouthStyle:'slight_smile', blushColor:'rgba(180,240,200,.28)',
+        glasses:false, accessory:'earring', outfit:'dress', outfitColor:'#065f46', outfitAccent:'#34d399', frameOffset:82 },
+      { name:'Sol',    role:'편집',   skin:'#f5cba7', shirt:'#047857', color:'#34d399',
+        hairColor:'#1a2e1a', hairStyle:'messy',     eyeColor:'#047857', irisColor:'#34d399',
+        faceW:12.5, faceH:12,   eyeSize:[3.4,3.7], eyeSpacing:4,
+        browStyle:'bold',    mouthStyle:'neutral',  blushColor:'rgba(140,220,180,.15)',
+        glasses:true,  accessory:'headphones', frameOffset:104 },
+      { name:'Luna',   role:'촬영',   skin:'#fde8cc', shirt:'#065f46', color:'#34d399',
+        hairColor:'#134e4a', hairStyle:'loose_curls', eyeColor:'#047857', irisColor:'#6ee7b7',
+        faceW:10.5, faceH:12.5, eyeSize:[4.4,4.8], eyeSpacing:3.5,
+        browStyle:'round',   mouthStyle:'open_smile', blushColor:'rgba(160,250,210,.32)',
+        glasses:false, accessory:'scarf', outfit:'hoodie', outfitColor:'#065f46', outfitAccent:'#6ee7b7', frameOffset:128 },
+    ]},
+  { id:'3', color:'#fb923c', accent:'#ea580c',
+    emps:[
+      { name:'Victor', role:'팀장',  skin:'#e8c090', shirt:'#7c2d12', color:'#fb923c',
+        hairColor:'#1c0a02', hairStyle:'swept',     eyeColor:'#9a3412', irisColor:'#ea580c',
+        faceW:13,   faceH:12,   eyeSize:[3.5,3.8], eyeSpacing:4,
+        browStyle:'strong',  mouthStyle:'calm',     blushColor:'rgba(220,150,80,.15)',
+        glasses:false, accessory:'tie', frameOffset:5 },
+      { name:'Iris N', role:'기획',  skin:'#fde8cc', shirt:'#9a3412', color:'#fb923c',
+        hairColor:'#78160c', hairStyle:'side_braid', eyeColor:'#c2410c', irisColor:'#fb923c',
+        faceW:10.5, faceH:13,   eyeSize:[4.0,4.5], eyeSpacing:3.5,
+        browStyle:'arched',  mouthStyle:'smile',    blushColor:'rgba(255,180,130,.3)',
+        glasses:false, accessory:'scarf', outfit:'blazer', outfitColor:'#9a3412', outfitAccent:'#fed7aa', frameOffset:50 },
+      { name:'Kane',   role:'분석',  skin:'#f5cba7', shirt:'#c2410c', color:'#fb923c',
+        hairColor:'#1e1e2e', hairStyle:'messy',     eyeColor:'#c2410c', irisColor:'#fb923c',
+        faceW:12.5, faceH:12,   eyeSize:[3.2,3.5], eyeSpacing:3.8,
+        browStyle:'bold',    mouthStyle:'neutral',  blushColor:'rgba(200,140,80,.15)',
+        glasses:true,  accessory:'headphones', frameOffset:92 },
+      { name:'Zoe',    role:'마케팅', skin:'#fde8d8', shirt:'#ea580c', color:'#fb923c',
+        hairColor:'#7c1d0a', hairStyle:'loose_curls', eyeColor:'#ea580c', irisColor:'#fb923c',
+        faceW:10,   faceH:13,   eyeSize:[4.3,4.8], eyeSpacing:3.5,
+        browStyle:'thin',    mouthStyle:'pout',     blushColor:'rgba(255,160,100,.32)',
+        glasses:false, accessory:'bow', outfit:'dress', outfitColor:'#ea580c', outfitAccent:'#fed7aa', frameOffset:115 },
+      { name:'Ren',    role:'개발',  skin:'#f5cba7', shirt:'#9a3412', color:'#fb923c',
+        hairColor:'#292524', hairStyle:'swept',     eyeColor:'#9a3412', irisColor:'#ea580c',
+        faceW:12,   faceH:12,   eyeSize:[3.5,3.8], eyeSpacing:3.8,
+        browStyle:'bold',    mouthStyle:'slight_smile', blushColor:'rgba(210,150,100,.18)',
+        glasses:false, accessory:'headphones', frameOffset:70 },
+      { name:'Ami',    role:'SNS',   skin:'#fde8cc', shirt:'#c2410c', color:'#fb923c',
+        hairColor:'#7c1d0a', hairStyle:'twin_tails', eyeColor:'#ea580c', irisColor:'#fb923c',
+        faceW:10,   faceH:12.5, eyeSize:[4.6,5.0], eyeSpacing:3.5,
+        browStyle:'arched',  mouthStyle:'smile',    blushColor:'rgba(255,180,130,.35)',
+        glasses:false, accessory:'bow', outfit:'dress', outfitColor:'#c2410c', outfitAccent:'#fed7aa', frameOffset:133 },
+    ]},
+  { id:'2', color:'#4ade80', accent:'#16a34a',
+    emps:[
+      { name:'Penny',  role:'수익분석', skin:'#fde8cc', shirt:'#14532d', color:'#4ade80',
+        hairColor:'#064e3b', hairStyle:'long_wavy', eyeColor:'#166534', irisColor:'#4ade80',
+        faceW:10.5, faceH:13,   eyeSize:[4.0,4.5], eyeSpacing:3.5,
+        browStyle:'gentle',  mouthStyle:'smile',    blushColor:'rgba(160,255,180,.3)',
+        glasses:false, accessory:'earring', outfit:'blazer', outfitColor:'#14532d', outfitAccent:'#bbf7d0', frameOffset:30 },
+      { name:'Rich',   role:'광고',    skin:'#f5cba7', shirt:'#166534', color:'#4ade80',
+        hairColor:'#1c1917', hairStyle:'swept',     eyeColor:'#166534', irisColor:'#4ade80',
+        faceW:12.5, faceH:12,   eyeSize:[3.5,3.8], eyeSpacing:4,
+        browStyle:'strong',  mouthStyle:'neutral',  blushColor:'rgba(140,220,160,.15)',
+        glasses:true,  accessory:'tie', frameOffset:75 },
+      { name:'Data',   role:'데이터',  skin:'#f0d0a0', shirt:'#15803d', color:'#4ade80',
+        hairColor:'#1a2e1a', hairStyle:'messy',     eyeColor:'#15803d', irisColor:'#4ade80',
+        faceW:12,   faceH:12,   eyeSize:[3.4,3.7], eyeSpacing:3.8,
+        browStyle:'bold',    mouthStyle:'calm',     blushColor:'rgba(120,200,140,.15)',
+        glasses:true,  accessory:'headphones', frameOffset:50 },
+      { name:'Fern',   role:'전략',   skin:'#fde8cc', shirt:'#166534', color:'#4ade80',
+        hairColor:'#052e16', hairStyle:'side_braid', eyeColor:'#16a34a', irisColor:'#4ade80',
+        faceW:11,   faceH:13,   eyeSize:[4.0,4.5], eyeSpacing:3.6,
+        browStyle:'gentle',  mouthStyle:'smile',    blushColor:'rgba(150,240,170,.28)',
+        glasses:false, accessory:'scarf', outfit:'blazer', outfitColor:'#166534', outfitAccent:'#bbf7d0', frameOffset:98 },
+      { name:'Max',    role:'운영',   skin:'#e8c090', shirt:'#14532d', color:'#4ade80',
+        hairColor:'#1c1917', hairStyle:'swept',     eyeColor:'#15803d', irisColor:'#4ade80',
+        faceW:12.5, faceH:12,   eyeSize:[3.5,3.8], eyeSpacing:4,
+        browStyle:'strong',  mouthStyle:'neutral',  blushColor:'rgba(130,210,150,.15)',
+        glasses:false, accessory:'tie', frameOffset:120 },
+    ]},
+  { id:'1', color:'#c4b5fd', accent:'#7c3aed',
+    emps:[
+      { name:'Otto',   role:'리셉션', skin:'#f5cba7', shirt:'#4c1d95', color:'#c4b5fd',
+        hairColor:'#1a0a3a', hairStyle:'swept',     eyeColor:'#7c3aed', irisColor:'#a78bfa',
+        faceW:12,   faceH:12.5, eyeSize:[3.8,4.2], eyeSpacing:3.8,
+        browStyle:'gentle',  mouthStyle:'smile',    blushColor:'rgba(200,180,255,.2)',
+        glasses:false, accessory:'tie', frameOffset:0 },
+      { name:'Mia',    role:'안내',   skin:'#fde8cc', shirt:'#5b21b6', color:'#c4b5fd',
+        hairColor:'#3b0764', hairStyle:'long_wavy', eyeColor:'#7c3aed', irisColor:'#c4b5fd',
+        faceW:10.5, faceH:13,   eyeSize:[4.2,4.7], eyeSpacing:3.5,
+        browStyle:'arched',  mouthStyle:'smile',    blushColor:'rgba(210,190,255,.3)',
+        glasses:false, accessory:'bow', outfit:'dress', outfitColor:'#5b21b6', outfitAccent:'#e9d5ff', frameOffset:55 },
+    ]},
+  { id:'b1', color:'#f87171', accent:'#dc2626',
+    emps:[
+      { name:'Rex',    role:'보안팀장', skin:'#e8c090', shirt:'#7f1d1d', color:'#f87171',
+        hairColor:'#0c0505', hairStyle:'swept',     eyeColor:'#dc2626', irisColor:'#f87171',
+        faceW:13,   faceH:12,   eyeSize:[3.5,3.8], eyeSpacing:4,
+        browStyle:'strong',  mouthStyle:'calm',     blushColor:'rgba(220,100,100,.15)',
+        glasses:false, accessory:'tie', frameOffset:0 },
+      { name:'Ada',    role:'모니터링', skin:'#fde8cc', shirt:'#991b1b', color:'#f87171',
+        hairColor:'#450a0a', hairStyle:'half_up',   eyeColor:'#b91c1c', irisColor:'#f87171',
+        faceW:10.5, faceH:13,   eyeSize:[4.0,4.5], eyeSpacing:3.5,
+        browStyle:'arched',  mouthStyle:'slight_smile', blushColor:'rgba(255,160,160,.28)',
+        glasses:false, accessory:'earring', outfit:'blazer', outfitColor:'#991b1b', outfitAccent:'#fecaca', frameOffset:40 },
+      { name:'Cy',     role:'시스템',  skin:'#f0d0a0', shirt:'#b91c1c', color:'#f87171',
+        hairColor:'#1c1917', hairStyle:'messy',     eyeColor:'#b91c1c', irisColor:'#f87171',
+        faceW:12,   faceH:12,   eyeSize:[3.4,3.7], eyeSpacing:3.8,
+        browStyle:'bold',    mouthStyle:'neutral',  blushColor:'rgba(200,120,120,.18)',
+        glasses:true,  accessory:'headphones', frameOffset:80 },
+    ]},
+];
+
+// ══════════════════════════════════════
+// CITY SKYLINE (stable seed)
+// ══════════════════════════════════════
+function rng(seed){ let x=Math.sin(seed+1)*79431; return x-Math.floor(x); }
+
+function drawCity(canvasEl) {
+  const W = canvasEl.offsetWidth || 290;
+  const H = canvasEl.offsetHeight || FH;
+  canvasEl.width  = W * 2; canvasEl.height = H * 2;
+  canvasEl.style.width = W+'px'; canvasEl.style.height = H+'px';
+  const ctx = canvasEl.getContext('2d');
+  ctx.scale(2,2);
+
+  const hr = new Date().getHours();
+  const night = hr < 6 || hr >= 20;
+  const dawn  = hr >= 6  && hr < 9;
+  const dusk  = hr >= 17 && hr < 20;
+
+  // sky
+  const sky = ctx.createLinearGradient(0,0,0,H);
+  if      (night){ sky.addColorStop(0,'#02000a'); sky.addColorStop(1,'#0d0520'); }
+  else if (dawn) { sky.addColorStop(0,'#160a30'); sky.addColorStop(1,'#d06030'); }
+  else if (dusk) { sky.addColorStop(0,'#14062a'); sky.addColorStop(1,'#b04020'); }
+  else           { sky.addColorStop(0,'#062050'); sky.addColorStop(1,'#2880b8'); }
+  ctx.fillStyle = sky; ctx.fillRect(0,0,W,H);
+
+  // stars
+  if(night){
+    for(let i=0;i<80;i++){
+      const sx=rng(i*7)*W, sy=rng(i*11)*(H*.65), ss=rng(i*13)*1.2+.3;
+      ctx.globalAlpha = rng(i*17)*.7+.3;
+      ctx.fillStyle='#fff';
+      ctx.beginPath(); ctx.arc(sx,sy,ss,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    // moon
+    ctx.fillStyle='rgba(230,225,200,0.92)';
+    ctx.beginPath(); ctx.arc(W*.82,H*.18,7,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=sky; // bite
+    ctx.beginPath(); ctx.arc(W*.82+4,H*.18-2,5.5,0,Math.PI*2); ctx.fill();
+  } else {
+    // sun glow
+    const sunX = dawn ? W*.25 : dusk ? W*.8 : W*.6;
+    const sg = ctx.createRadialGradient(sunX,H*.8,0,sunX,H*.8,35);
+    sg.addColorStop(0,'rgba(255,220,80,0.8)'); sg.addColorStop(1,'rgba(255,140,30,0)');
+    ctx.fillStyle=sg; ctx.fillRect(0,0,W,H);
+  }
+
+  // buildings
+  let bx=0;
+  for(let i=0; bx<W+30; i++){
+    const bw  = rng(i*3+1)*22+10;
+    const bh  = rng(i*7+2)*75+30;
+    const lum = rng(i*11+3);
+    const r   = Math.floor(lum*12+5);
+    const g   = Math.floor(lum*9+4);
+    const b   = Math.floor(lum*22+12);
+
+    // far layer
+    ctx.fillStyle = `rgba(${r+20},${g+15},${b+35},0.6)`;
+    ctx.fillRect(bx, H-bh*.5, bw, bh*.5);
+
+    // near layer
+    ctx.fillStyle = `rgb(${r},${g},${b})`;
+    ctx.fillRect(bx, H-bh, bw, bh);
+
+    // windows
+    if(night){
+      for(let wy=H-bh+5; wy<H-3; wy+=9){
+        for(let wx=bx+3; wx<bx+bw-2; wx+=6){
+          if(rng(i*200+wx*3+wy)>.38){
+            const warm = rng(i*300+wx+wy)>.6;
+            ctx.fillStyle = warm ? `rgba(180,215,255,${rng(i*400+wx)*0.4+0.4})` : `rgba(255,195,80,${rng(i*500+wy)*0.4+0.4})`;
+            ctx.fillRect(wx,wy,3,5);
+          }
+        }
+      }
+      // neon sign
+      if(rng(i*23)>.86){
+        const nc=['rgba(255,0,180,0.7)','rgba(0,230,200,0.7)','rgba(100,80,255,0.7)'];
+        ctx.fillStyle=nc[i%3]; ctx.fillRect(bx+2,H-bh+14,bw-4,2);
+      }
+    } else {
+      // glass
+      ctx.fillStyle='rgba(160,210,255,0.05)';
+      for(let wy=H-bh+3;wy<H-3;wy+=10) ctx.fillRect(bx+2,wy,bw-4,6);
+    }
+
+    // antenna
+    if(rng(i*17)>.75){
+      ctx.strokeStyle=night?'rgba(200,200,180,0.35)':'rgba(120,120,140,0.25)';
+      ctx.lineWidth=.8;
+      ctx.beginPath(); ctx.moveTo(bx+bw/2,H-bh); ctx.lineTo(bx+bw/2,H-bh-12); ctx.stroke();
+      if(night){ ctx.fillStyle='rgba(255,60,60,0.9)'; ctx.beginPath(); ctx.arc(bx+bw/2,H-bh-12,1,0,Math.PI*2); ctx.fill(); }
+    }
+    bx += bw+2;
+  }
+
+  // ground glow
+  if(night){
+    const gg=ctx.createLinearGradient(0,H-10,0,H);
+    gg.addColorStop(0,'rgba(80,30,160,0.5)'); gg.addColorStop(1,'transparent');
+    ctx.fillStyle=gg; ctx.fillRect(0,H-10,W,10);
+  }
+}
+
+function drawAllCities(){
+  FLOOR_IDS.forEach(id => drawCity(document.getElementById('city'+id)));
+}
+
+// ══════════════════════════════════════
+// FLOOR INTERIORS (background canvas)
+// ══════════════════════════════════════
+function initBg(canvasEl, floorId, theme) {
+  const parent = canvasEl.parentElement;
+  const W = parent.offsetWidth - 54 - 290;
+  const H = FH;
+  canvasEl.width  = W;
+  canvasEl.height = H;
+  canvasEl.style.left   = '54px';
+  canvasEl.style.right  = '290px';
+  canvasEl.style.top    = '0';
+  canvasEl.style.bottom = '0';
+  canvasEl.style.width  = W+'px';
+  canvasEl.style.height = H+'px';
+  const ctx = canvasEl.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+
+  // floor planks
+  for(let px=0;px<W;px+=24){
+    const alt = (Math.floor(px/24)%3);
+    ctx.fillStyle = alt===0?'rgba(255,255,255,.022)':alt===1?'rgba(255,255,255,.016)':'rgba(0,0,0,.018)';
+    ctx.fillRect(px, H-20, 23, 20);
+  }
+  ctx.fillStyle='rgba(255,255,255,.045)';
+  ctx.fillRect(0,H-20,W,1);
+
+  // ceiling track lights
+  for(let lx=70;lx<W-40;lx+=110){
+    ctx.fillStyle='rgba(255,255,255,.28)';
+    ctx.fillRect(lx-20,1,40,3);
+    // glow cone
+    const g=ctx.createRadialGradient(lx,2,0,lx,H*.45,55);
+    g.addColorStop(0, theme.lightGlow+'33');
+    g.addColorStop(1,'transparent');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  }
+
+  // wall skirting
+  ctx.fillStyle='rgba(255,255,255,.04)';
+  ctx.fillRect(0,0,3,H); ctx.fillRect(W-3,0,3,H);
+
+  // ── per-floor furniture ──
+  if(floorId==='7'){
+    drawFloor7(ctx, W, H, theme);
+  } else if(floorId==='1'){
+    drawFloor1(ctx, W, H, theme);
+  } else if(floorId==='b1'){
+    drawFloorB1(ctx, W, H, theme);
+  } else {
+    // 3F~6F 모두 동일한 오픈오피스 템플릿 (이미지 참조)
+    drawGenericOffice(ctx, W, H, theme, FLOORS_DATA.find(f=>f.id===floorId));
+  }
+}
+
+// — helper: wooden desk with monitor
+function drawWorkDesk(ctx, x, y, accent, screenColor, item) {
+  // shadow
+  ctx.fillStyle='rgba(0,0,0,.25)';
+  ctx.beginPath(); ctx.ellipse(x+21,y+24,23,5,0,0,Math.PI*2); ctx.fill();
+  // legs
+  ctx.fillStyle='#2a1a0a';
+  ctx.fillRect(x+6,y+12,4,12); ctx.fillRect(x+36,y+12,4,12);
+  // surface side
+  ctx.fillStyle='#2e1e0d'; ctx.fillRect(x,y+8,46,5);
+  // surface top
+  ctx.fillStyle='#4a2e14'; ctx.fillRect(x,y,46,9);
+  ctx.fillStyle='rgba(255,255,255,.06)'; ctx.fillRect(x,y,46,2);
+  // monitor stand
+  ctx.fillStyle='#2a2a3a'; ctx.fillRect(x+18,y-5,4,6); ctx.fillRect(x+14,y-1,12,3);
+  // monitor body
+  ctx.fillStyle='#141420'; ctx.beginPath(); ctx.roundRect(x+6,y-22,30,18,3); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.06)'; ctx.beginPath(); ctx.roundRect(x+6,y-22,30,2,3); ctx.fill();
+  // screen
+  const sg = ctx.createLinearGradient(x+8,y-20,x+34,y-6);
+  sg.addColorStop(0, screenColor[0]); sg.addColorStop(1, screenColor[1]);
+  ctx.fillStyle=sg; ctx.fillRect(x+8,y-20,26,14);
+  // screen glow
+  ctx.fillStyle=accent+'18'; ctx.fillRect(x+8,y-20,26,14);
+  // keyboard
+  ctx.fillStyle='#252535'; ctx.fillRect(x+5,y+2,30,5);
+  ctx.fillStyle='rgba(255,255,255,.04)';
+  for(let k=0;k<5;k++) ctx.fillRect(x+7+k*5,y+3,4,2);
+  // mouse
+  ctx.fillStyle='#303040';
+  ctx.beginPath(); ctx.ellipse(x+39,y+4,3,4.5,0,0,Math.PI*2); ctx.fill();
+  // item on desk
+  if(item==='coffee'){
+    ctx.fillStyle='#5a3a18'; ctx.fillRect(x+1,y+1,9,9);
+    ctx.fillStyle='#3d2510'; ctx.fillRect(x+2,y+2,7,7);
+    ctx.fillStyle='rgba(160,80,20,.5)';
+    ctx.beginPath(); ctx.ellipse(x+5.5,y+3.5,3,1.5,0,0,Math.PI*2); ctx.fill();
+    // steam
+    ctx.strokeStyle='rgba(255,255,255,.12)'; ctx.lineWidth=.7;
+    ctx.beginPath(); ctx.moveTo(x+4,y+1); ctx.quadraticCurveTo(x+3,y-2,x+5,y-4); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+7,y+1); ctx.quadraticCurveTo(x+8,y-2,x+6,y-4); ctx.stroke();
+  } else if(item==='plant'){
+    ctx.fillStyle='#5a3a1a'; ctx.fillRect(x+1,y+2,8,7);
+    ctx.fillStyle='#22863a';
+    ctx.beginPath(); ctx.ellipse(x+5,y-2,6,7,-.3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#28a745';
+    ctx.beginPath(); ctx.ellipse(x+8,y,5,6,.4,0,Math.PI*2); ctx.fill();
+  } else if(item==='book'){
+    ctx.fillStyle='#7c3aed'; ctx.fillRect(x+1,y+1,4,8);
+    ctx.fillStyle='#5b21b6'; ctx.fillRect(x+5.5,y+1,4,8);
+    ctx.fillStyle='#4338ca'; ctx.fillRect(x+10,y+1,3,8);
+  }
+}
+
+// — large potted plant
+function drawPlant(ctx, x, y, size) {
+  const [pw,ph] = size==='lg'?[22,50]:size==='md'?[16,36]:[12,24];
+  ctx.fillStyle='rgba(0,0,0,.2)';
+  ctx.beginPath(); ctx.ellipse(x+pw/2,y+6,pw*.7,4,0,0,Math.PI*2); ctx.fill();
+  // pot
+  ctx.fillStyle='#6b3e1e';
+  ctx.beginPath(); ctx.moveTo(x+2,y); ctx.lineTo(x+pw-2,y);
+  ctx.lineTo(x+pw+1,y+pw*.55); ctx.lineTo(x-1,y+pw*.55); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#4a2a12'; ctx.fillRect(x+1,y-3,pw-2,5);
+  // stem
+  ctx.strokeStyle='#166534'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(x+pw/2,y-2); ctx.lineTo(x+pw/2,y-ph*.55); ctx.stroke();
+  // leaves
+  const lc=['#16a34a','#15803d','#166534','#22c55e'];
+  for(let i=0;i<5;i++){
+    const a=(i/5)*Math.PI*2-Math.PI/2;
+    ctx.fillStyle=lc[i%lc.length];
+    ctx.save(); ctx.translate(x+pw/2+Math.cos(a)*pw*.35, y-ph*.45+Math.sin(a)*5);
+    ctx.rotate(a+Math.PI/2);
+    ctx.beginPath(); ctx.ellipse(0,0,pw*.28,ph*.18,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+}
+
+// — bookshelf
+function drawShelf(ctx, x, y, w, h, colors) {
+  ctx.fillStyle='#2a1808'; ctx.fillRect(x,y,w,h);
+  ctx.strokeStyle='rgba(255,255,255,.05)'; ctx.lineWidth=.5; ctx.strokeRect(x,y,w,h);
+  // shelves
+  for(let sy=y+4, row=0; sy<y+h-10; sy+=22, row++){
+    ctx.fillStyle='#1a1008'; ctx.fillRect(x+2,sy+18,w-4,2);
+    let bx=x+4;
+    for(let bi=0; bx<x+w-4; bi++){
+      const bw = 4+Math.floor(rng((row*20+bi)*7)*7);
+      const bh = 12+Math.floor(rng((row*20+bi)*11)*8);
+      ctx.fillStyle=colors[Math.abs(Math.floor(rng((row*20+bi)*13)*colors.length))%colors.length];
+      ctx.fillRect(bx, sy+20-bh, bw, bh);
+      bx+=bw+1;
+    }
+  }
+}
+
+// — sofa
+function drawSofa(ctx, x, y, color, w) {
+  const h=22;
+  ctx.fillStyle='rgba(0,0,0,.22)'; ctx.fillRect(x+4,y+h+2,w-4,5);
+  // seat cushions
+  ctx.fillStyle=color;
+  ctx.beginPath(); ctx.roundRect(x,y+10,w,h,4); ctx.fill();
+  ctx.fillStyle=lighten(color,12);
+  ctx.beginPath(); ctx.roundRect(x,y,w,14,5); ctx.fill();
+  // armrests
+  ctx.fillStyle=lighten(color,18);
+  ctx.beginPath(); ctx.roundRect(x-5,y+3,9,h+6,3); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(x+w-4,y+3,9,h+6,3); ctx.fill();
+  // cushion seams
+  ctx.strokeStyle='rgba(0,0,0,.12)'; ctx.lineWidth=1;
+  for(let s=1;s<3;s++){
+    ctx.beginPath(); ctx.moveTo(x+w/3*s,y+10); ctx.lineTo(x+w/3*s,y+10+h); ctx.stroke();
+  }
+}
+
+function lighten(hex,amt){
+  return '#'+hex.replace(/^#/,'').match(/../g)
+    .map(h=>Math.min(255,parseInt(h,16)+amt).toString(16).padStart(2,'0')).join('');
+}
+
+// — desk lamp
+function drawLamp(ctx, x, y, color) {
+  ctx.strokeStyle='#555'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,y-30); ctx.lineTo(x+12,y-28); ctx.stroke();
+  ctx.fillStyle=color+'cc';
+  ctx.beginPath(); ctx.ellipse(x+12,y-24,8,5,-0.4,0,Math.PI); ctx.fill();
+  const lg=ctx.createRadialGradient(x+12,y-22,0,x+12,y,20);
+  lg.addColorStop(0,color+'40'); lg.addColorStop(1,'transparent');
+  ctx.fillStyle=lg; ctx.fillRect(x-10,y-22,44,22);
+  // base
+  ctx.fillStyle='#444'; ctx.beginPath(); ctx.ellipse(x,y,5,2,0,0,Math.PI*2); ctx.fill();
+}
+
+// — floor 7: CEO – meeting table + shelves + plants
+function drawFloor7(ctx, W, H, theme) {
+  // large conference table
+  const tx=80, ty=H-55, tw=180, th=24;
+  ctx.fillStyle='rgba(0,0,0,.3)';
+  ctx.beginPath(); ctx.ellipse(tx+tw/2,ty+th+8,tw/2,8,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#6b3e1e';
+  ctx.beginPath(); ctx.roundRect(tx,ty,tw,th,6); ctx.fill();
+  ctx.fillStyle='#7a4820';
+  ctx.beginPath(); ctx.roundRect(tx,ty,tw,8,6); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.07)';
+  ctx.beginPath(); ctx.roundRect(tx,ty,tw,2,6); ctx.fill();
+  // chairs
+  for(let i=0;i<5;i++){
+    const cx2=tx+18+i*32;
+    ctx.fillStyle='#1a1a2a';
+    ctx.beginPath(); ctx.roundRect(cx2-8,ty-16,16,14,3); ctx.fill();
+    ctx.fillStyle='#252535';
+    ctx.beginPath(); ctx.roundRect(cx2-8,ty-3,16,6,2); ctx.fill();
+  }
+  // big screen on wall
+  ctx.fillStyle='#0a0a14'; ctx.strokeStyle='rgba(139,92,246,.5)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.roundRect(5,15,70,50,4); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#100830';
+  ctx.beginPath(); ctx.roundRect(8,18,64,44,2); ctx.fill();
+  ctx.fillStyle='#a78bfa'; ctx.font='bold 7px Inter'; ctx.textAlign='center';
+  ctx.fillText('ANALYTICS',40,35);
+  ctx.fillStyle='#4ade80'; ctx.font='bold 11px monospace'; ctx.fillText('↑23%',40,50);
+  // shelves
+  drawShelf(ctx, W-90, 8, 55, H-28, ['#7c3aed','#5b21b6','#4338ca','#6d28d9','#1d4ed8','#c2410c']);
+  // plants
+  drawPlant(ctx, W-125, H-20, 'lg');
+  drawPlant(ctx, W-148, H-18, 'md');
+  // chandelier (abstract)
+  ctx.strokeStyle='rgba(255,200,100,0.35)'; ctx.lineWidth=1;
+  for(let i=0;i<8;i++){
+    const a=i/8*Math.PI*2;
+    ctx.beginPath(); ctx.moveTo(W/2.2,8); ctx.lineTo(W/2.2+Math.cos(a)*18, 8+Math.sin(Math.abs(a))*12); ctx.stroke();
+  }
+  ctx.fillStyle='rgba(255,200,80,0.5)';
+  ctx.beginPath(); ctx.arc(W/2.2,8,4,0,Math.PI*2); ctx.fill();
+}
+
+// — generic offices (3F~6F 동일 오픈오피스 템플릿, 이미지 기반)
+function drawGenericOffice(ctx, W, H, theme, floorData) {
+  if(!floorData) return;
+  const count = floorData.emps.length;
+  const spacing = Math.min(82, (W-80)/(count+.3));
+  const sc = ['#06101e','#04080e']; // dark monitor screen
+  const items = ['coffee','plant','book','coffee','plant','book'];
+
+  // — 왼쪽 벽면 모니터 (부서별 콘텐츠) —
+  const wallDecor = {
+    '6': { bg:'#07090c', border:'rgba(251,191,36,.5)', title:'Q4 경영계획', lines:['예산 최적화 ▶ 진행중','팀 성과 리뷰 ▶ 82%','신규 채용 3명 확정'], color:'#fbbf24' },
+    '5': { bg:'#060e1a', border:'rgba(96,165,250,.5)', title:'YOUTUBE / BLOG', lines:['▶ 24,310 조회 / 1.2만 구독','쇼츠 3건 업로드 예정','블로그 인기글 5건'], color:'#60a5fa' },
+    '4': { bg:'#061208', border:'rgba(52,211,153,.5)', title:'CREATIVE BOARD', lines:['인스타 피드 12건 완료','소설 챕터 8 작업중','일러스트 시안 검토'], color:'#34d399' },
+    '3': { bg:'#0d0804', border:'rgba(251,146,60,.5)', title:'신규사업 피치', lines:['쿠팡 파트너스 ₩840K/월','네이버 광고 제안 검토중','B2B 계약 협의 중'], color:'#fb923c' },
+    '2': { bg:'#050810', border:'rgba(74,222,128,.5)', title:'REVENUE', lines:['월 수익 ₩3.2M 달성','광고 수익 전월比 +23%','목표달성률 87%'], color:'#4ade80' },
+  };
+  const wd = wallDecor[floorData.id] || wallDecor['3'];
+
+  // 왼쪽 벽 모니터 패널
+  ctx.fillStyle=wd.bg; ctx.strokeStyle=wd.border; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.roundRect(5,12,76,H-26,3); ctx.fill(); ctx.stroke();
+  // 패널 상단 헤더
+  ctx.fillStyle=wd.color; ctx.font='bold 6px monospace'; ctx.textAlign='center';
+  ctx.fillText(wd.title,43,24);
+  ctx.strokeStyle=wd.color+'44'; ctx.lineWidth=.5;
+  ctx.beginPath(); ctx.moveTo(10,28); ctx.lineTo(76,28); ctx.stroke();
+  // 내용
+  ctx.font='5.5px "Noto Sans KR"'; ctx.textAlign='left';
+  wd.lines.forEach((line,i)=>{
+    ctx.fillStyle = i===0 ? wd.color+'dd' : 'rgba(200,200,200,.55)';
+    ctx.fillText(line,10,38+i*12);
+  });
+  // 깜빡이는 상태 점
+  ctx.fillStyle=wd.color;
+  ctx.beginPath(); ctx.arc(69,17,2.5,0,Math.PI*2); ctx.fill();
+
+  // — 책상들 (이미지처럼 가지런히 배치) —
+  for(let i=0;i<count;i++){
+    const dx = 95 + i * spacing;
+    drawWorkDesk(ctx, dx, H-38, theme.accent, sc, items[i%items.length]);
+  }
+
+  // — 오른쪽 식물 (이미지처럼 큰 화분) —
+  drawPlant(ctx, W-96, H-20, 'lg');
+  if(count > 3) drawPlant(ctx, W-122, H-18, 'md');
+
+  // — 천장 조명 추가 (이미지의 플로어램프 스타일) —
+  // 플로어 스탠드 램프
+  const lampX = W - 148;
+  if(lampX > 200) drawLamp(ctx, lampX, H-18, '#ffe8a0');
+}
+
+// — floor 1: lobby
+function drawFloor1(ctx, W, H, theme) {
+  // reception desk (curved)
+  const rx=30, ry=H-50, rw=100, rh=30;
+  ctx.fillStyle='rgba(0,0,0,.25)';
+  ctx.beginPath(); ctx.ellipse(rx+rw/2,ry+rh+6,rw/2,7,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#4a2e14';
+  ctx.beginPath(); ctx.roundRect(rx,ry,rw,rh,12); ctx.fill();
+  ctx.fillStyle='#6b3e1e';
+  ctx.beginPath(); ctx.roundRect(rx,ry,rw,rh*.4,12); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.07)';
+  ctx.beginPath(); ctx.roundRect(rx,ry,rw,2,12); ctx.fill();
+  // Relaxing Mind neon sign
+  ctx.save();
+  ctx.shadowColor='rgba(167,139,250,0.9)'; ctx.shadowBlur=16;
+  ctx.fillStyle='rgba(196,181,253,0.92)';
+  ctx.font='bold 14px "Noto Sans KR"'; ctx.textAlign='center';
+  ctx.fillText('Relaxing Mind', rx+rw/2, ry-10);
+  ctx.restore();
+  // logo circle
+  ctx.save();
+  ctx.shadowColor='rgba(139,92,246,0.8)'; ctx.shadowBlur=12;
+  ctx.strokeStyle='rgba(139,92,246,0.9)'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.arc(rx+rw/2,ry-32,10,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='rgba(139,92,246,0.6)';
+  ctx.beginPath(); ctx.arc(rx+rw/2,ry-32,4,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+  // monitor on desk
+  ctx.fillStyle='#0a0a14'; ctx.fillRect(rx+rw-22,ry-15,18,12); ctx.fillRect(rx+rw-16,ry-3,6,3);
+  ctx.fillStyle='#060818'; ctx.fillRect(rx+rw-20,ry-13,14,9);
+  // sofas
+  drawSofa(ctx, 160, H-42, '#2a3030', 55);
+  drawSofa(ctx, 230, H-42, '#2a2838', 55);
+  // coffee table between sofas
+  ctx.fillStyle='#3a2810'; ctx.beginPath(); ctx.roundRect(185,H-30,30,12,4); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.04)'; ctx.beginPath(); ctx.roundRect(185,H-30,30,3,4); ctx.fill();
+  // large plants
+  drawPlant(ctx, W-110, H-20, 'lg');
+  drawPlant(ctx, W-140, H-18, 'lg');
+  drawPlant(ctx, W-88,  H-20, 'md');
+  // lamp
+  drawLamp(ctx, 155, H-20, '#fbbf24');
+  // welcome mat
+  ctx.fillStyle='rgba(139,92,246,.18)'; ctx.strokeStyle='rgba(139,92,246,.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.roundRect(W/2-50,H-12,100,9,3); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='rgba(196,181,253,.45)'; ctx.font='5px Inter'; ctx.textAlign='center';
+  ctx.fillText('WELCOME', W/2, H-6);
+}
+
+// — B1: 멀티모니터 배열 + 서버룸 (이미지 4번째 층 스타일)
+function drawFloorB1(ctx, W, H, theme) {
+  // 바닥 경고 줄무늬
+  for(let sx=0;sx<W;sx+=20){
+    ctx.fillStyle=sx%40===0?'rgba(180,20,20,.1)':'rgba(180,140,20,.07)';
+    ctx.fillRect(sx,H-14,19,14);
+  }
+
+  // — 왼쪽 대형 멀티모니터 월 (이미지 참조) —
+  // 메인 모니터 벽 프레임
+  ctx.fillStyle='#060208'; ctx.strokeStyle='rgba(248,113,113,.35)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.roundRect(5,8,W*.52,H-20,3); ctx.fill(); ctx.stroke();
+
+  // 2×3 모니터 그리드 (이미지의 멀티모니터 배열)
+  const monitors=[
+    {x:8,  y:10, w:50, h:36, label:'CCTV-1F', color:'rgba(200,30,30,.7)',   content:'1F 로비'},
+    {x:62, y:10, w:50, h:36, label:'CCTV-B1', color:'rgba(200,30,30,.7)',   content:'서버실'},
+    {x:116,y:10, w:50, h:36, label:'SYSTEM',  color:'rgba(100,180,255,.7)', content:'CPU 42%'},
+    {x:8,  y:50, w:50, h:36, label:'NETWORK', color:'rgba(50,200,120,.7)',  content:'↑124MB/s'},
+    {x:62, y:50, w:50, h:36, label:'ANALYSIS',color:'rgba(251,191,36,.7)', content:'AI 처리중'},
+    {x:116,y:50, w:50, h:36, label:'ALERT',   color:'rgba(248,113,113,.7)',content:'정상운영'},
+  ];
+
+  monitors.forEach(m=>{
+    // 모니터 베젤
+    ctx.fillStyle='#0a0a12';
+    ctx.beginPath(); ctx.roundRect(m.x,m.y,m.w,m.h,2); ctx.fill();
+    // 화면
+    ctx.fillStyle='#050308';
+    ctx.beginPath(); ctx.roundRect(m.x+2,m.y+2,m.w-4,m.h-4,1); ctx.fill();
+    // 스캔라인
+    ctx.fillStyle='rgba(255,255,255,.015)';
+    for(let sl=m.y+4;sl<m.y+m.h-4;sl+=3) ctx.fillRect(m.x+2,sl,m.w-4,1);
+    // 라벨
+    ctx.fillStyle=m.color; ctx.font='4.5px monospace'; ctx.textAlign='left';
+    ctx.fillText(m.label, m.x+4, m.y+10);
+    // 콘텐츠
+    ctx.fillStyle='rgba(200,200,180,.6)'; ctx.font='5px monospace';
+    ctx.fillText(m.content, m.x+4, m.y+24);
+    // 상태 LED
+    ctx.fillStyle=m.label==='ALERT'?'rgba(50,200,100,.9)':'rgba(50,200,100,.7)';
+    ctx.beginPath(); ctx.arc(m.x+m.w-5,m.y+5,2,0,Math.PI*2); ctx.fill();
+  });
+
+  // — 서버 랙 (오른쪽) —
+  for(let ri=0;ri<4;ri++){
+    const rx = W*.55 + ri*32;
+    if(rx+22 > W-10) break;
+    ctx.fillStyle='#080810'; ctx.strokeStyle='rgba(248,113,113,.18)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.roundRect(rx,6,24,H-18,2); ctx.fill(); ctx.stroke();
+    // 랙 유닛들
+    for(let u=0;u<5;u++){
+      ctx.fillStyle=u%2===0?'#0d0d1a':'#0a0a14';
+      ctx.fillRect(rx+2,9+u*22,20,20);
+      // 베젤 라인
+      ctx.strokeStyle='rgba(255,255,255,.04)'; ctx.lineWidth=.5;
+      ctx.strokeRect(rx+2,9+u*22,20,20);
+      // LED들
+      const ledColors=['rgba(50,220,100,.8)','rgba(255,50,50,.8)','rgba(50,150,255,.7)'];
+      for(let l=0;l<3;l++){
+        ctx.fillStyle=ledColors[l];
+        ctx.beginPath(); ctx.arc(rx+5+l*5,9+u*22+16,1.5,0,Math.PI*2); ctx.fill();
+      }
+    }
+    // 랙 상단 로고
+    ctx.fillStyle='rgba(248,113,113,.4)'; ctx.font='4px monospace'; ctx.textAlign='center';
+    ctx.fillText('SRV'+(ri+1), rx+12, 7);
+  }
+
+  // — 운영 데스크 —
+  drawWorkDesk(ctx, Math.floor(W*.56), H-38, theme.accent, ['#1a0606','#0c0404'], 'coffee');
+  if(W > 400) drawWorkDesk(ctx, Math.floor(W*.68), H-38, theme.accent, ['#1a0606','#0c0404'], 'book');
+}
+
+// ══════════════════════════════════════
+// CHARACTERS (seated by default, event-based movement)
+// ══════════════════════════════════════
+const chars = [];
+
+// Event types for movement
+const EVENTS = ['toilet','dept_visit','stretch'];
+const EVENT_INTERVALS = { toilet:5400, dept_visit:7200, stretch:4800 };
+const TALK_PHRASES = ['아이디어!','기획 중','검토 완료','수익 분석','회의 중','승인 요청','보고서 작성','데이터 확인','전략 수립','완료!'];
+
+function initChars() {
+  FLOORS_DATA.forEach(fl => {
+    const canvasEl = document.getElementById('c'+fl.id);
+    if(!canvasEl) return;
+    const parent = canvasEl.parentElement;
+    const W = parent.offsetWidth - 54 - 290;
+    const H = FH;
+    const dpr = window.devicePixelRatio || 1;
+    canvasEl.width  = W * dpr;
+    canvasEl.height = H * dpr;
+    canvasEl.style.left   = '54px';
+    canvasEl.style.right  = '290px';
+    canvasEl.style.width  = W+'px';
+    canvasEl.style.height = H+'px';
+    // store dpr on element for draw calls
+    canvasEl._dpr = dpr;
+
+    const spacing = Math.min(85, (W - 60) / (fl.emps.length + .3));
+
+    fl.emps.forEach((emp, i) => {
+      // fixed desk position
+      const deskX = 25 + i * spacing + 21; // center of desk
+      const deskY = H - 55;               // chair seat area (cy for seated person)
+      chars.push({
+        canvas: canvasEl,
+        // identity
+        name: emp.name, role: emp.role,
+        // colors / anime traits (full pass-through)
+        color: emp.color || fl.color,
+        skin: emp.skin, shirt: emp.shirt,
+        hairColor: emp.hairColor || '#1a1a2e',
+        hairStyle: emp.hairStyle || 'swept',
+        eyeColor: emp.eyeColor || '#333',
+        irisColor: emp.irisColor || '#555',
+        faceW: emp.faceW || 11,
+        faceH: emp.faceH || 12,
+        eyeSize: emp.eyeSize || [3.5,4],
+        eyeSpacing: emp.eyeSpacing || 3.8,
+        browStyle: emp.browStyle || 'strong',
+        mouthStyle: emp.mouthStyle || 'slight_smile',
+        blushColor: emp.blushColor || 'rgba(220,170,170,.2)',
+        glasses: emp.glasses || false,
+        accessory: emp.accessory || null,
+        outfit: emp.outfit || null,
+        outfitColor: emp.outfitColor || null,
+        outfitAccent: emp.outfitAccent || null,
+        frameOffset: emp.frameOffset || 0,
+        // positions
+        deskX, deskY,
+        x: deskX, y: deskY,
+        // state: 'seated' | 'walking' | 'arrived'
+        state: 'seated',
+        stateTimer: Math.floor(Math.random()*600)+300,
+        frame: 0,
+        facing: 1,
+        // event
+        event: null, eventTimer: 0,
+        nextEventTimer: Math.floor(Math.random()*3600)+2400,
+        // walk target
+        targetX: deskX, targetY: deskY,
+        // animation
+        walkPhase: Math.random()*Math.PI*2,
+        // typing
+        typePhase: Math.random()*Math.PI*2,
+        // emotion
+        emotion: null, emotionTimer: 0,
+        // talk bubble
+        talking: false, talkTimer: 0, bubbleText: '',
+        // "gone" state (left floor)
+        gone: false,
+        // offscreen reason label
+        eventLabel: '',
+      });
+    });
+  });
+}
+
+// ── ANIME CHARACTER HELPERS ──
+function drawEyebrows(ctx, x, headY, c, browStyle){
+  // Female styles use softened brow color; male styles use hair color
+  const femaleStyles = ['arched','gentle','thin','round'];
+  const isFemale = femaleStyles.includes(browStyle);
+  const hc = isFemale ? shadeColor(c.hairColor, 20) : c.hairColor;
+  ctx.strokeStyle = isFemale ? hc+'cc' : hc;
+  ctx.lineCap='round';
+  if(browStyle==='strong'){
+    ctx.lineWidth=2.2;
+    ctx.beginPath(); ctx.moveTo(x-7,headY-7); ctx.lineTo(x-0.5,headY-7.5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+0.5,headY-7.5); ctx.lineTo(x+7,headY-7); ctx.stroke();
+  } else if(browStyle==='arched'){
+    ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(x-6.5,headY-6.5); ctx.quadraticCurveTo(x-3,headY-9.5,x-.5,headY-7.5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+.5,headY-7.5); ctx.quadraticCurveTo(x+3,headY-9.5,x+6.5,headY-6.5); ctx.stroke();
+  } else if(browStyle==='round'){
+    ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(x-6,headY-7); ctx.quadraticCurveTo(x-3,headY-9,x-.5,headY-7.5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+.5,headY-7.5); ctx.quadraticCurveTo(x+3,headY-9,x+6,headY-7); ctx.stroke();
+  } else if(browStyle==='gentle'){
+    ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(x-5.5,headY-7); ctx.quadraticCurveTo(x-2,headY-8.8,x-.5,headY-7.2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+.5,headY-7.2); ctx.quadraticCurveTo(x+2,headY-8.8,x+5.5,headY-7); ctx.stroke();
+  } else if(browStyle==='bold'){
+    ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(x-7,headY-7.5); ctx.lineTo(x-.5,headY-7); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+.5,headY-7); ctx.lineTo(x+7,headY-7.5); ctx.stroke();
+  } else if(browStyle==='thin'){
+    ctx.lineWidth=0.9;
+    ctx.beginPath(); ctx.moveTo(x-5.5,headY-6.5); ctx.quadraticCurveTo(x-2,headY-9.2,x-.5,headY-7); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+.5,headY-7); ctx.quadraticCurveTo(x+2,headY-9.2,x+5.5,headY-6.5); ctx.stroke();
+  }
+}
+
+function drawMouth(ctx, x, headY, style){
+  ctx.lineCap='round';
+  if(style==='calm'){
+    // male calm — simple line
+    ctx.strokeStyle='rgba(150,85,75,.55)'; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(x-3,headY+7); ctx.lineTo(x+3,headY+7); ctx.stroke();
+  } else if(style==='smile'){
+    // female smile — lip fill + arc
+    ctx.fillStyle='rgba(220,100,110,.28)';
+    ctx.beginPath(); ctx.ellipse(x,headY+7,3.2,1.6,0,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(190,80,100,.75)'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.arc(x,headY+5.5,3.5,.18,Math.PI-.18); ctx.stroke();
+    // cupid's bow hint
+    ctx.strokeStyle='rgba(190,80,100,.4)'; ctx.lineWidth=.8;
+    ctx.beginPath(); ctx.moveTo(x-2.5,headY+5.5); ctx.quadraticCurveTo(x,headY+4.5,x+2.5,headY+5.5); ctx.stroke();
+  } else if(style==='open_smile'){
+    ctx.fillStyle='rgba(220,100,110,.25)'; ctx.beginPath(); ctx.ellipse(x,headY+7,3.2,1.8,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#2a1020'; ctx.beginPath(); ctx.ellipse(x,headY+7.2,2.5,1.6,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,150,150,.35)'; ctx.beginPath(); ctx.ellipse(x,headY+7.8,1.8,1,0,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(190,80,100,.75)'; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.arc(x,headY+5,3,.12,Math.PI-.12); ctx.stroke();
+    ctx.strokeStyle='rgba(190,80,100,.35)'; ctx.lineWidth=.8;
+    ctx.beginPath(); ctx.moveTo(x-2.2,headY+5.1); ctx.quadraticCurveTo(x,headY+4.2,x+2.2,headY+5.1); ctx.stroke();
+  } else if(style==='slight_smile'){
+    ctx.fillStyle='rgba(210,100,110,.2)'; ctx.beginPath(); ctx.ellipse(x,headY+7,2.5,1.3,0,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(180,80,100,.7)'; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.arc(x,headY+6,2.5,.25,Math.PI-.25); ctx.stroke();
+    ctx.strokeStyle='rgba(180,80,100,.3)'; ctx.lineWidth=.8;
+    ctx.beginPath(); ctx.moveTo(x-2,headY+6.1); ctx.quadraticCurveTo(x,headY+5.3,x+2,headY+6.1); ctx.stroke();
+  } else if(style==='neutral'){
+    ctx.strokeStyle='rgba(140,90,70,.5)'; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(x-2.5,headY+7.5); ctx.quadraticCurveTo(x,headY+8,x+2.5,headY+7.5); ctx.stroke();
+  } else if(style==='pout'){
+    // glossy pout lips
+    ctx.fillStyle='rgba(225,85,120,.35)'; ctx.beginPath(); ctx.ellipse(x,headY+6.5,3.5,2,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(240,100,140,.2)'; ctx.beginPath(); ctx.ellipse(x,headY+5.8,2.5,1,0,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(210,70,120,.85)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(x,headY+5,3.5,-.1,Math.PI+.1); ctx.stroke();
+    ctx.strokeStyle='rgba(210,70,120,.4)'; ctx.lineWidth=.8;
+    ctx.beginPath(); ctx.moveTo(x-2.5,headY+5.2); ctx.quadraticCurveTo(x,headY+4.2,x+2.5,headY+5.2); ctx.stroke();
+    // gloss
+    ctx.fillStyle='rgba(255,200,210,.4)'; ctx.beginPath(); ctx.ellipse(x-.5,headY+5.8,1.2,.6,-.3,0,Math.PI*2); ctx.fill();
+  } else {
+    ctx.strokeStyle='rgba(165,85,90,.6)'; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.arc(x,headY+5.5,3.5,.15,Math.PI-.15); ctx.stroke();
+  }
+}
+
+function drawHair(ctx, x, headY, c, seated){
+  const hc = c.hairColor, hs = c.hairStyle, hw = c.faceW;
+  ctx.fillStyle = hc;
+  if(hs==='swept'){
+    ctx.beginPath(); ctx.ellipse(x,headY-7,hw+0.5,8,0,Math.PI,0); ctx.fill();
+    ctx.fillRect(x-hw-0.5,headY-7,hw*2+1,6);
+    ctx.beginPath(); ctx.roundRect(x-hw-2,headY-5,6,12,3); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(x+hw-4,headY-5,6,12,3); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x-hw-1,headY-12); ctx.quadraticCurveTo(x+3,headY-16,x+hw,headY-7); ctx.quadraticCurveTo(x-2,headY-4,x-hw-1,headY-12); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.15)';
+    ctx.beginPath(); ctx.ellipse(x+2,headY-11,5,3,-.2,0,Math.PI*2); ctx.fill();
+  } else if(hs==='long_wavy'){
+    ctx.beginPath(); ctx.ellipse(x,headY-7,hw+0.5,8,0,Math.PI,0); ctx.fill();
+    ctx.fillRect(x-hw-0.5,headY-7,hw*2+1,6);
+    ctx.beginPath(); ctx.moveTo(x-hw-2,headY-4); ctx.quadraticCurveTo(x-hw-5,headY+8,x-hw-3,headY+18); ctx.quadraticCurveTo(x-hw-6,headY+28,x-hw-2,headY+36); ctx.lineTo(x-hw+4,headY+36); ctx.quadraticCurveTo(x-hw+1,headY+28,x-hw+4,headY+18); ctx.quadraticCurveTo(x-hw+2,headY+8,x-hw+4,headY-4); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x+hw+2,headY-4); ctx.quadraticCurveTo(x+hw+5,headY+8,x+hw+3,headY+18); ctx.quadraticCurveTo(x+hw+6,headY+28,x+hw+2,headY+36); ctx.lineTo(x+hw-4,headY+36); ctx.quadraticCurveTo(x+hw-1,headY+28,x+hw-4,headY+18); ctx.quadraticCurveTo(x+hw-2,headY+8,x+hw-4,headY-4); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(x-4,headY-7,10,32,5); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.12)'; ctx.beginPath(); ctx.ellipse(x-1,headY-10,5,3,-.3,0,Math.PI*2); ctx.fill();
+  } else if(hs==='twin_tails'){
+    ctx.beginPath(); ctx.ellipse(x,headY-7,hw+0.5,8,0,Math.PI,0); ctx.fill();
+    ctx.fillRect(x-hw-0.5,headY-7,hw*2+1,6);
+    ctx.beginPath(); ctx.roundRect(x-hw-3,headY-3,6,28,5); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(x+hw-3,headY-3,6,28,5); ctx.fill();
+    ctx.beginPath(); ctx.arc(x-hw,headY+25,4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+hw,headY+25,4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x-hw,headY-13); ctx.quadraticCurveTo(x,headY-16,x+hw,headY-13); ctx.lineTo(x+hw-2,headY-6); ctx.lineTo(x-hw+2,headY-6); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.12)'; ctx.beginPath(); ctx.ellipse(x,headY-11,5,2.5,0,0,Math.PI*2); ctx.fill();
+  } else if(hs==='bun'){
+    ctx.beginPath(); ctx.ellipse(x,headY-7,hw+0.5,8,0,Math.PI,0); ctx.fill();
+    ctx.fillRect(x-hw-0.5,headY-7,hw*2+1,6);
+    ctx.beginPath(); ctx.arc(x+4,headY-17,7,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=shadeColor(hc,40); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(x-1,headY-20); ctx.lineTo(x+9,headY-14); ctx.stroke();
+    ctx.beginPath(); ctx.roundRect(x-hw-2,headY-5,5,14,4); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(x+hw-3,headY-5,5,14,4); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.12)'; ctx.beginPath(); ctx.arc(x+2,headY-19,3,0,Math.PI*2); ctx.fill();
+  } else if(hs==='messy'){
+    ctx.beginPath(); ctx.ellipse(x,headY-7,hw+1,8.5,0,Math.PI,0); ctx.fill();
+    ctx.fillRect(x-hw-1,headY-7,hw*2+2,6);
+    ctx.beginPath(); ctx.roundRect(x-hw-3,headY-5,7,10,3); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(x+hw-4,headY-5,7,10,3); ctx.fill();
+    for(let s=0;s<5;s++){ const sx=x-8+s*4; ctx.beginPath(); ctx.moveTo(sx,headY-12); ctx.lineTo(sx-2,headY-18+s%2*3); ctx.lineTo(sx+2,headY-12); ctx.fill(); }
+    ctx.fillStyle='rgba(255,255,255,.1)'; ctx.beginPath(); ctx.ellipse(x,headY-13,4,2.5,-.1,0,Math.PI*2); ctx.fill();
+  } else if(hs==='side_braid'){
+    ctx.beginPath(); ctx.ellipse(x,headY-7,hw+0.5,8,0,Math.PI,0); ctx.fill();
+    ctx.fillRect(x-hw-0.5,headY-7,hw*2+1,7);
+    ctx.beginPath(); ctx.moveTo(x-hw-1,headY-4); ctx.bezierCurveTo(x-hw-6,headY+6,x-hw-4,headY+16,x-hw-2,headY+26); ctx.bezierCurveTo(x-hw,headY+34,x-hw+2,headY+38,x-hw+1,headY+42); ctx.lineTo(x-hw+6,headY+42); ctx.bezierCurveTo(x-hw+5,headY+36,x-hw+4,headY+26,x-hw+5,headY+16); ctx.bezierCurveTo(x-hw+3,headY+8,x-hw+4,headY-2,x-hw+4,headY-4); ctx.fill();
+    const bx=x+hw-2, by=headY+2;
+    for(let i=0;i<7;i++){ const seg=i*5,ox=i%2===0?-2:2; ctx.fillStyle=i%2===0?hc:shadeColor(hc,40); ctx.beginPath(); ctx.ellipse(bx+ox+i*0.5,by+seg,4,3.5,.3,0,Math.PI*2); ctx.fill(); }
+    ctx.fillStyle='#f472b6'; ctx.beginPath(); ctx.ellipse(bx+3.5,by+36,3,2,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=hc;
+    ctx.beginPath(); ctx.moveTo(x-hw,headY-14); ctx.quadraticCurveTo(x+4,headY-17,x+hw+1,headY-10); ctx.quadraticCurveTo(x+hw-2,headY-4,x+hw-6,headY-5); ctx.quadraticCurveTo(x,headY-10,x-hw+2,headY-9); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.18)'; ctx.beginPath(); ctx.ellipse(x+2,headY-12,6,3,-.2,0,Math.PI*2); ctx.fill();
+  } else if(hs==='half_up'){
+    ctx.beginPath(); ctx.ellipse(x,headY-7,hw+0.5,8,0,Math.PI,0); ctx.fill();
+    ctx.fillRect(x-hw-0.5,headY-7,hw*2+1,6);
+    ctx.beginPath(); ctx.roundRect(x-hw-3,headY-4,8,36,6); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(x+hw-5,headY-4,8,36,6); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(x-5,headY-5,12,36,6); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x,headY-14,7,5,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#fbbf24';
+    ctx.beginPath(); ctx.ellipse(x-7,headY-14,4,3,.4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x+7,headY-14,4,3,-.4,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=shadeColor(hc,20); ctx.beginPath(); ctx.arc(x,headY-14,2.5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=hc;
+    ctx.beginPath(); ctx.moveTo(x-hw,headY-13); ctx.quadraticCurveTo(x-5,headY-16,x-1,headY-10); ctx.quadraticCurveTo(x+5,headY-16,x+hw,headY-13); ctx.quadraticCurveTo(x+hw-3,headY-7,x+2,headY-9); ctx.quadraticCurveTo(x-4,headY-9,x-hw+3,headY-7); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.16)'; ctx.beginPath(); ctx.ellipse(x-1,headY-11,5,2.5,-.15,0,Math.PI*2); ctx.fill();
+  } else if(hs==='loose_curls'){
+    ctx.beginPath(); ctx.ellipse(x,headY-7,hw+0.5,9,0,Math.PI,0); ctx.fill();
+    ctx.fillRect(x-hw-0.5,headY-7,hw*2+1,6);
+    const curlPositions=[[-hw-3,0],[-hw-5,8],[-hw-4,17],[-hw-3,26],[-hw-1,34],[hw+3,0],[hw+5,8],[hw+4,17],[hw+3,26],[hw+1,34],[-3,-2],[3,-2],[0,30],[0,38]];
+    curlPositions.forEach(([cx2,cy2],i)=>{ ctx.fillStyle=i%2===0?hc:shadeColor(hc,25); ctx.beginPath(); ctx.arc(x+cx2,headY+cy2,5.5,0,Math.PI*2); ctx.fill(); });
+    ctx.fillStyle='rgba(255,255,255,.14)';
+    [[-hw-2,1],[-hw-4,9],[hw+2,1],[hw+4,9]].forEach(([cx2,cy2])=>{ ctx.beginPath(); ctx.arc(x+cx2,headY+cy2,2,0,Math.PI*2); ctx.fill(); });
+    ctx.fillStyle=hc;
+    ctx.beginPath(); ctx.arc(x-4,headY-10,5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+3,headY-11,4.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x-9,headY-7,4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+9,headY-7,4,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.16)'; ctx.beginPath(); ctx.arc(x-5,headY-12,2,0,Math.PI*2); ctx.fill();
+  } else {
+    // fallback: swept
+    ctx.beginPath(); ctx.ellipse(x,headY-7,hw+0.5,8,0,Math.PI,0); ctx.fill();
+    ctx.fillRect(x-hw-0.5,headY-7,hw*2+1,6);
+  }
+}
+
+function drawOutfit(ctx, x, bodyY, c){
+  if(!c.outfit) return;
+  const oc=c.outfitColor, oa=c.outfitAccent;
+  if(c.outfit==='blazer'){
+    ctx.fillStyle=shadeColor(oc,-20);
+    ctx.beginPath(); ctx.moveTo(x-9,bodyY); ctx.lineTo(x-4,bodyY+2); ctx.lineTo(x,bodyY+8); ctx.lineTo(x-9,bodyY+22); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x+9,bodyY); ctx.lineTo(x+4,bodyY+2); ctx.lineTo(x,bodyY+8); ctx.lineTo(x+9,bodyY+22); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.85)'; ctx.beginPath(); ctx.moveTo(x-3,bodyY+1); ctx.lineTo(x+3,bodyY+1); ctx.lineTo(x,bodyY+7); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.9)'; ctx.beginPath(); ctx.roundRect(x+4,bodyY+4,5,4,1); ctx.fill();
+    ctx.fillStyle=oa; ctx.beginPath(); ctx.roundRect(x+4.5,bodyY+4,4,2,1); ctx.fill();
+    [8,13,18].forEach(by2=>{ ctx.fillStyle='rgba(255,255,255,.5)'; ctx.beginPath(); ctx.arc(x,bodyY+by2,1,0,Math.PI*2); ctx.fill(); });
+  } else if(c.outfit==='hoodie'){
+    ctx.fillStyle=shadeColor(oc,15); ctx.beginPath(); ctx.roundRect(x-7,bodyY,14,6,3); ctx.fill();
+    ctx.fillStyle=shadeColor(oc,-20); ctx.beginPath(); ctx.roundRect(x-7,bodyY+13,14,8,4); ctx.fill();
+    ctx.strokeStyle=oa; ctx.lineWidth=2; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(x-9,bodyY+5); ctx.lineTo(x-9,bodyY+15); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+9,bodyY+5); ctx.lineTo(x+9,bodyY+15); ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,.4)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x-3,bodyY+3); ctx.lineTo(x-3,bodyY+8); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+3,bodyY+3); ctx.lineTo(x+3,bodyY+8); ctx.stroke();
+  } else if(c.outfit==='cardigan'){
+    ctx.fillStyle=shadeColor(oc,20);
+    ctx.beginPath(); ctx.roundRect(x-9,bodyY,5,22,3); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(x+4,bodyY,5,22,3); ctx.fill();
+    ctx.fillStyle='rgba(255,240,200,.9)'; ctx.beginPath(); ctx.roundRect(x-4,bodyY,8,22,3); ctx.fill();
+    [4,10,16].forEach(by2=>{ ctx.fillStyle=oa; ctx.beginPath(); ctx.arc(x-7,bodyY+by2,1.2,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(x+7,bodyY+by2,1.2,0,Math.PI*2); ctx.fill(); });
+    ctx.strokeStyle='rgba(255,240,200,.7)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x-4,bodyY+1); ctx.lineTo(x,bodyY+6); ctx.lineTo(x+4,bodyY+1); ctx.stroke();
+  } else if(c.outfit==='dress'){
+    const dGrad=ctx.createLinearGradient(x-12,bodyY,x+12,bodyY+28);
+    dGrad.addColorStop(0,shadeColor(oc,20)); dGrad.addColorStop(1,oc);
+    ctx.fillStyle=dGrad;
+    ctx.beginPath(); ctx.moveTo(x-9,bodyY); ctx.lineTo(x+9,bodyY); ctx.lineTo(x+13,bodyY+28); ctx.lineTo(x-13,bodyY+28); ctx.closePath(); ctx.fill();
+    ctx.fillStyle=shadeColor(oc,-30); ctx.beginPath(); ctx.roundRect(x-9,bodyY+14,18,4,2); ctx.fill();
+    ctx.fillStyle=oa; ctx.beginPath(); ctx.arc(x,bodyY+16,2.5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.15)'; ctx.beginPath(); ctx.ellipse(x,bodyY+2,6,3,0,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=shadeColor(oc,30); ctx.lineWidth=1.5; ctx.lineCap='round';
+    for(let r=0;r<6;r++){ const rx=x-12+r*5; ctx.beginPath(); ctx.arc(rx,bodyY+27,2.5,.1,Math.PI-.1); ctx.stroke(); }
+  }
+}
+
+function drawAccessory(ctx, x, headY, bodyY, c){
+  if(c.accessory==='glasses'||c.glasses){
+    ctx.strokeStyle='rgba(180,180,180,.8)'; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.roundRect(x-8,headY-3,7,5,1.5); ctx.stroke();
+    ctx.beginPath(); ctx.roundRect(x+1,headY-3,7,5,1.5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x-1,headY-.5); ctx.lineTo(x+1,headY-.5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x-8,headY-.5); ctx.lineTo(x-11,headY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+8,headY-.5); ctx.lineTo(x+11,headY); ctx.stroke();
+  } else if(c.accessory==='tie'){
+    ctx.fillStyle='#7c3aed';
+    ctx.beginPath(); ctx.moveTo(x-2,bodyY+2); ctx.lineTo(x+2,bodyY+2); ctx.lineTo(x+3,bodyY+10); ctx.lineTo(x,bodyY+13); ctx.lineTo(x-3,bodyY+10); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#5b21b6'; ctx.beginPath(); ctx.moveTo(x-1,bodyY+8); ctx.lineTo(x+1,bodyY+8); ctx.lineTo(x,bodyY+13); ctx.closePath(); ctx.fill();
+  } else if(c.accessory==='scarf'){
+    ctx.fillStyle='#22d3ee'; ctx.beginPath(); ctx.roundRect(x-8,bodyY-2,16,7,3); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.15)'; ctx.beginPath(); ctx.roundRect(x-8,bodyY-2,16,2,3); ctx.fill();
+  } else if(c.accessory==='headband'){
+    ctx.strokeStyle='#059669'; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.beginPath(); ctx.arc(x,headY-8,c.faceW+1,Math.PI+.3,-.3); ctx.stroke();
+    ctx.fillStyle='#34d399';
+    for(let p=0;p<5;p++){ const pa=p/5*Math.PI*2; ctx.beginPath(); ctx.ellipse(x-c.faceW+Math.cos(pa)*3,headY-9+Math.sin(pa)*3,2,2,pa,0,Math.PI*2); ctx.fill(); }
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x-c.faceW,headY-9,1.5,0,Math.PI*2); ctx.fill();
+  } else if(c.accessory==='earring'){
+    ctx.fillStyle='#fbbf24';
+    ctx.beginPath(); ctx.arc(x-c.faceW-1,headY+3,2,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+c.faceW+1,headY+3,2,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#d97706'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x-c.faceW-1,headY+5); ctx.lineTo(x-c.faceW-1,headY+9); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+c.faceW+1,headY+5); ctx.lineTo(x+c.faceW+1,headY+9); ctx.stroke();
+    ctx.fillStyle='#fbbf24';
+    ctx.beginPath(); ctx.arc(x-c.faceW-1,headY+10,1.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x+c.faceW+1,headY+10,1.5,0,Math.PI*2); ctx.fill();
+  } else if(c.accessory==='headphones'){
+    ctx.strokeStyle='#3b82f6'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(x,headY-8,c.faceW+3,Math.PI+.2,-.2); ctx.stroke();
+    ctx.fillStyle='#1d4ed8';
+    ctx.beginPath(); ctx.roundRect(x-c.faceW-5,headY-5,6,9,3); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(x+c.faceW-1,headY-5,6,9,3); ctx.fill();
+  } else if(c.accessory==='bow'){
+    const bx=x+c.faceW-2, by=headY-14;
+    ctx.fillStyle='#ec4899';
+    ctx.beginPath(); ctx.ellipse(bx-5,by,5,3.5,.3,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(bx+5,by,5,3.5,-.3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#db2777'; ctx.beginPath(); ctx.arc(bx,by,2.5,0,Math.PI*2); ctx.fill();
+  }
+}
+
+function drawFaceBase(ctx, x, headY, c){
+  const fw=c.faceW, fh=c.faceH;
+  ctx.fillStyle=c.skin; ctx.fillRect(x-3.5,headY+fh-2,7,8);
+  ctx.fillStyle=c.skin; ctx.beginPath(); ctx.ellipse(x,headY,fw,fh,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(0,0,0,.05)'; ctx.beginPath(); ctx.ellipse(x+1.5,headY+3,fw-2,fh-3,.1,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle=c.blushColor;
+  ctx.beginPath(); ctx.ellipse(x-fw+3,headY+4,4.5,3,0,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(x+fw-3,headY+4,4.5,3,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle=c.skin;
+  ctx.beginPath(); ctx.ellipse(x-fw-1,headY+1,3,4,0,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(x+fw+1,headY+1,3,4,0,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='rgba(180,120,80,.25)'; ctx.lineWidth=.8;
+  ctx.beginPath(); ctx.ellipse(x-fw-1,headY+1,1.4,2.2,0,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(x+fw+1,headY+1,1.4,2.2,0,0,Math.PI*2); ctx.stroke();
+}
+
+function drawEyes(ctx, x, headY, c, blink){
+  const es=c.eyeSpacing, ew=c.eyeSize[0], eh=c.eyeSize[1];
+  if(blink){
+    ctx.strokeStyle='#1a1230'; ctx.lineWidth=1.5; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(x-es-ew*.8,headY-.5); ctx.lineTo(x-es+ew*.8,headY-.5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x+es-ew*.8,headY-.5); ctx.lineTo(x+es+ew*.8,headY-.5); ctx.stroke();
+    return;
+  }
+  [-es,es].forEach(ex=>{
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.ellipse(x+ex,headY-.5,ew,eh,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(100,80,180,.12)'; ctx.beginPath(); ctx.ellipse(x+ex,headY-1.5,ew,eh*.5,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=c.eyeColor; ctx.beginPath(); ctx.ellipse(x+ex+.3,headY-.2,ew*.62,eh*.7,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=c.irisColor; ctx.beginPath(); ctx.ellipse(x+ex+.3,headY-.2,ew*.45,eh*.52,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#070310'; ctx.beginPath(); ctx.ellipse(x+ex+.3,headY+.1,ew*.35,eh*.47,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.95)'; ctx.beginPath(); ctx.arc(x+ex+ew*.2,headY-eh*.22,ew*.26,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.5)'; ctx.beginPath(); ctx.arc(x+ex-ew*.2,headY+eh*.2,ew*.14,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#1a1230'; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.ellipse(x+ex,headY-eh*.38,ew,eh*.43,0,Math.PI,0); ctx.stroke();
+    ctx.strokeStyle='rgba(50,30,80,.4)'; ctx.lineWidth=.7;
+    ctx.beginPath(); ctx.ellipse(x+ex,headY+eh*.3,ew*.85,eh*.3,0,0,Math.PI); ctx.stroke();
+  });
+}
+
+// draw anime seated person
+function drawSeatedPerson(ctx, c) {
+  const S = 0.58; // character scale factor
+  const x = c.x;
+  const baseY = c.deskY;
+  const frame = c.frame;
+  const t = frame * .08;
+  const breathe = Math.sin(t*.5)*.8;
+  const typeOffset = Math.sin(c.typePhase)*2.5;
+  const blinkT = (frame + (c.frameOffset||0)) % 200;
+  const blink = blinkT > 192;
+
+  ctx.save();
+  // scale around character's foot position
+  ctx.translate(x, baseY + 20);
+  ctx.scale(S, S);
+  ctx.translate(-x, -(baseY + 20));
+  if(c.facing < 0){ ctx.translate(c.x*2, 0); ctx.scale(-1,1); }
+
+  // ── CHAIR ──
+  const cy = baseY;
+  ctx.fillStyle='rgba(0,0,0,.22)'; ctx.beginPath(); ctx.ellipse(x,cy+17,15,4,0,0,Math.PI*2); ctx.fill();
+  const seatGrad=ctx.createLinearGradient(x-13,cy+2,x+13,cy+10);
+  seatGrad.addColorStop(0,'#2a2a40'); seatGrad.addColorStop(1,'#1a1a30');
+  ctx.fillStyle=seatGrad; ctx.beginPath(); ctx.roundRect(x-13,cy+2,26,9,4); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.06)'; ctx.beginPath(); ctx.roundRect(x-13,cy+2,26,2,4); ctx.fill();
+  const brGrad=ctx.createLinearGradient(x-12,cy-20,x+12,cy+2);
+  brGrad.addColorStop(0,'#2e2e48'); brGrad.addColorStop(1,'#1e1e38');
+  ctx.fillStyle=brGrad; ctx.beginPath(); ctx.roundRect(x-12,cy-22,24,24,5); ctx.fill();
+  ctx.fillStyle='#252540';
+  ctx.beginPath(); ctx.roundRect(x-17,cy-6,6,12,3); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(x+11,cy-6,6,12,3); ctx.fill();
+  ctx.strokeStyle='#303050'; ctx.lineWidth=1.8;
+  [[-9,14],[9,14],[-7,19],[7,19]].forEach(([ox,oy])=>{
+    ctx.beginPath(); ctx.moveTo(x,cy+11); ctx.lineTo(x+ox,cy+oy); ctx.stroke();
+    ctx.fillStyle='#3a3a58'; ctx.beginPath(); ctx.arc(x+ox,cy+oy,2.2,0,Math.PI*2); ctx.fill();
+  });
+
+  // ── BODY ──
+  const bodyY = cy - 16 + breathe;
+  ctx.strokeStyle=c.shirt; ctx.lineWidth=7; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x-5,bodyY+20); ctx.lineTo(x-5,bodyY+32); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x+5,bodyY+20); ctx.lineTo(x+5,bodyY+32); ctx.stroke();
+  ctx.strokeStyle=shadeColor(c.shirt,-40); ctx.lineWidth=5;
+  ctx.beginPath(); ctx.moveTo(x-5,bodyY+32); ctx.lineTo(x-6,cy+10); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x+5,bodyY+32); ctx.lineTo(x+6,cy+10); ctx.stroke();
+  ctx.fillStyle='#18181e';
+  ctx.beginPath(); ctx.ellipse(x-6,cy+12,6,3,-.15,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(x+6,cy+12,6,3,.15,0,Math.PI*2); ctx.fill();
+  const tGrad=ctx.createLinearGradient(x-9,bodyY,x+9,bodyY+22);
+  tGrad.addColorStop(0,shadeColor(c.shirt,30)); tGrad.addColorStop(1,c.shirt);
+  ctx.fillStyle=tGrad; ctx.beginPath(); ctx.roundRect(x-9,bodyY,18,22,5); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.09)'; ctx.beginPath(); ctx.roundRect(x-9,bodyY,18,5,5); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.15)';
+  ctx.beginPath(); ctx.moveTo(x-4,bodyY+1); ctx.lineTo(x+4,bodyY+1); ctx.lineTo(x,bodyY+7); ctx.closePath(); ctx.fill();
+
+  drawOutfit(ctx, x, bodyY, c);
+  // body accessories (non-head)
+  if(c.accessory==='tie') drawAccessory(ctx, x, 0, bodyY, c);
+  else if(c.accessory==='scarf') drawAccessory(ctx, x, 0, bodyY, c);
+
+  // ── ARMS (typing) ──
+  ctx.strokeStyle=c.skin; ctx.lineWidth=5; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x-8,bodyY+6); ctx.lineTo(x-15,bodyY+14); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x+8,bodyY+6); ctx.lineTo(x+15,bodyY+14); ctx.stroke();
+  ctx.strokeStyle=c.skin; ctx.lineWidth=4;
+  ctx.beginPath(); ctx.moveTo(x-15,bodyY+14); ctx.lineTo(x-17,bodyY+20+typeOffset); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x+15,bodyY+14); ctx.lineTo(x+17,bodyY+20-typeOffset); ctx.stroke();
+  ctx.fillStyle=c.skin;
+  ctx.beginPath(); ctx.ellipse(x-17,bodyY+20+typeOffset,4,3,-.3,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(x+17,bodyY+20-typeOffset,4,3,.3,0,Math.PI*2); ctx.fill();
+
+  // ── HEAD ──
+  const headY = bodyY - 17 - c.faceH*.3;
+  drawFaceBase(ctx, x, headY, c);
+  drawHair(ctx, x, headY, c, true);
+  drawEyes(ctx, x, headY, c, blink);
+  drawEyebrows(ctx, x, headY, c, c.browStyle);
+  // nose — delicate for female styles, subtle point for male
+  const isFemBrow = ['arched','gentle','thin','round'].includes(c.browStyle);
+  if(isFemBrow){
+    ctx.fillStyle='rgba(160,100,80,.18)';
+    ctx.beginPath(); ctx.ellipse(x-1.2,headY+4.5,.6,.45,-.4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x+1.2,headY+4.5,.6,.45,.4,0,Math.PI*2); ctx.fill();
+  } else {
+    ctx.fillStyle='rgba(150,90,60,.32)'; ctx.beginPath(); ctx.arc(x,headY+4,.8,0,Math.PI*2); ctx.fill();
+  }
+  // talking mouth override
+  if(c.talking){
+    ctx.fillStyle='#2a1020'; ctx.beginPath(); ctx.ellipse(x,headY+7,3,2,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,140,140,.4)'; ctx.beginPath(); ctx.ellipse(x,headY+7.5,2.2,1.3,0,0,Math.PI*2); ctx.fill();
+  } else {
+    drawMouth(ctx, x, headY, c.mouthStyle);
+  }
+  // head accessories
+  if(c.glasses) drawAccessory(ctx, x, headY, bodyY, c);
+  if(['headband','headphones','bow','earring'].includes(c.accessory)) drawAccessory(ctx, x, headY, bodyY, c);
+
+  // ── NAME TAG ──
+  const nw=c.name.length*5.8+12;
+  const tagGrad=ctx.createLinearGradient(x-nw/2,cy+20,x+nw/2,cy+32);
+  tagGrad.addColorStop(0,c.color+'44'); tagGrad.addColorStop(1,c.color+'22');
+  ctx.fillStyle=tagGrad; ctx.beginPath(); ctx.roundRect(x-nw/2,cy+20,nw,13,4); ctx.fill();
+  ctx.strokeStyle=c.color+'55'; ctx.lineWidth=.8;
+  ctx.beginPath(); ctx.roundRect(x-nw/2,cy+20,nw,13,4); ctx.stroke();
+  ctx.fillStyle=c.color; ctx.font='bold 7px "Noto Sans KR"'; ctx.textAlign='center';
+  ctx.fillText(c.name,x,cy+30);
+
+  // ── TALK BUBBLE ──
+  if(c.talking && c.bubbleText){
+    const tw=c.bubbleText.length*5+14;
+    const bx=x-tw/2, by=headY-28;
+    ctx.fillStyle='rgba(255,255,255,.96)'; ctx.beginPath(); ctx.roundRect(bx,by,tw,16,5); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x-4,by+16); ctx.lineTo(x+4,by+16); ctx.lineTo(x,by+22); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#1a1030'; ctx.font='bold 7px "Noto Sans KR"'; ctx.textAlign='center';
+    ctx.fillText(c.bubbleText,x,by+10);
+  }
+
+  ctx.restore();
+}
+
+// draw anime walking person
+function drawWalkingPerson(ctx, c) {
+  const S = 0.58; // character scale factor
+  const x = c.x, y = c.y;
+  const frame = c.frame;
+  const t = frame * .16;
+  const bob = Math.sin(t*2)*1.2;
+  const hy = y + bob;
+  const blinkT = (frame + (c.frameOffset||0)) % 200;
+  const blink = blinkT > 192;
+
+  ctx.save();
+  ctx.translate(x, y + 10);
+  ctx.scale(S, S);
+  ctx.translate(-x, -(y + 10));
+
+  const groundY = y + 8;
+  const hipY    = hy - 6;
+  const thigh=13, shin=13, upperArm=10, foreArm=9;
+
+  function leg(phase){
+    const ta=Math.sin(phase)*.32;
+    const kb=Math.max(0,-Math.cos(phase))*.5;
+    const kx=x+Math.sin(ta)*thigh;
+    const ky=hipY+Math.cos(ta)*thigh;
+    const sa=ta-kb;
+    let fx=kx+Math.sin(sa)*shin;
+    let fy=ky+Math.cos(sa)*shin;
+    if(fy>groundY){ const scale=(groundY-ky)/(fy-ky); fx=kx+(fx-kx)*scale; fy=groundY; }
+    return {kx,ky,fx,fy};
+  }
+  function arm(phase,side){
+    const swing=Math.sin(phase)*.28;
+    const shx=x+side*8, shy=hy-22;
+    const ex=shx+Math.sin(swing)*upperArm*.4;
+    const ey=shy+Math.cos(swing)*upperArm*.8;
+    const eb=Math.max(0,-Math.sin(phase)*side)*.45;
+    const hx=ex+Math.sin(swing-eb*side)*foreArm*.4;
+    const hy2=ey+Math.cos(swing-eb*side)*foreArm*.75;
+    return {ex,ey,hx,hy2};
+  }
+
+  const legL=leg(t), legR=leg(t+Math.PI);
+  const armL=arm(t+Math.PI,-1), armR=arm(t,1);
+
+  ctx.save();
+  if(c.facing<0){ ctx.translate(x*2,0); ctx.scale(-1,1); }
+
+  // shadow
+  ctx.fillStyle='rgba(0,0,0,.18)'; ctx.beginPath(); ctx.ellipse(x,groundY+1,11,3,0,0,Math.PI*2); ctx.fill();
+
+  // back leg
+  ctx.strokeStyle=shadeColor(c.shirt,-35); ctx.lineWidth=6; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x+2,hipY); ctx.lineTo(legR.kx+2,legR.ky); ctx.stroke();
+  ctx.strokeStyle=shadeColor(c.shirt,-55); ctx.lineWidth=5;
+  ctx.beginPath(); ctx.moveTo(legR.kx+2,legR.ky); ctx.lineTo(legR.fx+2,legR.fy); ctx.stroke();
+  ctx.fillStyle='#10101a'; ctx.beginPath(); ctx.ellipse(legR.fx+2,legR.fy+1.5,5.5,2.5,0,0,Math.PI*2); ctx.fill();
+
+  // back arm
+  ctx.strokeStyle=shadeColor(c.skin,-25); ctx.lineWidth=4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x+8,hy-22); ctx.lineTo(armR.ex+1,armR.ey+1); ctx.stroke();
+  ctx.strokeStyle=shadeColor(c.skin,-35); ctx.lineWidth=3.5;
+  ctx.beginPath(); ctx.moveTo(armR.ex+1,armR.ey+1); ctx.lineTo(armR.hx+1,armR.hy2+1); ctx.stroke();
+  ctx.fillStyle=shadeColor(c.skin,-20); ctx.beginPath(); ctx.ellipse(armR.hx+1,armR.hy2+1,3.5,2.5,0,0,Math.PI*2); ctx.fill();
+
+  // torso
+  const tGrad=ctx.createLinearGradient(x-9,hy-28,x+9,hy-6);
+  tGrad.addColorStop(0,shadeColor(c.shirt,30)); tGrad.addColorStop(1,c.shirt);
+  ctx.fillStyle=tGrad; ctx.beginPath(); ctx.roundRect(x-9,hy-28,18,22,5); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.09)'; ctx.beginPath(); ctx.roundRect(x-9,hy-28,18,5,5); ctx.fill();
+  drawOutfit(ctx, x, hy-28, c);
+
+  // front leg
+  ctx.strokeStyle=c.shirt; ctx.lineWidth=7; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x-2,hipY); ctx.lineTo(legL.kx-2,legL.ky); ctx.stroke();
+  ctx.strokeStyle=shadeColor(c.shirt,-15); ctx.lineWidth=5;
+  ctx.beginPath(); ctx.moveTo(legL.kx-2,legL.ky); ctx.lineTo(legL.fx-2,legL.fy); ctx.stroke();
+  ctx.fillStyle='#18181e'; ctx.beginPath(); ctx.ellipse(legL.fx-2,legL.fy+1.5,6,3,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.1)'; ctx.beginPath(); ctx.ellipse(legL.fx-3.5,legL.fy+1,2,1.1,0,0,Math.PI*2); ctx.fill();
+
+  // front arm
+  ctx.strokeStyle=c.skin; ctx.lineWidth=4.5; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x-8,hy-22); ctx.lineTo(armL.ex-1,armL.ey); ctx.stroke();
+  ctx.strokeStyle=shadeColor(c.skin,-10); ctx.lineWidth=4;
+  ctx.beginPath(); ctx.moveTo(armL.ex-1,armL.ey); ctx.lineTo(armL.hx-1,armL.hy2); ctx.stroke();
+  ctx.fillStyle=c.skin; ctx.beginPath(); ctx.ellipse(armL.hx-1,armL.hy2,4,3,.3,0,Math.PI*2); ctx.fill();
+
+  // head
+  const headY = hy - 42 - c.faceH*.3;
+  drawFaceBase(ctx, x, headY, c);
+  drawHair(ctx, x, headY, c, false);
+  drawEyes(ctx, x, headY, c, blink);
+  drawEyebrows(ctx, x, headY, c, c.browStyle);
+  const isFemBrowW = ['arched','gentle','thin','round'].includes(c.browStyle);
+  if(isFemBrowW){
+    ctx.fillStyle='rgba(160,100,80,.18)';
+    ctx.beginPath(); ctx.ellipse(x-1.2,headY+4.5,.6,.45,-.4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x+1.2,headY+4.5,.6,.45,.4,0,Math.PI*2); ctx.fill();
+  } else {
+    ctx.fillStyle='rgba(150,90,60,.32)'; ctx.beginPath(); ctx.arc(x,headY+4,.8,0,Math.PI*2); ctx.fill();
+  }
+  drawMouth(ctx, x, headY, c.mouthStyle);
+  if(c.glasses) drawAccessory(ctx, x, headY, hy-28, c);
+  if(['headband','headphones','bow','earring'].includes(c.accessory)) drawAccessory(ctx, x, headY, hy-28, c);
+
+  // name
+  const nw=c.name.length*5.8+12;
+  ctx.fillStyle=c.color+'33'; ctx.beginPath(); ctx.roundRect(x-nw/2,headY-66,nw,12,4); ctx.fill();
+  ctx.fillStyle=c.color; ctx.font='bold 7px "Noto Sans KR"'; ctx.textAlign='center';
+  ctx.fillText(c.name,x,headY-57);
+
+  // event label
+  if(c.eventLabel){
+    ctx.fillStyle='rgba(0,0,0,.6)';
+    ctx.beginPath(); ctx.roundRect(x-22,headY-80,44,11,3); ctx.fill();
+    ctx.fillStyle='rgba(255,255,200,.7)'; ctx.font='6px "Noto Sans KR"'; ctx.textAlign='center';
+    ctx.fillText(c.eventLabel,x,headY-72);
+  }
+
+  ctx.restore();
+}
+
+function shadeColor(hex,amt){
+  try{
+    return '#'+hex.replace(/^#/,'').match(/../g)
+      .map(h=>Math.max(0,Math.min(255,parseInt(h,16)+amt)).toString(16).padStart(2,'0')).join('');
+  }catch{return '#333333';}
+}
+
+// ══════════════════════════════════════
+// ELEVATOR
+// ══════════════════════════════════════
+const elevC = document.getElementById('elev-c');
+const TOTAL_H = FH * 8;
+elevC.width=26; elevC.height=TOTAL_H;
+elevC.style.height=TOTAL_H+'px';
+const elevCtx = elevC.getContext('2d');
+let elevY=TOTAL_H-FH, elevTarget=TOTAL_H-FH, elevMoving=false;
+let elevPerson={color:'#a78bfa',visible:false};
+
+function drawElev(){
+  elevCtx.clearRect(0,0,26,TOTAL_H);
+  // bg
+  elevCtx.fillStyle='rgba(0,0,0,.4)'; elevCtx.fillRect(0,0,26,TOTAL_H);
+  // rails
+  elevCtx.strokeStyle='rgba(139,92,246,.15)'; elevCtx.lineWidth=1;
+  elevCtx.beginPath(); elevCtx.moveTo(4,0); elevCtx.lineTo(4,TOTAL_H); elevCtx.stroke();
+  elevCtx.beginPath(); elevCtx.moveTo(22,0); elevCtx.lineTo(22,TOTAL_H); elevCtx.stroke();
+  // floor marks
+  for(let i=0;i<8;i++){
+    elevCtx.strokeStyle='rgba(139,92,246,.08)'; elevCtx.lineWidth=.5;
+    elevCtx.beginPath(); elevCtx.moveTo(0,i*FH); elevCtx.lineTo(26,i*FH); elevCtx.stroke();
+  }
+  // cable
+  elevCtx.strokeStyle='rgba(139,92,246,.45)'; elevCtx.lineWidth=1.5;
+  elevCtx.setLineDash([4,5]);
+  elevCtx.beginPath(); elevCtx.moveTo(13,0); elevCtx.lineTo(13,elevY+3); elevCtx.stroke();
+  elevCtx.setLineDash([]);
+  // car
+  const g=elevCtx.createLinearGradient(0,elevY,26,elevY+48);
+  g.addColorStop(0,'#2a185a'); g.addColorStop(1,'#150a32');
+  elevCtx.fillStyle=g;
+  elevCtx.beginPath(); elevCtx.roundRect(2,elevY,22,48,4); elevCtx.fill();
+  elevCtx.strokeStyle=elevMoving?'#a78bfa':'#7c3aed'; elevCtx.lineWidth=1.5;
+  elevCtx.beginPath(); elevCtx.roundRect(2,elevY,22,48,4); elevCtx.stroke();
+  // door line
+  elevCtx.strokeStyle='rgba(167,139,250,.4)'; elevCtx.lineWidth=1;
+  elevCtx.beginPath(); elevCtx.moveTo(13,elevY+5); elevCtx.lineTo(13,elevY+43); elevCtx.stroke();
+  // LED indicator
+  elevCtx.fillStyle='rgba(0,0,0,.5)'; elevCtx.fillRect(4,elevY+3,18,11);
+  const fl=7-Math.round(elevY/FH);
+  elevCtx.fillStyle='#a78bfa'; elevCtx.font='bold 7px monospace'; elevCtx.textAlign='center';
+  elevCtx.fillText(fl>0?fl+'F':'B1',13,elevY+11);
+  // person
+  if(elevPerson.visible){
+    elevCtx.fillStyle=elevPerson.color;
+    elevCtx.beginPath(); elevCtx.roundRect(7,elevY+16,12,20,2); elevCtx.fill();
+    elevCtx.fillStyle='#f5cba7';
+    elevCtx.beginPath(); elevCtx.arc(13,elevY+14,5,0,Math.PI*2); elevCtx.fill();
+  }
+  if(elevMoving){
+    elevCtx.fillStyle='rgba(139,92,246,.1)';
+    elevCtx.beginPath(); elevCtx.roundRect(2,elevY,22,48,4); elevCtx.fill();
+  }
+}
+
+function tickElev(){
+  if(elevMoving){
+    const d=elevTarget-elevY;
+    if(Math.abs(d)<.5){elevY=elevTarget;elevMoving=false;elevPerson.visible=false;}
+    else elevY+=d*.055;
+  }
+  drawElev();
+}
+setInterval(()=>{
+  if(!elevMoving){
+    const tf=Math.floor(Math.random()*8);
+    elevTarget=tf*FH; elevMoving=true;
+    elevPerson.visible=true;
+    elevPerson.color=FLOORS_DATA[tf].color;
+  }
+},6000);
+
+// ══════════════════════════════════════
+// MAIN ANIMATION LOOP
+// ══════════════════════════════════════
+let statWork=0, statMeet=0, statMove=0;
+
+function animate(){
+  requestAnimationFrame(animate);
+  statWork=0; statMeet=0; statMove=0;
+
+  const byCanvas={};
+  chars.forEach(c=>{
+    const id=c.canvas.id;
+    if(!byCanvas[id])byCanvas[id]=[];
+    byCanvas[id].push(c);
+  });
+
+  Object.entries(byCanvas).forEach(([cid,group])=>{
+    const cv=document.getElementById(cid);
+    if(!cv)return;
+    const ctx=cv.getContext('2d');
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const dpr=cv._dpr||1;
+    ctx.save();
+    ctx.scale(dpr,dpr);
+
+    group.forEach(c=>{
+      c.frame++;
+      c.typePhase+=.12;
+      if(c.talkTimer>0)c.talkTimer--;
+      else if(c.talking)c.talking=false;
+
+      // ── EVENT LOGIC ──
+      if(c.state==='seated'){
+        statWork++;
+        c.nextEventTimer--;
+        if(c.nextEventTimer<=0){
+          // pick an event
+          const evType = EVENTS[Math.floor(Math.random()*EVENTS.length)];
+          c.event=evType; c.state='walking';
+          // set target
+          if(evType==='toilet'){
+            c.targetX=cv.width+30; c.targetY=c.deskY; // exit right
+            c.eventLabel='🚻 화장실';
+            c.eventTimer=180+Math.floor(Math.random()*120);
+          } else if(evType==='dept_visit'){
+            c.targetX=cv.width+30; c.targetY=c.deskY;
+            c.eventLabel='🚶 타부서';
+            c.eventTimer=200+Math.floor(Math.random()*200);
+          } else if(evType==='commute_out'){
+            c.targetX=-40; c.targetY=c.deskY;
+            c.eventLabel='👋 퇴근';
+            c.eventTimer=400+Math.floor(Math.random()*200);
+          } else if(evType==='stretch'){
+            // just walk to a spot and back
+            c.targetX=c.deskX+(Math.random()>.5?60:-60);
+            c.targetX=Math.max(20,Math.min(cv.width-20,c.targetX));
+            c.targetY=c.deskY;
+            c.eventLabel='🧘 스트레칭';
+            c.eventTimer=100;
+          }
+          c.facing = c.targetX > c.x ? 1 : -1;
+          c.nextEventTimer = EVENT_INTERVALS[evType]+Math.floor(Math.random()*3600)+1800;
+        } else {
+          // occasional talk bubble while seated
+          if(!c.talking && Math.random()<.002){
+            c.talking=true; c.talkTimer=80;
+            c.bubbleText=TALK_PHRASES[Math.floor(Math.random()*TALK_PHRASES.length)];
+          }
+        }
+      } else if(c.state==='walking'){
+        statMove++;
+        const speed=1.2;
+        const dx=c.targetX-c.x;
+        if(Math.abs(dx)<speed){
+          // reached target
+          if(c.targetX===c.deskX){
+            // returned to desk
+            c.x=c.deskX; c.y=c.deskY;
+            c.state='seated'; c.event=null; c.eventLabel='';
+            c.facing=1;
+          } else if(c.targetX>cv.width||c.targetX<0){
+            // exited floor
+            c.state='gone';
+            c.gone=true;
+          } else {
+            // stretch - return to desk
+            c.targetX=c.deskX; c.facing=c.targetX>c.x?1:-1;
+          }
+        } else {
+          c.x += dx>0?speed:-speed;
+          c.facing = dx>0?1:-1;
+        }
+      } else if(c.state==='gone'){
+        statMove++;
+        c.eventTimer--;
+        if(c.eventTimer<=0){
+          // return to desk
+          c.gone=false; c.state='walking';
+          c.x = c.event==='commute_out'?-40:cv.width+30;
+          c.y=c.deskY;
+          c.targetX=c.deskX; c.targetY=c.deskY;
+          c.facing=c.targetX>c.x?1:-1;
+          c.eventLabel='🔙 복귀';
+        }
+      }
+
+      if(!c.gone){
+        if(c.state==='seated'){
+          drawSeatedPerson(ctx,c);
+        } else {
+          drawWalkingPerson(ctx,c);
+        }
+      }
+    });
+    ctx.restore();
+  });
+
+  document.getElementById('sv-work').textContent=statWork;
+  document.getElementById('sv-meet').textContent=statMeet;
+  document.getElementById('sv-move').textContent=statMove;
+  tickElev();
+}
+
+// ══════════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════════
+function switchTab(id, btn){
+  ['chat','history','cmd'].forEach(t=>{
+    document.getElementById('tab-'+t).hidden = (t!==id);
+  });
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(id==='chat') renderChatFeed();
+  if(id==='history') renderEmpGrid();
+}
+
+// ══════════════════════════════════════
+// CMD / CEO ORDERS
+// ══════════════════════════════════════
+function sendCmd(){
+  const dept=document.getElementById('cmd-dept').value;
+  const txt=document.getElementById('cmd-inp').value.trim();
+  if(!txt)return;
+  const ts=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const log=document.getElementById('cmd-log');
+  const div=document.createElement('div');
+  div.className='wl-entry';
+  div.innerHTML=`<span class="wl-ts">${ts}</span><span class="wl-dept">[${dept}]</span><span class="wl-text">${txt}</span>`;
+  // remove empty placeholder
+  const empty=log.querySelector('.wl-empty');
+  if(empty)empty.remove();
+  log.appendChild(div); log.scrollTop=log.scrollHeight;
+  document.getElementById('cmd-inp').value='';
+  chars.filter(c=>Math.random()>.4).forEach(c=>{
+    c.talking=true; c.talkTimer=100;
+    c.bubbleText=txt.length>9?txt.slice(0,9)+'..':txt;
+  });
+  // also echo to chat
+  addChatMsg('CEO (Claude)','#7c3aed','📢 [지시] '+txt,true);
+}
+
+// ══════════════════════════════════════
+// WORKLOG
+// ══════════════════════════════════════
+let _wlDept='CEO 오피스', _wlColor='#a78bfa';
+
+
+function updateWlDate(){
+  const now=new Date();
+  const d=document.getElementById('wl-date');
+  if(d) d.textContent=now.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+}
+
+
+
+
+function sendCmd_silent(dept,txt){
+  const ts=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const log=document.getElementById('cmd-log');
+  if(!log)return;
+  const div=document.createElement('div');
+  div.className='wl-entry';
+  div.innerHTML=`<span class="wl-ts">${ts}</span><span class="wl-dept">[${dept}]</span><span class="wl-text">${txt}</span>`;
+  log.prepend(div);
+}
+
+// ══════════════════════════════════════
+// WORKLOG SEED DATA
+// ══════════════════════════════════════
+
+// ══════════════════════════════════════
+// TEAM CHAT
+// ══════════════════════════════════════
+const CHAT_MSGS = [
+  {name:'Aria', color:'#22d3ee', ch:'CEO 오피스', text:'오늘 콘텐츠 KPI 달성률 확인했습니다. 전반적으로 양호합니다 👍'},
+  {name:'Nova', color:'#34d399', ch:'CEO 오피스', text:'서버 업타임 99.98% 유지 중. 보안 패치도 완료했어요 💚'},
+  {name:'Stella', color:'#fbbf24', ch:'경영지원팀', text:'이번 주 경비 정산 완료했습니다. 보고서 공유할게요 📊'},
+  {name:'Maya', color:'#fbbf24', ch:'경영지원팀', text:'신규 직원 온보딩 준비 중입니다. 내일 오전 미팅 괜찮으세요?'},
+  {name:'Kai', color:'#60a5fa', ch:'콘텐츠팀', text:'블로그 포스팅 3건 완성! 오늘 오후 2시 예약 발행 예정 ✍️'},
+  {name:'Milo', color:'#60a5fa', ch:'콘텐츠팀', text:'유튜브 편집 거의 다 됐어요. 내일 오전까지 업로드 가능합니다'},
+  {name:'Elle', color:'#34d399', ch:'크리에이티브팀', text:'새 일러스트 초안 완성 🎨 피드백 주시면 바로 수정할게요'},
+  {name:'Pip', color:'#34d399', ch:'크리에이티브팀', text:'인스타 오늘 3포스트 예약완료! 참여율 올라가고 있어요 📸'},
+  {name:'Victor', color:'#fb923c', ch:'신규사업부', text:'파트너사 미팅 결과 공유드립니다. 긍정적인 반응이었어요!'},
+  {name:'Penny', color:'#4ade80', ch:'수익화팀', text:'이번 달 광고 수익 목표 대비 112% 달성 중입니다 💰'},
+  {name:'Rich', color:'#4ade80', ch:'수익화팀', text:'새 광고주 2곳 계약 진행 중. 다음 주 최종 확인 예정이에요'},
+  {name:'Rex', color:'#f87171', ch:'전체', text:'🛡️ 보안 점검 완료. 이상 없음.'},
+  {name:'Otto', color:'#c4b5fd', ch:'전체', text:'방문객 오늘 총 12명. 모두 안내 완료했습니다 🤝'},
+];
+let chatHistory=[];
+
+function addChatMsg(name, color, text, isMe=false){
+  const ts=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});
+  chatHistory.push({name,color,text,ts,isMe});
+  renderChatFeed();
+}
+
+function renderChatFeed(){
+  const feed=document.getElementById('chat-feed');
+  if(!feed)return;
+  if(chatHistory.length===0){
+    // seed initial messages
+    const now=new Date();
+    CHAT_MSGS.forEach((m,i)=>{
+      const d=new Date(now-1000*(CHAT_MSGS.length-i)*240);
+      const ts=d.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});
+      chatHistory.push({...m,ts,isMe:false});
+    });
+  }
+  feed.innerHTML='';
+  chatHistory.forEach(m=>{
+    const d=document.createElement('div');
+    d.className='chat-msg'+(m.isMe?' chat-me':'');
+    const initials=m.name.slice(0,2);
+    if(m.isMe){
+      d.innerHTML=`<div style="flex:1"></div><div class="chat-bubble"><div class="ch-name" style="color:${m.color}">${m.name}</div><div class="ch-text">${m.text}</div><div class="ch-time">${m.ts}</div></div><div class="chat-av" style="background:${m.color}22;color:${m.color}">${initials}</div>`;
+    } else {
+      d.innerHTML=`<div class="chat-av" style="background:${m.color}22;color:${m.color}">${initials}</div><div class="chat-bubble"><div class="ch-name" style="color:${m.color}">${m.name}</div><div class="ch-text">${m.text}</div><div class="ch-time">${m.ts}</div></div>`;
+    }
+    feed.appendChild(d);
+  });
+  feed.scrollTop=feed.scrollHeight;
+}
+
+function sendChatMsg(){
+  const txt=document.getElementById('chat-inp').value.trim();
+  if(!txt)return;
+  addChatMsg('CEO (Claude)','#a78bfa',txt,true);
+  document.getElementById('chat-inp').value='';
+  // simulate reply after 1.5s
+  setTimeout(()=>{
+    const reps=[
+      {name:'Aria',color:'#22d3ee',text:'알겠습니다! 바로 처리하겠습니다 👍'},
+      {name:'Stella',color:'#fbbf24',text:'네, 확인했습니다. 진행하겠습니다!'},
+      {name:'Kai',color:'#60a5fa',text:'반영하겠습니다. 감사합니다 ✍️'},
+      {name:'Victor',color:'#fb923c',text:'좋은 방향입니다. 팀과 공유할게요!'},
+    ];
+    const r=reps[Math.floor(Math.random()*reps.length)];
+    addChatMsg(r.name,r.color,r.text,false);
+  },1400+Math.random()*1200);
+}
+
+// ══════════════════════════════════════
+// EMPLOYEE HISTORY
+// ══════════════════════════════════════
+const EMP_INFO = {
+  'Claude': { emoji:'🧑‍💼', join:'2023-01-01', joined:730, projects:142, floor:'7F', dept:'CEO 오피스',
+    log:['2024-06 회사 창립 2주년 달성','2024-09 해외 파트너십 체결','2025-01 직원 37명 규모로 확장','2025-06 수익 목표 150% 달성'] },
+  'Aria':  { emoji:'👩‍💼', join:'2023-02-01', joined:700, projects:98, floor:'7F', dept:'CEO 오피스',
+    log:['2023-04 COO 승진','2023-10 운영체계 전면 개선','2024-03 직원 만족도 조사 1위','2025-01 조직 개편 주도'] },
+  'Nova':  { emoji:'👩‍💻', join:'2023-03-01', joined:670, projects:115, floor:'7F', dept:'CEO 오피스',
+    log:['2023-06 서버 인프라 구축','2024-01 보안 시스템 업그레이드','2024-08 클라우드 마이그레이션','2025-02 AI 파이프라인 개발'] },
+  'Stella':{ emoji:'⭐', join:'2023-04-01', joined:640, projects:80, floor:'6F', dept:'경영지원팀',
+    log:['2023-07 팀장 승진','2024-02 경영지원 프로세스 표준화','2024-11 예산 관리 시스템 도입'] },
+  'Rex F': { emoji:'💼', join:'2023-06-01', joined:580, projects:62, floor:'6F', dept:'경영지원팀',
+    log:['2023-09 재무 시스템 도입','2024-04 외부 감사 통과','2025-01 연간 예산 계획 수립'] },
+  'Maya':  { emoji:'👩‍👩‍👦', join:'2023-05-01', joined:610, projects:74, floor:'6F', dept:'경영지원팀',
+    log:['2023-08 채용 프로세스 개선','2024-01 HR 시스템 도입','2024-07 직원 복지 프로그램 신설'] },
+  'Leon':  { emoji:'⚖️', join:'2023-07-01', joined:550, projects:55, floor:'6F', dept:'경영지원팀',
+    log:['2023-10 계약 검토 체계 구축','2024-03 법무 리스크 관리 도입','2024-09 파트너 계약 협상 완료'] },
+  'Nora':  { emoji:'🧮', join:'2024-01-01', joined:360, projects:38, floor:'6F', dept:'경영지원팀',
+    log:['2024-02 회계 시스템 셋업','2024-06 분기 결산 보고','2024-10 세무 신고 완료'] },
+  'Kai':   { emoji:'✍️', join:'2023-04-15', joined:625, projects:210, floor:'5F', dept:'콘텐츠팀',
+    log:['2023-07 블로그 구독자 1만 달성','2024-01 월 포스팅 30건 달성','2024-08 검색 트래픽 300% 증가'] },
+  'Milo':  { emoji:'🎬', join:'2023-06-01', joined:580, projects:89, floor:'5F', dept:'콘텐츠팀',
+    log:['2023-09 유튜브 채널 개설','2024-02 구독자 5만 달성','2024-10 월 100만 뷰 달성'] },
+  'Lena':  { emoji:'📋', join:'2023-07-01', joined:550, projects:71, floor:'5F', dept:'콘텐츠팀',
+    log:['2023-10 콘텐츠 기획 프레임 수립','2024-04 편집 가이드라인 제작','2025-01 콘텐츠 캘린더 운영'] },
+  'Finn':  { emoji:'✂️', join:'2023-08-01', joined:520, projects:156, floor:'5F', dept:'콘텐츠팀',
+    log:['2023-11 영상 편집 파이프라인 구축','2024-05 썸네일 A/B 테스트','2024-12 쇼츠 채널 개설'] },
+  'Zara':  { emoji:'🔍', join:'2023-09-01', joined:490, projects:93, floor:'5F', dept:'콘텐츠팀',
+    log:['2023-12 SEO 전략 수립','2024-06 키워드 순위 50개 상위 진입','2025-01 오가닉 트래픽 500% 성장'] },
+  'Jay':   { emoji:'📊', join:'2024-02-01', joined:330, projects:45, floor:'5F', dept:'콘텐츠팀',
+    log:['2024-03 데이터 대시보드 구축','2024-07 A/B 테스트 프레임 도입','2024-11 성과 리포트 자동화'] },
+  'Vera':  { emoji:'🌐', join:'2024-04-01', joined:270, projects:38, floor:'5F', dept:'콘텐츠팀',
+    log:['2024-05 번역 품질 가이드 제작','2024-08 영어/일어 채널 론칭','2024-11 글로벌 트래픽 증가'] },
+  'Elle':  { emoji:'🎨', join:'2023-05-01', joined:610, projects:183, floor:'4F', dept:'크리에이티브팀',
+    log:['2023-08 디자인 시스템 구축','2024-01 리브랜딩 프로젝트','2024-07 UX 개선 프로젝트 완료'] },
+  'Iris':  { emoji:'📚', join:'2023-07-01', joined:550, projects:12, floor:'4F', dept:'크리에이티브팀',
+    log:['2023-10 첫 소설 연재 시작','2024-03 독자 수 1만 명 달성','2024-09 전자책 출판 계약 체결'] },
+  'Pip':   { emoji:'📸', join:'2023-08-01', joined:520, projects:420, floor:'4F', dept:'크리에이티브팀',
+    log:['2023-11 인스타 팔로워 1만 달성','2024-04 팔로워 5만 달성','2024-10 팔로워 15만 돌파 🎉'] },
+  'Cleo':  { emoji:'🖌️', join:'2023-09-01', joined:490, projects:234, floor:'4F', dept:'크리에이티브팀',
+    log:['2023-12 일러스트 스타일 확립','2024-05 굿즈 제작 프로젝트','2024-11 외부 콜라보 일러스트'] },
+  'Sol':   { emoji:'✂️', join:'2023-10-01', joined:460, projects:178, floor:'4F', dept:'크리에이티브팀',
+    log:['2024-01 편집 속도 2배 향상','2024-06 프리미어 프로 교육 담당','2024-10 릴스 편집 특화'] },
+  'Luna':  { emoji:'📷', join:'2024-03-01', joined:300, projects:56, floor:'4F', dept:'크리에이티브팀',
+    log:['2024-04 촬영 장비 세팅','2024-07 야외 촬영 프로젝트','2024-10 제품 사진 촬영 전담'] },
+  'Victor':{ emoji:'🚀', join:'2023-03-15', joined:655, projects:67, floor:'3F', dept:'신규사업부',
+    log:['2023-07 팀 창설 및 팀장 임명','2024-01 해외 진출 전략 수립','2024-08 B2B 파트너십 3건 체결'] },
+  'Iris N':{ emoji:'📌', join:'2023-09-01', joined:490, projects:55, floor:'3F', dept:'신규사업부',
+    log:['2023-12 신사업 기획서 5건 작성','2024-05 파일럿 프로젝트 성공','2024-11 신규 수익모델 제안'] },
+  'Kane':  { emoji:'🔬', join:'2024-01-01', joined:360, projects:42, floor:'3F', dept:'신규사업부',
+    log:['2024-02 시장 분석 보고서 작성','2024-06 경쟁사 인텔리전스 보고','2024-11 수요 예측 모델 구축'] },
+  'Zoe':   { emoji:'📣', join:'2024-02-01', joined:330, projects:61, floor:'3F', dept:'신규사업부',
+    log:['2024-03 SNS 마케팅 전략 수립','2024-07 캠페인 ROI 200% 달성','2024-11 바이럴 캠페인 기획'] },
+  'Ren':   { emoji:'💻', join:'2023-11-01', joined:430, projects:88, floor:'3F', dept:'신규사업부',
+    log:['2024-01 MVP 개발 완료','2024-05 앱 출시','2024-09 앱 사용자 1만 명 달성'] },
+  'Ami':   { emoji:'📱', join:'2024-05-01', joined:240, projects:49, floor:'3F', dept:'신규사업부',
+    log:['2024-06 SNS 채널 셋업','2024-08 팔로워 5천 달성','2024-11 바이럴 콘텐츠 제작'] },
+  'Penny': { emoji:'💰', join:'2023-06-01', joined:580, projects:78, floor:'2F', dept:'수익화팀',
+    log:['2023-09 수익화 전략 수립','2024-02 광고 수익 목표 초과 달성','2024-08 신규 수익 채널 3개 발굴'] },
+  'Rich':  { emoji:'📈', join:'2023-08-01', joined:520, projects:65, floor:'2F', dept:'수익화팀',
+    log:['2023-11 광고 네트워크 확장','2024-04 스폰서십 계약 10건','2024-10 광고 수익 200% 성장'] },
+  'Data':  { emoji:'🔢', join:'2023-10-01', joined:460, projects:94, floor:'2F', dept:'수익화팀',
+    log:['2024-01 데이터 웨어하우스 구축','2024-06 ML 기반 예측 모델 개발','2024-11 실시간 대시보드 오픈'] },
+  'Fern':  { emoji:'🗺️', join:'2024-03-01', joined:300, projects:29, floor:'2F', dept:'수익화팀',
+    log:['2024-04 중장기 수익 전략 수립','2024-08 투자자 덱 작성','2024-11 파트너십 전략 발표'] },
+  'Max':   { emoji:'⚙️', join:'2024-04-01', joined:270, projects:34, floor:'2F', dept:'수익화팀',
+    log:['2024-05 운영 지표 대시보드','2024-08 프로세스 최적화 5건','2024-11 운영비 절감 15%'] },
+  'Otto':  { emoji:'🤝', join:'2023-01-01', joined:730, projects:0, floor:'1F', dept:'로비',
+    log:['2023-02 방문객 안내 시스템 구축','2023-09 월 방문객 100명 돌파','2024-06 만족도 98% 달성','2025-01 방문객 누적 5000명'] },
+  'Mia':   { emoji:'💐', join:'2024-06-01', joined:210, projects:0, floor:'1F', dept:'로비',
+    log:['2024-07 안내 매뉴얼 작성','2024-09 방문객 응대 교육 수료','2024-11 민원 처리율 100%'] },
+  'Rex':   { emoji:'🛡️', join:'2023-01-01', joined:730, projects:310, floor:'B1', dept:'보안팀',
+    log:['2023-03 보안 시스템 구축','2023-09 첫 침투 테스트 통과','2024-03 ISO 27001 취득','2025-01 무결점 보안 기록 2년'] },
+  'Ada':   { emoji:'🤖', join:'2023-04-01', joined:640, projects:245, floor:'B1', dept:'보안팀',
+    log:['2023-07 AI 모니터링 시스템 개발','2024-01 자동화 보안 패치 도입','2024-08 이상 탐지 정확도 99%'] },
+  'Cy':    { emoji:'🌐', join:'2023-06-01', joined:580, projects:189, floor:'B1', dept:'보안팀',
+    log:['2023-09 네트워크 인프라 구축','2024-02 서버 이중화 완료','2024-09 99.99% 업타임 달성'] },
+};
+
+function renderEmpGrid(){
+  const grid=document.getElementById('emp-grid');
+  if(!grid||grid.dataset.rendered)return;
+  grid.dataset.rendered='1';
+  // Build from FLOORS_DATA
+  FLOORS_DATA.forEach(f=>{
+    f.emps.forEach(e=>{
+      const card=document.createElement('div');
+      card.className='emp-card';
+      const info=EMP_INFO[e.name]||{emoji:'👤',join:'2023-01-01',joined:365,projects:50,floor:'?',dept:'?',log:[]};
+      card.innerHTML=`<div><span class="ec-color" style="background:${e.color}"></span></div><div class="ec-name">${e.name}</div><div class="ec-role">${e.role}</div><div class="ec-floor">${info.floor} · ${info.dept}</div>`;
+      card.onclick=()=>openEmpModal(e,info);
+      grid.appendChild(card);
+    });
+  });
+}
+
+function openEmpModal(e,info){
+  document.getElementById('em-av').textContent=info.emoji;
+  document.getElementById('em-av').style.borderColor=e.color+'80';
+  document.getElementById('em-name').textContent=e.name;
+  document.getElementById('em-name').style.color=e.color;
+  document.getElementById('em-role').textContent=e.role+' · '+info.dept;
+  document.getElementById('em-dept').innerHTML=`<span style="color:${e.color};font-size:10px">${info.floor}</span> &nbsp;입사: ${info.join}`;
+  document.getElementById('em-stats').innerHTML=`
+    <div class="em-stat"><div class="em-stat-lbl">근무 일수</div><div class="em-stat-val" style="color:${e.color}">${info.joined}일</div></div>
+    <div class="em-stat"><div class="em-stat-lbl">참여 프로젝트</div><div class="em-stat-val" style="color:${e.color}">${info.projects}건</div></div>
+    <div class="em-stat"><div class="em-stat-lbl">현재 상태</div><div class="em-stat-val" style="color:#4ade80">재직중</div></div>
+    <div class="em-stat"><div class="em-stat-lbl">소속팀</div><div class="em-stat-val" style="color:${e.color};font-size:10px">${info.dept}</div></div>
+  `;
+  const logEl=document.getElementById('em-log');
+  logEl.innerHTML=info.log.map(l=>`<div style="color:${e.color+'80'}">▸ ${l}</div>`).join('');
+  document.getElementById('emp-modal').hidden=false;
+}
+function closeEmpModal(){ document.getElementById('emp-modal').hidden=true; }
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+const THEMES = {
+  '7':  {accent:'#7c3aed',lightGlow:'#7c3aed'},
+  '6':  {accent:'#d97706',lightGlow:'#d97706'},
+  '5':  {accent:'#2563eb',lightGlow:'#2563eb'},
+  '4':  {accent:'#059669',lightGlow:'#059669'},
+  '3':  {accent:'#ea580c',lightGlow:'#ea580c'},
+  '2':  {accent:'#16a34a',lightGlow:'#16a34a'},
+  '1':  {accent:'#7c3aed',lightGlow:'#7c3aed'},
+  'b1': {accent:'#dc2626',lightGlow:'#dc2626'},
+};
+
+window.addEventListener('load',()=>{
+  requestAnimationFrame(()=>{
+    FLOORS_DATA.forEach(f=>{
+      initBg(document.getElementById('bg'+f.id), f.id, THEMES[f.id]);
+    });
+    drawAllCities();
+    initChars();
+    animate();
+    updateWlDate();
+    // Auto team chat messages
+    setTimeout(()=>{
+      const m=CHAT_MSGS[Math.floor(Math.random()*CHAT_MSGS.length)];
+      addChatMsg(m.name,m.color,m.text);
+    },8000);
+    setInterval(()=>{
+      const m=CHAT_MSGS[Math.floor(Math.random()*CHAT_MSGS.length)];
+      addChatMsg(m.name,m.color,m.text);
+    },35000);
+  });
+});
+
+window.addEventListener('resize',()=>{
+  FLOORS_DATA.forEach(f=>{
+    initBg(document.getElementById('bg'+f.id), f.id, THEMES[f.id]);
+    const cv=document.getElementById('c'+f.id);
+    if(cv){
+      const par=cv.parentElement;
+      const W=par.offsetWidth-54-290;
+      if(W>0){cv.width=W; cv.style.width=W+'px';}
+    }
+  });
+  drawAllCities();
+});
+</script>
+
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body></html>
