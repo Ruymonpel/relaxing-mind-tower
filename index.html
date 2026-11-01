@@ -358,6 +358,19 @@
     .wl-dept-floor { display: none; }
     .wl-dept-cnt { display: none; }
   }
+
+  .ai-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:6px; background:rgba(63,185,80,.15); border:1px solid rgba(63,185,80,.35); color:var(--accent2); font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .ai-btn.off { background:rgba(248,81,73,.12); border-color:rgba(248,81,73,.35); color:var(--danger); }
+  .ai-modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:300; padding:16px; }
+  .ai-modal-bg.show { display:flex; }
+  .ai-modal { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px; width:100%; max-width:460px; color:var(--text); }
+  .ai-modal h3 { margin:0 0 6px; font-size:16px; }
+  .ai-modal p { font-size:12px; color:var(--text2); line-height:1.7; margin:0 0 12px; }
+  .ai-modal a { color:var(--accent); }
+  .ai-modal label { display:block; font-size:12px; color:var(--text2); margin:10px 0 4px; }
+  .ai-modal input { width:100%; box-sizing:border-box; padding:9px 10px; border-radius:6px; border:1px solid var(--border); background:var(--surface2); color:var(--text); font-size:13px; }
+  .ai-modal .row { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
+  .cmd-ai { color:var(--accent2); }
 </style>
 </head>
 <body>
@@ -371,6 +384,7 @@
   </div>
   <div class="topbar-center">RELAXING MIND AI COMPANY · 37 AI AGENTS ONLINE</div>
   <div class="topbar-right">
+    <button class="ai-btn off" id="ai-btn" onclick="openAiSettings()">🔌 AI 연결 안됨</button>
     <a class="office-btn" href="https://ruymonpel.github.io/relaxing-mind-tower/office/" target="_blank">🏢 오피스로 이동</a>
     <div style="display:flex;align-items:center;gap:6px"><div class="status-dot"></div><span style="font-size:12px;color:var(--text2)">LIVE</span></div>
     <span id="live-clock">--:--:--</span>
@@ -705,6 +719,26 @@
 </div>
 <div class="toast" id="toast"></div>
 
+<!-- AI 설정 (무료 Gemini API) -->
+<div class="ai-modal-bg" id="ai-modal" onclick="if(event.target===this)closeAiSettings()">
+  <div class="ai-modal">
+    <h3>🔌 AI 직원 연결 (무료 세션)</h3>
+    <p>Google Gemini 무료 API 키를 넣으면 CEO 지시를 보낼 때 해당 부서 AI 직원이 실제로 답하고, 업무일지를 작성해 보고서기록에 올립니다.<br>
+    1) <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> 접속 → 구글 로그인<br>
+    2) "Create API key" → 복사해서 아래에 붙여넣기 (카드 등록 필요 없음)<br>
+    키는 이 브라우저에만 저장되고 Google 외에는 전송되지 않습니다.</p>
+    <label for="ai-key">Gemini API 키</label>
+    <input id="ai-key" type="password" placeholder="AIza..." autocomplete="off">
+    <label for="ai-model">모델 (기본값 그대로 두면 됩니다)</label>
+    <input id="ai-model" type="text" placeholder="gemini-2.5-flash">
+    <div class="row">
+      <button class="btn btn-success" onclick="saveAiSettings()">💾 저장 후 연결 테스트</button>
+      <button class="btn btn-secondary" onclick="closeAiSettings()">닫기</button>
+      <button class="btn btn-danger" onclick="resetSession()">🔄 새 세션 시작 (데이터 초기화)</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ─── WL_SEED: 37명 업무일지 ───
 const WL_SEED = [
@@ -920,6 +954,8 @@ function init() {
   loadRevenue();
   loadReports();
   updateStats();
+  updateAiBtn();
+  if(!getAiKey())addCmdLog('시스템','전체','AI가 연결되지 않았습니다. 상단 🔌 버튼에서 무료 Gemini API 키를 등록하세요.');
 }
 
 function updateClock() {
@@ -1166,14 +1202,115 @@ function updateStats(){
 }
 
 // ─── CEO CMD ───
-function sendCmd(){
+async function sendCmd(){
   const dept=document.getElementById('cmd-dept-sel').value;
-  const text=document.getElementById('cmd-input').value.trim();
+  const input=document.getElementById('cmd-input');
+  const text=input.value.trim();
   if(!text)return;
   const ts=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});
-  addCmdLog(ts,dept,text);
-  document.getElementById('cmd-input').value='';
-  showToast(`📨 [${dept}] 지시 전달 완료`);
+  addCmdLog(ts,dept,esc(text));
+  input.value='';
+  if(!getAiKey()){
+    showToast('⚠️ AI가 연결되지 않아 지시가 전달되지 않습니다. 상단 🔌 버튼에서 연결하세요');
+    openAiSettings();
+    return;
+  }
+  showToast(`📨 [${dept}] 지시 전달 중... AI 직원이 작업합니다`);
+  try{
+    const results=await runAgents(dept,text);
+    results.forEach(r=>{
+      addCmdLog(r.person||'AI',r.dept||dept,`<span class="cmd-ai">${esc(r.reply||'')}</span>`);
+      const reports=getReports();
+      reports.unshift({id:Date.now()+Math.floor(Math.random()*1000),dept:r.dept||dept,author:r.person||'AI',
+        status:r.status||'정상 진행',done:r.today||r.reply||'',plan:r.tomorrow||'',issue:(r.issue&&r.issue!=='없음')?r.issue:'',
+        pct:String(Math.max(0,Math.min(100,parseInt(r.pct)||0))),kpi:r.kpi||'',
+        ts:new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}),approval:'pending'});
+      saveReports(reports);
+    });
+    loadReports(); updateStats();
+    showToast(`✅ ${results.length}명이 업무를 수행하고 보고서를 올렸습니다`);
+  }catch(e){
+    addCmdLog('오류',dept,esc(e.message));
+    showToast('❌ AI 호출 실패: '+e.message);
+  }
+}
+
+// ─── AI 연결 (Google Gemini 무료 API) ───
+const KEY_AI='rm_gemini_key', KEY_AI_MODEL='rm_gemini_model', DEFAULT_MODEL='gemini-2.5-flash';
+function lsGet(k){try{return localStorage.getItem(k)||'';}catch(e){return '';}}
+function lsSet(k,v){try{v?localStorage.setItem(k,v):localStorage.removeItem(k);}catch(e){}}
+function getAiKey(){return lsGet(KEY_AI);}
+function getAiModel(){return lsGet(KEY_AI_MODEL)||DEFAULT_MODEL;}
+function esc(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function updateAiBtn(){
+  const b=document.getElementById('ai-btn'); if(!b)return;
+  const on=!!getAiKey();
+  b.classList.toggle('off',!on);
+  b.textContent=on?'🟢 AI 연결됨':'🔌 AI 연결 안됨';
+}
+function openAiSettings(){
+  document.getElementById('ai-key').value=getAiKey();
+  document.getElementById('ai-model').value=lsGet(KEY_AI_MODEL);
+  document.getElementById('ai-modal').classList.add('show');
+}
+function closeAiSettings(){document.getElementById('ai-modal').classList.remove('show');}
+async function saveAiSettings(){
+  const k=document.getElementById('ai-key').value.trim();
+  const m=document.getElementById('ai-model').value.trim();
+  lsSet(KEY_AI,k); lsSet(KEY_AI_MODEL,m); updateAiBtn();
+  if(!k){showToast('🔌 AI 연결 해제됨');return;}
+  showToast('⏳ 연결 테스트 중...');
+  try{
+    const out=await callGemini('"OK"라고만 답하세요.',false);
+    showToast('✅ AI 연결 성공! ('+getAiModel()+') 응답: '+out.slice(0,20));
+    closeAiSettings();
+  }catch(e){showToast('❌ 연결 실패: '+e.message);}
+}
+function resetSession(){
+  if(!confirm('보고서·수익 데이터를 모두 지우고 새 세션으로 시작할까요? (API 키는 유지됩니다)'))return;
+  lsSet(KEY_REPORTS,''); lsSet(KEY_REVENUE,'');
+  const log=document.getElementById('cmd-log'); if(log)log.innerHTML='';
+  loadReports(); loadRevenue(); updateStats();
+  addCmdLog('시스템','전체','새 세션이 시작되었습니다.');
+  showToast('🔄 새 세션 시작');
+}
+async function callGemini(prompt,json){
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(getAiModel())}:generateContent`;
+  const body={contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:0.8}};
+  if(json)body.generationConfig.responseMimeType='application/json';
+  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':getAiKey()},body:JSON.stringify(body)});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok){
+    const msg=data.error?.message||('HTTP '+res.status);
+    if(res.status===429)throw new Error('무료 사용량 한도 초과 — 잠시 후 다시 시도하세요');
+    if(res.status===400&&/API key/i.test(msg))throw new Error('API 키가 올바르지 않습니다');
+    if(res.status===404)throw new Error('모델 이름을 찾을 수 없습니다 ('+getAiModel()+')');
+    throw new Error(msg);
+  }
+  const txt=data.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'';
+  if(!txt)throw new Error('빈 응답 (안전 필터 또는 한도)');
+  return txt;
+}
+async function runAgents(dept,cmd){
+  const pool=dept==='전체'
+    ? Object.values(WL_SEED.reduce((a,e)=>{a[e.dept]=a[e.dept]||e;return a;},{})) // 부서별 팀장급 1명
+    : WL_SEED.filter(e=>e.dept===dept);
+  const roster=pool.map(e=>`- ${e.person} (${e.dept}, ${e.role}) 최근 업무: ${e.today}`).join('\n');
+  const prompt=`당신은 "Relaxing Mind AI Company"의 AI 직원들입니다. 회사는 네이버 블로그, 유튜브, 쿠팡 파트너스, 인스타그램, 웹소설로 수익을 냅니다.
+CEO가 [${dept}]에 다음 지시를 내렸습니다:
+"""${cmd}"""
+
+담당 직원 목록:
+${roster}
+
+이 지시와 관련된 직원(최대 5명)이 각자 역할에 맞게 지시를 실제로 수행하세요. 막연한 말 대신 바로 쓸 수 있는 구체적 결과물(제목안, 개요, 체크리스트, 수치 계획 등)을 today에 담으세요.
+JSON 배열로만 답하세요. 각 원소 형식:
+{"person":"이름","dept":"부서","reply":"CEO에게 한두 문장 보고","today":"수행한 작업과 결과물 (300자 이내)","tomorrow":"다음 계획","issue":"이슈 또는 없음","pct":0~100 숫자,"kpi":"측정 지표","status":"정상 진행|완료|지연|긴급"}`;
+  const raw=await callGemini(prompt,true);
+  let arr;
+  try{arr=JSON.parse(raw.replace(/^```(json)?|```$/g,'').trim());}catch(e){throw new Error('AI 응답을 해석하지 못했습니다');}
+  if(!Array.isArray(arr))arr=[arr];
+  return arr.slice(0,5);
 }
 function addCmdLog(ts,dept,text){
   const log=document.getElementById('cmd-log');
@@ -1202,11 +1339,3 @@ if('serviceWorker' in navigator){
 </script>
 </body>
 </html>
-
-
-<script>
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
-}
-</script>
-</body></html>
