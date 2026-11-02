@@ -13,1300 +13,463 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
   :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface2: #1c2230;
-    --border: #30363d;
-    --accent: #58a6ff;
-    --accent2: #3fb950;
-    --accent3: #d2a8ff;
-    --accent4: #ffa657;
-    --danger: #f85149;
-    --text: #e6edf3;
-    --text2: #8b949e;
-    --text3: #6e7681;
+    --bg:#0d1117; --surface:#161b22; --surface2:#1c2230; --border:#30363d;
+    --accent:#58a6ff; --accent2:#3fb950; --accent3:#d2a8ff; --accent4:#ffa657; --danger:#f85149;
+    --text:#e6edf3; --text2:#8b949e; --text3:#6e7681;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Noto Sans KR', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:'Noto Sans KR',sans-serif; min-height:100vh; overflow-x:hidden; padding-bottom:90px; }
+  button { font-family:inherit; }
+  .mono { font-family:'JetBrains Mono',monospace; }
 
-  /* TOPBAR */
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 28px; height: 56px;
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    position: sticky; top: 0; z-index: 100;
-  }
-  .topbar-logo { display:flex; align-items:center; gap:10px; font-weight:700; font-size:15px; letter-spacing:-.3px; }
-  .topbar-logo .dot { width:8px; height:8px; border-radius:50%; background:var(--accent2); box-shadow:0 0 8px var(--accent2); }
-  .topbar-center { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text2); }
-  .topbar-right { display:flex; align-items:center; gap:16px; font-size:13px; }
-  #live-clock { font-family:'JetBrains Mono',monospace; color:var(--accent); }
-  .office-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:6px; background:rgba(88,166,255,.15); border:1px solid rgba(88,166,255,.3); color:var(--accent); font-size:12px; font-weight:600; text-decoration:none; transition:all .2s; white-space:nowrap; }
-  .office-btn:hover { background:rgba(88,166,255,.25); border-color:var(--accent); }
-  .status-dot { width:6px; height:6px; border-radius:50%; background:var(--accent2); animation:pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .topbar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 20px; min-height:56px; background:var(--surface); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; flex-wrap:wrap; }
+  .logo { display:flex; align-items:center; gap:8px; font-weight:700; font-size:15px; }
+  .logo .dot { width:8px; height:8px; border-radius:50%; background:var(--accent2); box-shadow:0 0 8px var(--accent2); }
+  .top-right { display:flex; align-items:center; gap:10px; font-size:12px; flex-wrap:wrap; padding:8px 0; }
+  .pill { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; text-decoration:none; border:1px solid; }
+  .pill-blue { background:rgba(88,166,255,.12); border-color:rgba(88,166,255,.35); color:var(--accent); }
+  .pill-green { background:rgba(63,185,80,.12); border-color:rgba(63,185,80,.35); color:var(--accent2); }
+  .pill-red { background:rgba(248,81,73,.12); border-color:rgba(248,81,73,.35); color:var(--danger); }
 
-  /* TABS */
-  .tabs {
-    display:flex; gap:0; padding:0 28px;
-    background:var(--surface); border-bottom:1px solid var(--border);
-    overflow-x: auto;
-  }
-  .tabs::-webkit-scrollbar { height: 2px; }
-  .tabs::-webkit-scrollbar-thumb { background: var(--border); }
-  .tab {
-    padding:14px 22px; font-size:13px; font-weight:500; color:var(--text2);
-    cursor:pointer; border-bottom:2px solid transparent; transition:all .2s; white-space:nowrap;
-  }
-  .tab:hover { color:var(--text); }
-  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .tabs { display:flex; padding:0 20px; background:var(--surface); border-bottom:1px solid var(--border); overflow-x:auto; }
+  .tab { padding:13px 16px; font-size:13px; color:var(--text2); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; }
+  .tab.active { color:var(--text); border-bottom-color:var(--accent); font-weight:600; }
+  .badge { display:inline-block; min-width:18px; padding:0 6px; margin-left:4px; border-radius:9px; background:var(--accent4); color:#0d1117; font-size:11px; font-weight:700; text-align:center; }
+  .badge:empty { display:none; }
 
-  /* MAIN */
-  .main { padding:28px 28px 100px; max-width:1400px; margin:0 auto; }
+  .main { max-width:1100px; margin:0 auto; padding:20px 16px; }
   .panel { display:none; }
   .panel.active { display:block; }
+  .h2 { font-size:15px; font-weight:700; margin:22px 0 10px; }
+  .h2:first-child { margin-top:0; }
+  .muted { color:var(--text2); font-size:12px; line-height:1.7; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; }
+  .stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; }
+  .stat-label { font-size:11px; color:var(--text2); margin-bottom:6px; }
+  .stat-val { font-size:22px; font-weight:700; }
+  .c-blue{color:var(--accent)} .c-green{color:var(--accent2)} .c-orange{color:var(--accent4)} .c-purple{color:var(--accent3)} .c-red{color:var(--danger)}
 
-  /* STAT ROW */
-  .stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
-  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px; }
-  .stat-label { font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
-  .stat-value { font-size:28px; font-weight:700; font-family:'JetBrains Mono',monospace; }
-  .stat-sub { font-size:12px; color:var(--text2); margin-top:4px; }
-  .c-blue{color:var(--accent)} .c-green{color:var(--accent2)} .c-purple{color:var(--accent3)} .c-orange{color:var(--accent4)}
+  .notice { border:1px solid rgba(88,166,255,.35); background:rgba(88,166,255,.08); border-radius:10px; padding:12px 14px; font-size:12px; line-height:1.7; color:var(--text2); margin-bottom:16px; }
+  .notice b { color:var(--text); }
 
-  /* FLOOR CARDS */
-  .section-title { font-size:13px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
-  .floor-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:28px; }
-  .floor-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
-  .floor-header { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--border); background:var(--surface2); }
-  .floor-badge { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; padding:3px 8px; border-radius:4px; background:rgba(88,166,255,.15); color:var(--accent); }
-  .floor-name { font-size:14px; font-weight:600; }
-  .floor-count { font-size:12px; color:var(--text2); }
-  .emp-list { padding:12px 18px; display:flex; flex-direction:column; gap:10px; }
-  .emp-row { display:flex; align-items:center; gap:12px; }
-  .emp-avatar { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
-  .emp-info { flex:1; min-width:0; }
-  .emp-name { font-size:13px; font-weight:500; }
-  .emp-role { font-size:11px; color:var(--text3); }
-  .emp-progress-wrap { width:90px; flex-shrink:0; }
-  .emp-progress-bar { height:4px; background:var(--border); border-radius:2px; overflow:hidden; margin-top:2px; }
-  .emp-progress-fill { height:100%; border-radius:2px; background:var(--accent2); transition:width 1s; }
-  .emp-pct { font-size:10px; color:var(--text3); text-align:right; }
-  .emp-status { font-size:10px; padding:2px 7px; border-radius:3px; white-space:nowrap; flex-shrink:0; }
-  .s-work{background:rgba(63,185,80,.15);color:var(--accent2)} .s-meet{background:rgba(210,168,255,.15);color:var(--accent3)} .s-idle{background:rgba(110,118,129,.15);color:var(--text3)} .s-report{background:rgba(255,166,87,.15);color:var(--accent4)}
+  .ch-head { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+  .ch-name { font-weight:700; font-size:14px; }
+  .ch-topic { font-size:12px; color:var(--text2); margin-bottom:10px; }
+  .m-row { margin:8px 0; }
+  .m-top { display:flex; justify-content:space-between; gap:8px; font-size:12px; color:var(--text2); margin-bottom:4px; }
+  .m-top b { color:var(--text); font-family:'JetBrains Mono',monospace; font-weight:600; }
+  .bar { height:6px; background:var(--surface2); border-radius:3px; overflow:hidden; }
+  .bar > div { height:100%; background:var(--accent); border-radius:3px; }
+  .bar.done > div { background:var(--accent2); }
+  .ch-foot { display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:11px; color:var(--text3); margin-top:10px; }
+  .stale { color:var(--accent4); }
+  details { margin-top:10px; }
+  summary { cursor:pointer; font-size:12px; color:var(--accent); }
+  .edit-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+  .edit-grid label { font-size:11px; color:var(--text2); display:block; margin-bottom:3px; }
 
-  /* ── 업무일지 (개선) ── */
-  .wl-layout {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 20px;
-    min-height: 600px;
-  }
-  .wl-left {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .wl-left-header {
-    padding: 12px 16px;
-    font-size: 11px; font-weight: 600; color: var(--text2);
-    text-transform: uppercase; letter-spacing: 1px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-  }
-  .wl-dept-item {
-    padding: 11px 16px;
-    cursor: pointer;
-    border-bottom: 1px solid var(--border);
-    transition: background .15s;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .wl-dept-item:last-child { border-bottom: none; }
-  .wl-dept-item:hover { background: var(--surface2); }
-  .wl-dept-item.active { background: rgba(88,166,255,.1); border-left: 2px solid var(--accent); }
-  .wl-dept-icon { font-size: 18px; }
-  .wl-dept-name { font-size: 13px; font-weight: 500; }
-  .wl-dept-floor { font-size: 11px; color: var(--text3); }
-  .wl-dept-cnt {
-    margin-left: auto;
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 10px;
-    background: rgba(88,166,255,.15);
-    color: var(--accent);
-    font-family: 'JetBrains Mono', monospace;
-  }
+  .input, .ta, select { width:100%; padding:8px 10px; border-radius:6px; border:1px solid var(--border); background:var(--surface2); color:var(--text); font-size:13px; font-family:inherit; outline:none; }
+  .input:focus, .ta:focus { border-color:var(--accent); }
+  .ta { min-height:80px; resize:vertical; line-height:1.6; }
+  .btn { padding:8px 14px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid transparent; }
+  .btn-primary { background:var(--accent); color:#0d1117; }
+  .btn-green { background:var(--accent2); color:#0d1117; }
+  .btn-ghost { background:var(--surface2); color:var(--text); border-color:var(--border); }
+  .btn-red { background:rgba(248,81,73,.12); color:var(--danger); border-color:rgba(248,81,73,.35); }
+  .btn:disabled { opacity:.5; cursor:wait; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
 
-  .wl-right {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
+  .task { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:12px; }
+  .task-head { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px; }
+  .role { font-size:11px; padding:2px 8px; border-radius:4px; background:rgba(210,168,255,.15); color:var(--accent3); font-weight:600; }
+  .chtag { font-size:11px; padding:2px 8px; border-radius:4px; background:var(--surface2); color:var(--text2); }
+  .task-title { font-weight:700; font-size:14px; flex:1 1 200px; }
+  .task-ts { font-size:11px; color:var(--text3); }
+  .task-body { white-space:pre-wrap; font-size:13px; line-height:1.75; color:var(--text2); background:var(--surface2); border-radius:8px; padding:12px; max-height:340px; overflow:auto; margin-bottom:10px; word-break:break-word; }
+  .task-note { font-size:12px; color:var(--accent4); margin-bottom:8px; }
+  .empty { color:var(--text3); font-size:13px; text-align:center; padding:36px 10px; }
 
-  /* 오늘의 업무일지 로그 */
-  .wl-log-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    flex: 1;
-  }
-  .wl-log-header {
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .wl-log-title { font-size: 14px; font-weight: 600; }
-  .wl-log-subtitle { font-size: 11px; color: var(--text3); margin-top: 2px; }
-  .wl-log-date { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text2); }
-  .wl-entries {
-    padding: 0;
-    max-height: 480px;
-    overflow-y: auto;
-  }
-  .wl-entry {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 13px 20px;
-    border-bottom: 1px solid var(--border);
-    transition: background .1s;
-  }
-  .wl-entry:last-child { border-bottom: none; }
-  .wl-entry:hover { background: var(--surface2); }
-  .wl-entry-avatar {
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-  .wl-entry-body { flex: 1; min-width: 0; }
-  .wl-entry-top {
-    display: flex; align-items: center; gap: 8px;
-    margin-bottom: 5px; flex-wrap: wrap;
-  }
-  .wl-entry-person { font-size: 13px; font-weight: 600; }
-  .wl-entry-dept { font-size: 11px; color: var(--text3); }
-  .wl-entry-status { font-size: 10px; padding: 2px 7px; border-radius: 3px; white-space: nowrap; }
-  .st-done { background:rgba(63,185,80,.15); color:var(--accent2); }
-  .st-prog { background:rgba(88,166,255,.15); color:var(--accent); }
-  .st-issue { background:rgba(248,81,73,.15); color:var(--danger); }
-  .st-meet { background:rgba(210,168,255,.15); color:var(--accent3); }
-  .wl-entry-text { font-size: 12px; color: var(--text2); line-height: 1.6; }
-  .wl-entry-meta {
-    display: flex; align-items: center; gap: 12px;
-    margin-top: 6px;
-  }
-  .wl-entry-pct-wrap { display: flex; align-items: center; gap: 6px; }
-  .wl-entry-bar { width: 80px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .wl-entry-bar-fill { height: 100%; border-radius: 2px; background: var(--accent2); }
-  .wl-entry-pct-num { font-size: 10px; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
-  .wl-entry-kpi { font-size: 10px; color: var(--accent3); }
-  .wl-entry-ts { font-size: 10px; color: var(--text3); font-family: 'JetBrains Mono', monospace; margin-left: auto; }
-  .wl-entry-issue { font-size: 11px; color: var(--danger); margin-top: 4px; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  th, td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--border); }
+  th { color:var(--text2); font-weight:500; }
+  .tbl-wrap { overflow-x:auto; }
 
-  /* 업무일지 제출 폼 */
-  .wl-form-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .wl-form-header {
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .wl-form-title { font-size: 14px; font-weight: 600; }
-  .wl-form-members { font-size: 11px; color: var(--text3); margin-top: 2px; }
-  .log-form { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
-  .form-row { display: flex; flex-direction: column; gap: 5px; }
-  .form-label { font-size: 12px; color: var(--text2); font-weight: 500; }
-  .form-input, .form-textarea {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-    color: var(--text); font-family: 'Noto Sans KR', sans-serif;
-    font-size: 13px; padding: 9px 12px; outline: none; transition: border .2s;
-  }
-  .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
-  .form-textarea { min-height: 90px; resize: vertical; line-height: 1.6; }
-  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .form-actions { display: flex; gap: 10px; padding: 14px 20px; border-top: 1px solid var(--border); }
-  .btn { padding: 9px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all .2s; }
-  .btn-primary { background: var(--accent); color: #0d1117; }
-  .btn-primary:hover { background: #79c0ff; }
-  .btn-success { background: var(--accent2); color: #0d1117; }
-  .btn-success:hover { background: #56d364; }
-  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-  .btn-secondary:hover { border-color: var(--text2); }
-  .btn-danger { background: rgba(248,81,73,.15); color: var(--danger); border: 1px solid rgba(248,81,73,.3); }
+  .cmdbar { position:fixed; left:0; right:0; bottom:0; background:var(--surface); border-top:1px solid var(--border); padding:10px 16px; z-index:90; }
+  .cmdbar .row { max-width:1100px; margin:0 auto; flex-wrap:nowrap; }
+  .cmdbar select { width:auto; flex:0 0 auto; }
+  .cmdbar .input { flex:1 1 auto; min-width:0; }
 
-  /* 보고서기록 */
-  .report-toolbar { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
-  .report-filter { padding:7px 14px; background:var(--surface); border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:12px; cursor:pointer; outline:none; }
-  .reports-list { display:flex; flex-direction:column; gap:12px; }
-  .report-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
-  .report-card-header { padding:14px 18px; border-bottom:1px solid var(--border); background:var(--surface2); display:flex; align-items:center; justify-content:space-between; }
-  .report-meta { display:flex; align-items:center; gap:10px; }
-  .report-dept-badge { font-size:11px; padding:3px 8px; border-radius:4px; background:rgba(88,166,255,.15); color:var(--accent); }
-  .report-title-text { font-size:14px; font-weight:600; }
-  .report-time { font-size:11px; color:var(--text3); font-family:'JetBrains Mono',monospace; }
-  .report-body { padding:14px 18px; }
-  .report-section { margin-bottom:10px; }
-  .report-section-label { font-size:11px; color:var(--text3); margin-bottom:4px; }
-  .report-section-text { font-size:13px; line-height:1.6; color:var(--text2); }
-  .report-kpi-row { display:flex; gap:20px; flex-wrap:wrap; }
-  .report-kpi-key { font-size:11px; color:var(--text3); }
-  .report-kpi-val { font-size:14px; font-weight:600; color:var(--accent2); }
-  .report-actions-row { display:flex; gap:8px; margin-top:12px; }
-  .approval-badge { font-size:11px; padding:3px 8px; border-radius:4px; }
-  .app-pending{background:rgba(255,166,87,.15);color:var(--accent4)} .app-approved{background:rgba(63,185,80,.15);color:var(--accent2)} .app-rejected{background:rgba(248,81,73,.15);color:var(--danger)}
-
-  /* 수익현황 */
-  .revenue-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
-  .rev-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px; }
-  .rev-label { font-size:12px; color:var(--text3); margin-bottom:6px; }
-  .rev-amount { font-size:24px; font-weight:700; font-family:'JetBrains Mono',monospace; }
-  .rev-change { font-size:12px; margin-top:4px; }
-  .up{color:var(--accent2)} .dn{color:var(--danger)}
-  .rev-input-section { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
-  .rev-input-header { padding:14px 20px; border-bottom:1px solid var(--border); background:var(--surface2); font-size:13px; font-weight:600; }
-  .rev-form { padding:20px; display:flex; flex-direction:column; gap:12px; }
-  .rev-row { display:grid; grid-template-columns:180px 1fr 140px 100px; gap:10px; align-items:end; }
-  .rev-history { padding:0 20px 20px; }
-  .rev-history-title { font-size:12px; color:var(--text2); font-weight:600; margin-bottom:10px; }
-  .rev-table { width:100%; border-collapse:collapse; font-size:12px; }
-  .rev-table th { text-align:left; padding:8px 12px; color:var(--text3); font-weight:500; border-bottom:1px solid var(--border); }
-  .rev-table td { padding:9px 12px; border-bottom:1px solid var(--border); color:var(--text2); }
-  .rev-table tr:last-child td { border-bottom:none; }
-  .rev-table .amount-cell { color:var(--accent2); font-family:'JetBrains Mono',monospace; font-weight:600; }
-
-  /* CEO 커맨드바 */
-  .ceo-bar { position:fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:1px solid var(--border); padding:14px 28px; display:flex; align-items:center; gap:12px; z-index:100; }
-  .ceo-label { font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:1px; white-space:nowrap; display:flex; align-items:center; gap:6px; }
-  .ceo-bar select { background:var(--surface2); border:1px solid var(--border); border-radius:6px; color:var(--text); font-size:12px; padding:8px 12px; outline:none; cursor:pointer; }
-  .ceo-input { flex:1; background:var(--bg); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'Noto Sans KR',sans-serif; font-size:13px; padding:9px 14px; outline:none; transition:border .2s; }
-  .ceo-input:focus { border-color:var(--accent); }
-  .ceo-send { background:var(--accent); color:#0d1117; border:none; border-radius:6px; padding:9px 18px; font-size:13px; font-weight:700; cursor:pointer; transition:background .2s; white-space:nowrap; }
-  .ceo-send:hover { background:#79c0ff; }
-  .cmd-log { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:14px 18px; margin-bottom:24px; max-height:160px; overflow-y:auto; font-size:12px; line-height:1.8; font-family:'JetBrains Mono',monospace; }
-  .cmd-entry { display:flex; gap:8px; }
-  .cmd-ts{color:var(--text3)} .cmd-dept{color:var(--accent3)} .cmd-text{color:var(--text2)}
-
-  /* toast */
-  .toast { position:fixed; bottom:80px; right:28px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:12px 18px; font-size:13px; opacity:0; transform:translateY(8px); transition:all .3s; pointer-events:none; z-index:200; }
+  .toast { position:fixed; bottom:84px; right:16px; left:16px; margin-left:auto; max-width:420px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:12px 16px; font-size:13px; opacity:0; transform:translateY(8px); transition:all .3s; pointer-events:none; z-index:200; }
   .toast.show { opacity:1; transform:translateY(0); }
 
-  /* RESPONSIVE */
-  @media (max-width:900px) {
-    .wl-layout { grid-template-columns: 1fr; }
-    .wl-left { flex-direction: column; }
-    .wl-left .wl-dept-item { display: inline-flex; border-bottom: none; border-right: 1px solid var(--border); }
-    .wl-left { flex-direction: row; flex-wrap: wrap; overflow-x: auto; height: auto; }
-    .wl-left-header { width: 100%; }
-  }
-  @media (max-width: 768px) {
-    .stat-row { grid-template-columns: repeat(2,1fr); }
-    .floor-grid { grid-template-columns: 1fr; }
-    .form-row-2 { grid-template-columns: 1fr; }
-    .revenue-grid { grid-template-columns: repeat(2,1fr); }
-    .rev-row { grid-template-columns: 1fr 1fr; gap: 8px; }
-    .topbar { padding: 0 12px; }
-    .topbar-center { display: none; }
-    .main { padding: 14px 14px 90px; }
-    .tabs { padding: 0 8px; }
-    .tab { padding: 12px 14px; font-size: 12px; }
-    .ceo-bar { padding: 10px 12px; gap: 8px; }
-    .ceo-bar select { display: none; }
-    .emp-progress-wrap { display: none; }
-    .floor-header { flex-wrap: wrap; gap: 6px; }
-    .wl-layout { grid-template-columns: 1fr; }
-    .wl-left {
-      flex-direction: row;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      border-radius: 10px;
-    }
-    .wl-left-header { display: none; }
-    .wl-dept-item {
-      flex-direction: column;
-      padding: 8px 12px;
-      border-bottom: none;
-      border-right: 1px solid var(--border);
-      min-width: 80px;
-      align-items: center;
-      text-align: center;
-      gap: 4px;
-    }
-    .wl-dept-floor { display: none; }
-    .wl-dept-cnt { display: none; }
-  }
+  .modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:300; padding:16px; }
+  .modal-bg.show { display:flex; }
+  .modal { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; width:100%; max-width:480px; max-height:90vh; overflow:auto; }
+  .modal h3 { font-size:16px; margin-bottom:8px; }
+  .modal label { display:block; font-size:12px; color:var(--text2); margin:10px 0 4px; }
+  .modal a { color:var(--accent); }
+  .modal hr { border:0; border-top:1px solid var(--border); margin:16px 0; }
 
-  .ai-btn { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:6px; background:rgba(63,185,80,.15); border:1px solid rgba(63,185,80,.35); color:var(--accent2); font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
-  .ai-btn.off { background:rgba(248,81,73,.12); border-color:rgba(248,81,73,.35); color:var(--danger); }
-  .ai-modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:300; padding:16px; }
-  .ai-modal-bg.show { display:flex; }
-  .ai-modal { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px; width:100%; max-width:460px; color:var(--text); }
-  .ai-modal h3 { margin:0 0 6px; font-size:16px; }
-  .ai-modal p { font-size:12px; color:var(--text2); line-height:1.7; margin:0 0 12px; }
-  .ai-modal a { color:var(--accent); }
-  .ai-modal label { display:block; font-size:12px; color:var(--text2); margin:10px 0 4px; }
-  .ai-modal input { width:100%; box-sizing:border-box; padding:9px 10px; border-radius:6px; border:1px solid var(--border); background:var(--surface2); color:var(--text); font-size:13px; }
-  .ai-modal .row { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
-  .cmd-ai { color:var(--accent2); }
-  .rs-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px 18px; margin-bottom:14px; }
-  .rs-head { display:flex; flex-wrap:wrap; gap:8px; align-items:baseline; justify-content:space-between; margin-bottom:8px; }
-  .rs-title { font-size:15px; font-weight:700; }
-  .rs-meta { font-size:11px; color:var(--text3); }
-  .rs-body { font-size:13px; color:var(--text2); line-height:1.7; }
-  .rs-body b { color:var(--text); }
-  .rs-steps { margin:6px 0 0 18px; padding:0; }
-  .rs-score { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent2); }
+  @media (max-width:600px){
+    .topbar { padding:0 16px; }
+    .tabs { padding:0 8px; }
+    .edit-grid { grid-template-columns:1fr; }
+    .cmdbar select { max-width:120px; }
+  }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar">
-  <div class="topbar-logo">
-    <div class="dot"></div>
-    RM 관제탑 <span style="font-weight:300;opacity:.5;margin-left:4px">CONTROL TOWER</span>
-    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent3);font-weight:400;margin-left:6px">v2.0</span>
-  </div>
-  <div class="topbar-center">RELAXING MIND AI COMPANY · 37 AI AGENTS ONLINE</div>
-  <div class="topbar-right">
-    <button class="ai-btn off" id="ai-btn" onclick="openAiSettings()">🔌 AI 연결 안됨</button>
-    <a class="office-btn" href="https://ruymonpel.github.io/relaxing-mind-tower/office/" target="_blank">🏢 오피스로 이동</a>
-    <div style="display:flex;align-items:center;gap:6px"><div class="status-dot"></div><span style="font-size:12px;color:var(--text2)">LIVE</span></div>
-    <span id="live-clock">--:--:--</span>
+  <div class="logo"><div class="dot"></div>RM 관제탑 <span class="mono" style="font-size:10px;color:var(--accent3);font-weight:400">v3</span></div>
+  <div class="top-right">
+    <button class="pill pill-red" id="ai-btn" onclick="openSettings()">🔌 AI 연결 안됨</button>
+    <a class="pill pill-blue" href="office/" target="_blank">🏢 오피스</a>
+    <span class="mono" id="clock" style="color:var(--accent)">--:--</span>
   </div>
 </div>
 
-<!-- TABS -->
 <div class="tabs">
-  <div class="tab active" onclick="switchTab('dashboard',this)">🏢 대시보드</div>
-  <div class="tab" onclick="switchTab('worklog',this)">📝 업무일지</div>
-  <div class="tab" onclick="switchTab('reports',this)">📋 보고서기록</div>
-  <div class="tab" onclick="switchTab('revenue',this)">💰 수익현황</div>
-  <div class="tab" onclick="switchTab('research',this)">🧠 사업연구</div>
+  <div class="tab active" data-tab="goals" onclick="switchTab('goals')">🎯 12월 목표</div>
+  <div class="tab" data-tab="inbox" onclick="switchTab('inbox')">📥 승인함<span class="badge" id="b-inbox"></span></div>
+  <div class="tab" data-tab="todo" onclick="switchTab('todo')">🚀 실행 목록<span class="badge" id="b-todo"></span></div>
+  <div class="tab" data-tab="revenue" onclick="switchTab('revenue')">💰 수익</div>
 </div>
 
 <div class="main">
 
-<!-- ===== 대시보드 ===== -->
-<div id="panel-dashboard" class="panel active">
-  <div class="stat-row">
-    <div class="stat-card">
-      <div class="stat-label">전체 직원</div>
-      <div class="stat-value c-blue">37</div>
-      <div class="stat-sub">8개 부서 운영 중</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">오늘 업무일지</div>
-      <div class="stat-value c-green" id="stat-logs">37</div>
-      <div class="stat-sub">전원 제출 완료</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">승인 완료</div>
-      <div class="stat-value c-purple" id="stat-approved">0</div>
-      <div class="stat-sub">CEO 승인 대기 <span id="stat-pending">0</span>건</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">누적 수익</div>
-      <div class="stat-value c-orange" id="stat-revenue">₩0</div>
-      <div class="stat-sub">전 채널 합산</div>
+<!-- ===== 12월 목표 ===== -->
+<div class="panel active" id="panel-goals">
+  <div class="notice">
+    <b>이 화면의 모든 숫자는 대표님이 직접 입력한 실제 값입니다.</b> AI는 숫자를 만들지 않습니다.
+    YouTube 스튜디오 · 네이버 블로그 통계 · 인스타 인사이트에서 확인한 값을 각 채널의 「✏️ 숫자 입력」에 넣어 주세요.
+    AI 직원은 초안만 만들고, 게시는 대표님이 승인한 것만 직접 합니다.
+  </div>
+
+  <div class="stats">
+    <div class="card"><div class="stat-label">목표일까지</div><div class="stat-val c-orange" id="s-dday">-</div></div>
+    <div class="card"><div class="stat-label">이번 달 게시 완료</div><div class="stat-val c-green" id="s-done">0</div></div>
+    <div class="card"><div class="stat-label">승인 대기 초안</div><div class="stat-val c-purple" id="s-pending">0</div></div>
+    <div class="card"><div class="stat-label">입력된 총 수익</div><div class="stat-val c-blue" id="s-rev">₩0</div></div>
+  </div>
+
+  <div class="h2">🧭 대표님 방향 메모</div>
+  <div class="card">
+    <div class="muted" style="margin-bottom:8px">AI 직원은 매번 이 메모를 가장 먼저 따릅니다. 원하지 않는 방향, 집중할 채널, 금지 사항을 적어 두세요.</div>
+    <textarea class="ta" id="note" placeholder="예: 12월까지는 유튜브 1번 채널에 집중. 자극적인 제목 금지. 새 사업 제안은 하지 말 것."></textarea>
+    <div class="row" style="margin-top:8px;justify-content:space-between">
+      <div class="row"><span class="muted">목표일</span><input class="input" type="date" id="deadline" style="width:auto"></div>
+      <button class="btn btn-primary" onclick="saveNote()">💾 저장</button>
     </div>
   </div>
 
-  <div class="cmd-log" id="cmd-log">
-    <div class="cmd-entry"><span class="cmd-ts">시스템</span><span class="cmd-dept">[전체]</span><span class="cmd-text">RM 관제탑이 시작되었습니다. 37명 전원 업무일지 제출 완료.</span></div>
-  </div>
+  <div class="h2">📊 채널별 실제 진척</div>
+  <div class="grid" id="channels"></div>
 
-  <div class="section-title">🏢 층별 현황</div>
-  <div class="floor-grid">
-    <!-- 7F CEO 오피스 -->
-    <div class="floor-card">
-      <div class="floor-header">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span class="floor-badge">7F</span>
-          <span class="floor-name">CEO 오피스</span>
-        </div>
-        <span class="floor-count">3명</span>
-      </div>
-      <div class="emp-list">
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(167,139,250,.2)">🤖</div><div class="emp-info"><div class="emp-name">Claude</div><div class="emp-role">CEO · 전략총괄</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:95%"></div></div><div class="emp-pct">95%</div></div><span class="emp-status s-work">업무중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(167,139,250,.2)">🎙️</div><div class="emp-info"><div class="emp-name">Aria</div><div class="emp-role">비서실장</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:88%"></div></div><div class="emp-pct">88%</div></div><span class="emp-status s-meet">회의중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(167,139,250,.2)">📊</div><div class="emp-info"><div class="emp-name">Nova</div><div class="emp-role">데이터 분석가</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:92%"></div></div><div class="emp-pct">92%</div></div><span class="emp-status s-work">업무중</span></div>
-      </div>
-    </div>
-    <!-- 6F 경영지원팀 -->
-    <div class="floor-card">
-      <div class="floor-header">
-        <div style="display:flex;align-items:center;gap:10px"><span class="floor-badge">6F</span><span class="floor-name">경영지원팀</span></div>
-        <span class="floor-count">4명</span>
-      </div>
-      <div class="emp-list">
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(250,204,21,.15)">⭐</div><div class="emp-info"><div class="emp-name">Stella</div><div class="emp-role">경영지원팀장</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:91%"></div></div><div class="emp-pct">91%</div></div><span class="emp-status s-work">업무중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(250,204,21,.15)">💼</div><div class="emp-info"><div class="emp-name">Rex F</div><div class="emp-role">재무 담당</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:85%"></div></div><div class="emp-pct">85%</div></div><span class="emp-status s-work">업무중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(250,204,21,.15)">🌐</div><div class="emp-info"><div class="emp-name">Maya</div><div class="emp-role">HR 매니저</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:78%"></div></div><div class="emp-pct">78%</div></div><span class="emp-status s-meet">회의중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(250,204,21,.15)">🔧</div><div class="emp-info"><div class="emp-name">Leon</div><div class="emp-role">시스템 관리</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:80%"></div></div><div class="emp-pct">80%</div></div><span class="emp-status s-work">업무중</span></div>
-      </div>
-    </div>
-    <!-- 5F 콘텐츠팀 -->
-    <div class="floor-card">
-      <div class="floor-header">
-        <div style="display:flex;align-items:center;gap:10px"><span class="floor-badge">5F</span><span class="floor-name">콘텐츠팀</span></div>
-        <span class="floor-count">12명</span>
-      </div>
-      <div class="emp-list">
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(59,130,246,.15)">✍️</div><div class="emp-info"><div class="emp-name">Kai</div><div class="emp-role">블로그 팀장</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:87%"></div></div><div class="emp-pct">87%</div></div><span class="emp-status s-work">업무중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(59,130,246,.15)">📹</div><div class="emp-info"><div class="emp-name">Milo</div><div class="emp-role">유튜브 PD</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:82%"></div></div><div class="emp-pct">82%</div></div><span class="emp-status s-work">업무중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(59,130,246,.15)">📝</div><div class="emp-info"><div class="emp-name">Lena · Finn · Zara</div><div class="emp-role">블로그 라이터</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:80%"></div></div><div class="emp-pct">80%</div></div><span class="emp-status s-work">업무중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(59,130,246,.15)">🎬</div><div class="emp-info"><div class="emp-name">Jay · Sora · Nyx</div><div class="emp-role">영상 편집</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:75%"></div></div><div class="emp-pct">75%</div></div><span class="emp-status s-report">보고중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(59,130,246,.15)">🔍</div><div class="emp-info"><div class="emp-name">Teo · Wren · Bree</div><div class="emp-role">SEO 최적화</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:90%"></div></div><div class="emp-pct">90%</div></div><span class="emp-status s-work">업무중</span></div>
-      </div>
-    </div>
-    <!-- 4F 크리에이티브팀 -->
-    <div class="floor-card">
-      <div class="floor-header">
-        <div style="display:flex;align-items:center;gap:10px"><span class="floor-badge">4F</span><span class="floor-name">크리에이티브팀</span></div>
-        <span class="floor-count">6명</span>
-      </div>
-      <div class="emp-list">
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(168,85,247,.15)">🎨</div><div class="emp-info"><div class="emp-name">Elle</div><div class="emp-role">소설 팀장</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:85%"></div></div><div class="emp-pct">85%</div></div><span class="emp-status s-work">업무중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(168,85,247,.15)">📸</div><div class="emp-info"><div class="emp-name">Iris</div><div class="emp-role">인스타 팀장</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:91%"></div></div><div class="emp-pct">91%</div></div><span class="emp-status s-work">업무중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(168,85,247,.15)">✒️</div><div class="emp-info"><div class="emp-name">Pip · Cleo · Sol</div><div class="emp-role">소설 작가</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:77%"></div></div><div class="emp-pct">77%</div></div><span class="emp-status s-work">업무중</span></div>
-      </div>
-    </div>
-    <!-- 3F 신규사업부 -->
-    <div class="floor-card">
-      <div class="floor-header">
-        <div style="display:flex;align-items:center;gap:10px"><span class="floor-badge">3F</span><span class="floor-name">신규사업부</span></div>
-        <span class="floor-count">5명</span>
-      </div>
-      <div class="emp-list">
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(16,185,129,.15)">🚀</div><div class="emp-info"><div class="emp-name">Victor</div><div class="emp-role">사업개발 팀장</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:88%"></div></div><div class="emp-pct">88%</div></div><span class="emp-status s-meet">회의중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(16,185,129,.15)">🔬</div><div class="emp-info"><div class="emp-name">Iris N</div><div class="emp-role">트렌드 리서처</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:83%"></div></div><div class="emp-pct">83%</div></div><span class="emp-status s-work">업무중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(16,185,129,.15)">💡</div><div class="emp-info"><div class="emp-name">Kane · Zoe · Ren</div><div class="emp-role">신규 콘텐츠 개발</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:71%"></div></div><div class="emp-pct">71%</div></div><span class="emp-status s-work">업무중</span></div>
-      </div>
-    </div>
-    <!-- 2F+1F+B1 -->
-    <div class="floor-card">
-      <div class="floor-header">
-        <div style="display:flex;align-items:center;gap:10px"><span class="floor-badge">2F·1F·B1</span><span class="floor-name">수익화팀 · 로비 · 보안팀</span></div>
-        <span class="floor-count">7명</span>
-      </div>
-      <div class="emp-list">
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(245,158,11,.15)">💰</div><div class="emp-info"><div class="emp-name">Penny · Rich · Data</div><div class="emp-role">수익화팀 (2F)</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:89%"></div></div><div class="emp-pct">89%</div></div><span class="emp-status s-work">업무중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(99,102,241,.15)">🤝</div><div class="emp-info"><div class="emp-name">Otto</div><div class="emp-role">로비 매니저 (1F)</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:74%"></div></div><div class="emp-pct">74%</div></div><span class="emp-status s-meet">회의중</span></div>
-        <div class="emp-row"><div class="emp-avatar" style="background:rgba(239,68,68,.15)">🛡️</div><div class="emp-info"><div class="emp-name">Rex · Ada · Cy</div><div class="emp-role">보안팀 (B1)</div></div><div class="emp-progress-wrap"><div class="emp-progress-bar"><div class="emp-progress-fill" style="width:96%"></div></div><div class="emp-pct">96%</div></div><span class="emp-status s-work">업무중</span></div>
-      </div>
+  <div class="h2">🤖 AI 직원 (4명)</div>
+  <div class="card">
+    <div class="muted" id="roles-desc"></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn btn-green" id="run-btn" onclick="runDaily(false)">🧠 오늘의 초안 받기</button>
+      <span class="muted" id="last-run"></span>
     </div>
   </div>
-</div><!-- /dashboard -->
+</div>
 
+<!-- ===== 승인함 ===== -->
+<div class="panel" id="panel-inbox">
+  <div class="notice">AI 직원이 만든 초안입니다. <b>승인</b>하면 실행 목록으로 가고, <b>반려</b>할 때 이유를 적으면 다음 초안부터 반영됩니다.</div>
+  <div id="inbox-list"></div>
+</div>
 
-<!-- ===== 업무일지 ===== -->
-<div id="panel-worklog" class="panel">
-  <div class="section-title" style="margin-top:4px">📝 부서별 업무일지 현황</div>
-  <div class="wl-layout">
-    <!-- 왼쪽: 부서 선택 -->
-    <div class="wl-left">
-      <div class="wl-left-header">부서 선택</div>
-      <div class="wl-dept-item active" onclick="selectWlDept(this,'all')">
-        <span class="wl-dept-icon">🏢</span>
-        <div><div class="wl-dept-name">전체 보기</div><div class="wl-dept-floor">37명 전원</div></div>
-        <span class="wl-dept-cnt">37</span>
-      </div>
-      <div class="wl-dept-item" onclick="selectWlDept(this,'CEO 오피스')">
-        <span class="wl-dept-icon">🤖</span>
-        <div><div class="wl-dept-name">CEO 오피스</div><div class="wl-dept-floor">7F · 3명</div></div>
-        <span class="wl-dept-cnt">3</span>
-      </div>
-      <div class="wl-dept-item" onclick="selectWlDept(this,'경영지원팀')">
-        <span class="wl-dept-icon">⭐</span>
-        <div><div class="wl-dept-name">경영지원팀</div><div class="wl-dept-floor">6F · 4명</div></div>
-        <span class="wl-dept-cnt">4</span>
-      </div>
-      <div class="wl-dept-item" onclick="selectWlDept(this,'콘텐츠팀')">
-        <span class="wl-dept-icon">✍️</span>
-        <div><div class="wl-dept-name">콘텐츠팀</div><div class="wl-dept-floor">5F · 12명</div></div>
-        <span class="wl-dept-cnt">12</span>
-      </div>
-      <div class="wl-dept-item" onclick="selectWlDept(this,'크리에이티브팀')">
-        <span class="wl-dept-icon">🎨</span>
-        <div><div class="wl-dept-name">크리에이티브팀</div><div class="wl-dept-floor">4F · 6명</div></div>
-        <span class="wl-dept-cnt">6</span>
-      </div>
-      <div class="wl-dept-item" onclick="selectWlDept(this,'신규사업부')">
-        <span class="wl-dept-icon">🚀</span>
-        <div><div class="wl-dept-name">신규사업부</div><div class="wl-dept-floor">3F · 5명</div></div>
-        <span class="wl-dept-cnt">5</span>
-      </div>
-      <div class="wl-dept-item" onclick="selectWlDept(this,'수익화팀')">
-        <span class="wl-dept-icon">💰</span>
-        <div><div class="wl-dept-name">수익화팀</div><div class="wl-dept-floor">2F · 3명</div></div>
-        <span class="wl-dept-cnt">3</span>
-      </div>
-      <div class="wl-dept-item" onclick="selectWlDept(this,'로비')">
-        <span class="wl-dept-icon">🤝</span>
-        <div><div class="wl-dept-name">로비</div><div class="wl-dept-floor">1F · 1명</div></div>
-        <span class="wl-dept-cnt">1</span>
-      </div>
-      <div class="wl-dept-item" onclick="selectWlDept(this,'보안팀')">
-        <span class="wl-dept-icon">🛡️</span>
-        <div><div class="wl-dept-name">보안팀</div><div class="wl-dept-floor">B1 · 3명</div></div>
-        <span class="wl-dept-cnt">3</span>
-      </div>
-    </div>
+<!-- ===== 실행 목록 ===== -->
+<div class="panel" id="panel-todo">
+  <div class="notice">승인한 초안을 대표님이 직접 게시한 뒤 <b>게시 완료</b>를 누르세요. 링크를 넣어 두면 기록이 남습니다. 여기서 「완료」된 것만 실제 실적으로 셉니다.</div>
+  <div class="h2">할 일</div>
+  <div id="todo-list"></div>
+  <div class="h2">게시 완료 기록</div>
+  <div id="done-list"></div>
+</div>
 
-    <!-- 오른쪽 -->
-    <div class="wl-right">
-      <!-- 오늘의 업무일지 로그 -->
-      <div class="wl-log-panel">
-        <div class="wl-log-header">
-          <div>
-            <div class="wl-log-title" id="wl-log-title">📋 오늘의 업무일지 — 전체</div>
-            <div class="wl-log-subtitle" id="wl-log-subtitle">37명 제출 완료</div>
-          </div>
-          <div class="wl-log-date" id="wl-log-date">--</div>
-        </div>
-        <div class="wl-entries" id="wl-entries"></div>
-      </div>
-
-      <!-- 신규 제출 폼 -->
-      <div class="wl-form-panel">
-        <div class="wl-form-header">
-          <div>
-            <div class="wl-form-title" id="wl-form-title">✏️ 업무일지 제출</div>
-            <div class="wl-form-members" id="wl-form-members">부서를 선택하세요</div>
-          </div>
-          <div class="wl-log-date" id="wl-form-date">--</div>
-        </div>
-        <div class="log-form">
-          <div class="form-row-2">
-            <div class="form-row">
-              <div class="form-label">담당자 이름</div>
-              <input class="form-input" id="log-author" placeholder="예: Kai">
-            </div>
-            <div class="form-row">
-              <div class="form-label">업무 상태</div>
-              <select class="form-input" id="log-status">
-                <option>정상 진행</option><option>완료</option><option>지연</option><option>보류</option><option>긴급</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-label">오늘 한 일</div>
-            <textarea class="form-textarea" id="log-done" placeholder="오늘 수행한 업무를 구체적으로 작성해 주세요."></textarea>
-          </div>
-          <div class="form-row">
-            <div class="form-label">내일 할 일 (계획)</div>
-            <textarea class="form-textarea" id="log-plan" placeholder="내일 예정된 업무를 작성해 주세요."></textarea>
-          </div>
-          <div class="form-row">
-            <div class="form-label">이슈 / CEO 보고 사항</div>
-            <textarea class="form-textarea" id="log-issue" placeholder="특이사항, 결재 필요 사항, CEO 확인이 필요한 내용." style="min-height:70px"></textarea>
-          </div>
-          <div class="form-row-2">
-            <div class="form-row">
-              <div class="form-label">완료율 (%)</div>
-              <input class="form-input" id="log-pct" type="number" min="0" max="100" placeholder="0~100">
-            </div>
-            <div class="form-row">
-              <div class="form-label">KPI / 성과 지표</div>
-              <input class="form-input" id="log-kpi" placeholder="예: 글 발행 3건">
-            </div>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-success" onclick="submitLog()">📤 CEO에게 보고</button>
-          <button class="btn btn-primary" onclick="saveDraft()">💾 임시저장</button>
-          <button class="btn btn-secondary" onclick="clearLog()">↺ 초기화</button>
-        </div>
-      </div>
+<!-- ===== 수익 ===== -->
+<div class="panel" id="panel-revenue">
+  <div class="notice">실제로 정산·확인된 수익만 입력하세요.</div>
+  <div class="card">
+    <div class="row">
+      <select id="rev-ch" style="width:auto"></select>
+      <input class="input" id="rev-desc" placeholder="내용 (예: 10월 쿠팡 파트너스 정산)" style="flex:1 1 180px">
+      <input class="input" id="rev-amt" type="number" placeholder="금액(원)" style="width:130px">
+      <button class="btn btn-primary" onclick="addRevenue()">➕ 추가</button>
     </div>
   </div>
-</div><!-- /worklog -->
-
-
-<!-- ===== 보고서기록 ===== -->
-<div id="panel-reports" class="panel">
-  <div class="section-title" style="margin-top:4px">📋 전체 보고서 기록</div>
-  <div class="report-toolbar">
-    <select class="report-filter" id="report-filter" onchange="filterReports()">
-      <option value="all">전체 부서</option>
-      <option value="CEO 오피스">CEO 오피스</option>
-      <option value="경영지원팀">경영지원팀</option>
-      <option value="콘텐츠팀">콘텐츠팀</option>
-      <option value="크리에이티브팀">크리에이티브팀</option>
-      <option value="신규사업부">신규사업부</option>
-      <option value="수익화팀">수익화팀</option>
-      <option value="로비">로비</option>
-      <option value="보안팀">보안팀</option>
-    </select>
-    <select class="report-filter" id="approval-filter" onchange="filterReports()">
-      <option value="all">전체 상태</option>
-      <option value="pending">승인 대기</option>
-      <option value="approved">승인 완료</option>
-      <option value="rejected">반려</option>
-    </select>
-    <button class="btn btn-danger" onclick="clearAllReports()" style="margin-left:auto;font-size:11px;padding:7px 12px;">🗑 전체 삭제</button>
+  <div class="stats" style="margin-top:12px" id="rev-sums"></div>
+  <div class="card tbl-wrap" style="margin-top:12px">
+    <table><thead><tr><th>날짜</th><th>채널</th><th>내용</th><th>금액</th><th></th></tr></thead><tbody id="rev-tbody"></tbody></table>
   </div>
-  <div class="reports-list" id="reports-list">
-    <div style="color:var(--text3);font-size:13px;text-align:center;padding:40px">아직 제출된 보고서가 없습니다.</div>
-  </div>
-</div><!-- /reports -->
-
-
-<!-- ===== 사업연구 (생각하기) ===== -->
-<div id="panel-research" class="panel">
-  <div class="section-title" style="margin-top:4px">🧠 수익화 사업 연구 — 신규사업부 · 수익화팀</div>
-  <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:12px">
-    AI 직원들이 <b>생각하기(Thinking) 모드</b>로 깊게 검토한 뒤 사업안을 제출합니다. AI가 연결돼 있으면 관제탑을 여는 날마다 하루 1회 자동 연구하고, 아래 버튼으로 언제든 직접 지시할 수 있습니다.
-  </div>
-  <div class="form-row">
-    <div class="form-label">연구 주제 (비워두면 직원들이 스스로 정함)</div>
-    <input class="form-input" id="research-topic" placeholder="예: 초기비용 0원으로 한 달 안에 수익 낼 수 있는 사업">
-  </div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px">
-    <button class="btn btn-primary" id="research-btn" onclick="runResearch(false)">🧠 생각하기 · 연구 시작</button>
-    <button class="btn btn-danger" onclick="clearResearch()" style="font-size:11px">🗑 연구 기록 삭제</button>
-  </div>
-  <div id="research-list"></div>
-</div><!-- /research -->
-
-<!-- ===== 수익현황 ===== -->
-<div id="panel-revenue" class="panel">
-  <div class="section-title" style="margin-top:4px">💰 수익 현황 대시보드</div>
-  <div class="revenue-grid">
-    <div class="rev-card"><div class="rev-label">네이버 블로그 수익</div><div class="rev-amount c-green" id="rev-blog">₩0</div><div class="rev-change up" id="rev-blog-change">—</div></div>
-    <div class="rev-card"><div class="rev-label">유튜브 수익</div><div class="rev-amount c-blue" id="rev-yt">₩0</div><div class="rev-change up" id="rev-yt-change">—</div></div>
-    <div class="rev-card"><div class="rev-label">쿠팡 파트너스</div><div class="rev-amount c-orange" id="rev-cp">₩0</div><div class="rev-change" id="rev-cp-change">최소 ₩10,000 출금 기준</div></div>
-    <div class="rev-card"><div class="rev-label">인스타그램 수익</div><div class="rev-amount c-purple" id="rev-ig">₩0</div><div class="rev-change" id="rev-ig-change">—</div></div>
-    <div class="rev-card"><div class="rev-label">소설 수익</div><div class="rev-amount" id="rev-novel" style="color:var(--accent3)">₩0</div><div class="rev-change" id="rev-novel-change">—</div></div>
-    <div class="rev-card" style="border-color:var(--accent2)"><div class="rev-label">총 누적 수익</div><div class="rev-amount c-green" id="rev-total">₩0</div><div class="rev-change up" id="rev-total-sub">모든 채널 합산</div></div>
-  </div>
-  <div class="rev-input-section">
-    <div class="rev-input-header">📥 수익 입력 (수익화팀 전용)</div>
-    <div class="rev-form">
-      <div class="rev-row">
-        <div class="form-row"><div class="form-label">채널</div><select class="form-input" id="rev-channel"><option value="blog">네이버 블로그</option><option value="yt">유튜브</option><option value="cp">쿠팡 파트너스</option><option value="ig">인스타그램</option><option value="novel">소설</option><option value="other">기타</option></select></div>
-        <div class="form-row"><div class="form-label">설명</div><input class="form-input" id="rev-desc" placeholder="예: 9월 블로그 광고 수익"></div>
-        <div class="form-row"><div class="form-label">금액 (원)</div><input class="form-input" id="rev-amount-input" type="number" placeholder="예: 5000"></div>
-        <div class="form-row"><div class="form-label">&nbsp;</div><button class="btn btn-success" onclick="addRevenue()">+ 추가</button></div>
-      </div>
-    </div>
-    <div class="rev-history">
-      <div class="rev-history-title">수익 내역</div>
-      <table class="rev-table">
-        <thead><tr><th>날짜</th><th>채널</th><th>설명</th><th>금액</th><th></th></tr></thead>
-        <tbody id="rev-tbody"><tr><td colspan="5" style="color:var(--text3);text-align:center">수익 내역이 없습니다.</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-</div><!-- /revenue -->
+</div>
 
 </div><!-- /main -->
 
-<!-- CEO 커맨드바 -->
-<div class="ceo-bar">
-  <div class="ceo-label">👑 CEO 지시</div>
-  <select id="cmd-dept-sel">
-    <option value="전체">📢 전체</option>
-    <option value="CEO 오피스">🤖 CEO 오피스</option>
-    <option value="경영지원팀">⭐ 경영지원팀</option>
-    <option value="콘텐츠팀">✍️ 콘텐츠팀</option>
-    <option value="크리에이티브팀">🎨 크리에이티브팀</option>
-    <option value="신규사업부">🚀 신규사업부</option>
-    <option value="수익화팀">💰 수익화팀</option>
-    <option value="로비">🤝 로비</option>
-    <option value="보안팀">🛡️ 보안팀</option>
-  </select>
-  <input class="ceo-input" id="cmd-input" placeholder="지시 사항을 입력하세요..." onkeydown="if(event.key==='Enter')sendCmd()">
-  <button class="ceo-send" onclick="sendCmd()">📨 전송</button>
+<!-- CEO 지시 -->
+<div class="cmdbar">
+  <div class="row">
+    <select id="cmd-role"></select>
+    <input class="input" id="cmd-input" placeholder="직원에게 지시 (예: 1번 채널 첫 영상 대본 써줘)" onkeydown="if(event.key==='Enter'&&!event.isComposing)sendCmd()">
+    <button class="btn btn-primary" id="cmd-btn" onclick="sendCmd()">📨</button>
+  </div>
 </div>
+
 <div class="toast" id="toast"></div>
 
-<!-- AI 설정 (무료 Gemini API) -->
-<div class="ai-modal-bg" id="ai-modal" onclick="if(event.target===this)closeAiSettings()">
-  <div class="ai-modal">
-    <h3>🔌 AI 직원 연결 (무료 세션)</h3>
-    <p>Google Gemini 무료 API 키를 넣으면 CEO 지시를 보낼 때 해당 부서 AI 직원이 실제로 답하고, 업무일지를 작성해 보고서기록에 올립니다.<br>
-    1) <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> 접속 → 구글 로그인<br>
-    2) "Create API key" → 복사해서 아래에 붙여넣기 (카드 등록 필요 없음)<br>
-    키는 이 브라우저에만 저장되고 Google 외에는 전송되지 않습니다.</p>
+<!-- 설정 -->
+<div class="modal-bg" id="settings" onclick="if(event.target===this)closeSettings()">
+  <div class="modal">
+    <h3>⚙️ 설정</h3>
+    <div class="muted">
+      <b style="color:var(--text)">AI 연결 (Google Gemini 무료 API)</b><br>
+      <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>에서 키를 복사해 붙여넣으세요. 이미 만든 키도 그 페이지에 보입니다.
+      키는 이 브라우저에만 저장되며 Google 외에는 전송되지 않습니다. 무료 버전 입력 내용은 Google이 서비스 개선에 쓸 수 있으니 기밀은 넣지 마세요.
+    </div>
     <label for="ai-key">Gemini API 키</label>
-    <input id="ai-key" type="password" placeholder="AIza..." autocomplete="off">
-    <label for="ai-model">모델 (기본값 그대로 두면 됩니다)</label>
-    <input id="ai-model" type="text" placeholder="gemini-2.5-flash">
-    <div class="row">
-      <button class="btn btn-success" onclick="saveAiSettings()">💾 저장 후 연결 테스트</button>
-      <button class="btn btn-secondary" onclick="closeAiSettings()">닫기</button>
-      <button class="btn btn-danger" onclick="resetSession()">🔄 새 세션 시작 (데이터 초기화)</button>
+    <input class="input" id="ai-key" type="password" placeholder="AIza..." autocomplete="off">
+    <label for="ai-model">모델 (보통 그대로 두세요)</label>
+    <input class="input" id="ai-model" placeholder="gemini-2.5-flash">
+    <div class="row" style="margin-top:12px">
+      <button class="btn btn-green" onclick="saveSettings()">💾 저장 후 연결 테스트</button>
+    </div>
+    <hr>
+    <div class="muted"><b style="color:var(--text)">기기 간 옮기기 · 백업</b><br>데이터는 기기마다 따로 저장됩니다. 노트북 ↔ 폰은 백업 파일로 옮기세요.</div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn-ghost" onclick="exportData()">⬇️ 백업 저장</button>
+      <label class="btn btn-ghost" style="margin:0;color:var(--text)">⬆️ 백업 불러오기<input type="file" accept="application/json" style="display:none" onchange="importData(this)"></label>
+    </div>
+    <hr>
+    <div class="row" style="justify-content:space-between">
+      <button class="btn btn-red" onclick="resetAll()">🔄 전체 초기화</button>
+      <button class="btn btn-ghost" onclick="closeSettings()">닫기</button>
     </div>
   </div>
 </div>
 
 <script>
-// ─── WL_SEED: 37명 업무일지 ───
-const WL_SEED = [
-  // CEO 오피스 (7F)
-  {dept:'CEO 오피스', icon:'🤖', color:'#a78bfa', person:'Claude', role:'CEO',
-   status:'✅ 완료', stClass:'st-done',
-   today:'전사 KPI 대시보드 검토 및 이사회 보고서 초안 작성. 37명 업무일지 종합 분석 완료.',
-   tomorrow:'팀장 주간 회의 준비 및 Q4 전략 방향 확정',
-   issue:'없음', pct:95, kpi:'전략 실행률 95%', ts:'08:47'},
-  {dept:'CEO 오피스', icon:'🎙️', color:'#a78bfa', person:'Aria', role:'비서실장',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'CEO 일정 관리 및 외부 미팅 조율 3건. 주간 부서장 회의록 작성.',
-   tomorrow:'Q4 예산 검토 보조 및 파트너사 컨택',
-   issue:'없음', pct:88, kpi:'일정 처리율 100%', ts:'09:12'},
-  {dept:'CEO 오피스', icon:'📊', color:'#a78bfa', person:'Nova', role:'데이터 분석가',
-   status:'✅ 완료', stClass:'st-done',
-   today:'월간 채널별 성과 데이터 취합 및 시각화 대시보드 업데이트.',
-   tomorrow:'콘텐츠팀 블로그 조회수 분석 리포트 작성',
-   issue:'없음', pct:92, kpi:'데이터 정확도 99.2%', ts:'09:03'},
+// ═══════════ 기본 설정 ═══════════
+const S_KEY='rm_tower_v3', REV_KEY='rm_revenue_v2', AI_KEY='rm_gemini_key', AI_MODEL='rm_gemini_model', DEFAULT_MODEL='gemini-2.5-flash';
 
-  // 경영지원팀 (6F)
-  {dept:'경영지원팀', icon:'⭐', color:'#fde68a', person:'Stella', role:'경영지원팀장',
-   status:'✅ 완료', stClass:'st-done',
-   today:'팀 목표 KPI 점검 및 월간 예산 집행 현황 보고.',
-   tomorrow:'신규 협력사 계약서 검토 및 법무팀 컨택',
-   issue:'없음', pct:91, kpi:'예산 집행률 87%', ts:'09:20'},
-  {dept:'경영지원팀', icon:'💼', color:'#fde68a', person:'Rex F', role:'재무담당',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'9월 비용 정산 및 카드 내역 검증. 세금계산서 발행 3건.',
-   tomorrow:'월말 재무 마감 준비 및 손익계산서 초안 작성',
-   issue:'없음', pct:85, kpi:'정산 오류 0건', ts:'09:35'},
-  {dept:'경영지원팀', icon:'🌐', color:'#fde68a', person:'Maya', role:'HR 매니저',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'신규 AI 에이전트 온보딩 가이드 업데이트. 팀별 역할 정의 문서 수정.',
-   tomorrow:'Q4 인력 배치 계획 작성',
-   issue:'없음', pct:78, kpi:'문서 업데이트 5건', ts:'10:01'},
-  {dept:'경영지원팀', icon:'🔧', color:'#fde68a', person:'Leon', role:'시스템관리',
-   status:'✅ 완료', stClass:'st-done',
-   today:'서버 모니터링 및 관제탑 v2.0 배포 지원. 시스템 점검 완료.',
-   tomorrow:'백업 자동화 스크립트 개선',
-   issue:'없음', pct:80, kpi:'시스템 가동률 99.9%', ts:'08:55'},
+const METRICS={
+  youtube:[['subs','구독자',1000],['hours','최근 12개월 시청시간(시간)',4000],['shorts','최근 90일 쇼츠 조회수',10000000]],
+  blog:[['visitors','일 평균 방문자',null],['rev','이번 달 수익(원)',null]],
+  instagram:[['followers','팔로워',null],['rev','이번 달 수익(원)',null]]
+};
+const TYPE_ICON={youtube:'📹',blog:'✍️',instagram:'📸'};
 
-  // 콘텐츠팀 (5F) — 블로그
-  {dept:'콘텐츠팀', icon:'✍️', color:'#93c5fd', person:'Kai', role:'블로그팀장',
-   status:'✅ 완료', stClass:'st-done',
-   today:'네이버 블로그 9월 콘텐츠 캘린더 확정. 팀원 글 3편 검수 및 발행.',
-   tomorrow:'10월 주제 기획 및 SEO 키워드 선정',
-   issue:'없음', pct:87, kpi:'발행 글 3편, 조회수 +2,400', ts:'09:05'},
-  {dept:'콘텐츠팀', icon:'📝', color:'#93c5fd', person:'Lena', role:'블로그 라이터',
-   status:'✅ 완료', stClass:'st-done',
-   today:'「AI 생산성 툴 TOP 10」 2,800자 완성 발행. 내부 링크 최적화 완료.',
-   tomorrow:'「GPT 활용법 심화편」 초안 작성',
-   issue:'없음', pct:100, kpi:'조회수 820', ts:'10:22'},
-  {dept:'콘텐츠팀', icon:'📝', color:'#93c5fd', person:'Finn', role:'블로그 라이터',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'「쿠팡 파트너스 수익 공개」 초안 80% 완성. 수익 스크린샷 첨부 준비 중.',
-   tomorrow:'원고 마무리 및 SEO 최적화 후 발행',
-   issue:'없음', pct:80, kpi:'목표 조회수: 1,200', ts:'11:14'},
-  {dept:'콘텐츠팀', icon:'📝', color:'#93c5fd', person:'Zara', role:'블로그 라이터',
-   status:'✅ 완료', stClass:'st-done',
-   today:'「네이버 블로그 알고리즘 분석」 완성. 공식 가이드라인 참고 자료 첨부.',
-   tomorrow:'「월 100만원 블로그 수익 공개」 기획',
-   issue:'없음', pct:95, kpi:'조회수 1,050, 댓글 14건', ts:'09:48'},
+const ROLES={
+  youtube:{name:'Milo',title:'유튜브 기획',desc:'유튜브 4개 채널을 하루 1개씩 돌아가며 영상 기획안과 대본 초안을 씁니다.',types:['youtube']},
+  blog:{name:'Lena',title:'블로그 작가',desc:'네이버 블로그 글 1편 초안(제목·본문·쿠팡 링크 넣을 위치)을 씁니다.',types:['blog']},
+  insta:{name:'Iris',title:'인스타 기획',desc:'인스타 게시물·릴스 1개 기획(캡션·해시태그·촬영 컷)을 씁니다.',types:['instagram']},
+  analyst:{name:'Penny',title:'수익 분석가',desc:'대표님이 입력한 실제 숫자만 보고 지금 가장 먼저 할 일 1~3개를 제안합니다. 숫자가 없으면 없다고 말합니다.',types:[]}
+};
 
-  // 콘텐츠팀 (5F) — 유튜브
-  {dept:'콘텐츠팀', icon:'📹', color:'#93c5fd', person:'Milo', role:'유튜브 PD',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'9월 업로드 영상 3편 기획안 확정. 썸네일 A/B 테스트 결과 분석.',
-   tomorrow:'「AI로 유튜브 채널 만들기」 촬영 준비',
-   issue:'없음', pct:82, kpi:'구독자 +124명', ts:'09:18'},
-  {dept:'콘텐츠팀', icon:'🎬', color:'#93c5fd', person:'Jay', role:'영상 편집',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'「AI 자동화 수익 공개」 편집 80% 완료. 자막 삽입 중.',
-   tomorrow:'편집 완료 및 업로드. 다음 영상 컷편집 시작.',
-   issue:'없음', pct:75, kpi:'편집 속도 1.2배 향상', ts:'10:45'},
-  {dept:'콘텐츠팀', icon:'🎬', color:'#93c5fd', person:'Sora', role:'영상 편집',
-   status:'✅ 완료', stClass:'st-done',
-   today:'「쿠팡 파트너스 실전 가이드」 편집 완료 및 업로드. 최적 업로드 시간 설정.',
-   tomorrow:'「AI 수익화 3개월 결산」 편집 착수',
-   issue:'없음', pct:100, kpi:'업로드 완료, 24h 조회 380', ts:'08:30'},
-  {dept:'콘텐츠팀', icon:'🎬', color:'#93c5fd', person:'Nyx', role:'영상 편집',
-   status:'⚠️ 이슈', stClass:'st-issue',
-   today:'「블로그 vs 유튜브」 편집 50%. Adobe Premiere 라이선스 갱신 필요.',
-   tomorrow:'라이선스 해결 후 편집 완료 예정',
-   issue:'Adobe 라이선스 만료 — CEO 결재 필요', pct:50, kpi:'', ts:'11:30'},
-
-  // 콘텐츠팀 (5F) — SEO
-  {dept:'콘텐츠팀', icon:'🔍', color:'#93c5fd', person:'Teo', role:'SEO 최적화',
-   status:'✅ 완료', stClass:'st-done',
-   today:'블로그 15편 메타태그 일괄 업데이트. 네이버 검색 순위 모니터링.',
-   tomorrow:'롱테일 키워드 100개 추가 발굴',
-   issue:'없음', pct:90, kpi:'검색 노출 +32%', ts:'09:10'},
-  {dept:'콘텐츠팀', icon:'🔍', color:'#93c5fd', person:'Wren', role:'SEO 최적화',
-   status:'✅ 완료', stClass:'st-done',
-   today:'경쟁사 키워드 분석 리포트 완성. 상위 10개 키워드 공략 전략 수립.',
-   tomorrow:'내부 링크 구조 개선 프로젝트 착수',
-   issue:'없음', pct:88, kpi:'분석 키워드 240개', ts:'09:55'},
-  {dept:'콘텐츠팀', icon:'🔍', color:'#93c5fd', person:'Bree', role:'SEO 최적화',
-   status:'✅ 완료', stClass:'st-done',
-   today:'구글 애드센스 CPC 최적화 작업. 고수익 키워드 배치 변경 완료.',
-   tomorrow:'모바일 최적화 점검 및 페이지 속도 개선',
-   issue:'없음', pct:92, kpi:'CPC +18% 향상', ts:'10:08'},
-
-  // 크리에이티브팀 (4F) — 소설
-  {dept:'크리에이티브팀', icon:'🎨', color:'#c4b5fd', person:'Elle', role:'소설팀장',
-   status:'✅ 완료', stClass:'st-done',
-   today:'소설 3편 원고 검수 완료. 플랫폼 업로드 일정 조정 및 작가 피드백.',
-   tomorrow:'신규 소설 기획 미팅 및 장르 다각화 방안 검토',
-   issue:'없음', pct:85, kpi:'검수 완료 3편', ts:'09:25'},
-  {dept:'크리에이티브팀', icon:'✒️', color:'#c4b5fd', person:'Pip', role:'소설 작가',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'로맨스 소설 「별의 계약」 15화 집필. 약 4,200자 완성.',
-   tomorrow:'16~17화 연속 집필 예정',
-   issue:'없음', pct:70, kpi:'일일 집필량 4,200자', ts:'10:30'},
-  {dept:'크리에이티브팀', icon:'✒️', color:'#c4b5fd', person:'Cleo', role:'소설 작가',
-   status:'✅ 완료', stClass:'st-done',
-   today:'판타지 소설 「용의 후계자」 8~9화 탈고. 교정 완료 후 플랫폼 업로드.',
-   tomorrow:'10화 집필 시작 및 독자 댓글 응대',
-   issue:'없음', pct:100, kpi:'업로드 2화, 조회수 +890', ts:'08:42'},
-  {dept:'크리에이티브팀', icon:'✒️', color:'#c4b5fd', person:'Sol', role:'소설 작가',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'공포 스릴러 「새벽 3시」 초안 60% 완성. 서사 구조 조정 중.',
-   tomorrow:'초안 완성 후 내부 검토 요청',
-   issue:'없음', pct:60, kpi:'집필 진행 60%', ts:'11:05'},
-
-  // 크리에이티브팀 (4F) — 인스타그램
-  {dept:'크리에이티브팀', icon:'📸', color:'#c4b5fd', person:'Iris', role:'인스타팀장',
-   status:'✅ 완료', stClass:'st-done',
-   today:'인스타그램 9월 피드 컨셉 확정. 릴스 5편 기획안 승인.',
-   tomorrow:'릴스 촬영 지휘 및 스토리 콘텐츠 점검',
-   issue:'없음', pct:91, kpi:'팔로워 +87명', ts:'09:15'},
-
-  // 신규사업부 (3F)
-  {dept:'신규사업부', icon:'🚀', color:'#6ee7b7', person:'Victor', role:'사업개발팀장',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'신규 수익 채널 리서치 — 전자책 플랫폼 3곳 비교 분석 완료.',
-   tomorrow:'전자책 출판 파일럿 프로그램 기획서 작성',
-   issue:'없음', pct:88, kpi:'채널 발굴 3개', ts:'09:40'},
-  {dept:'신규사업부', icon:'🔬', color:'#6ee7b7', person:'Iris N', role:'트렌드 리서처',
-   status:'✅ 완료', stClass:'st-done',
-   today:'2026 Q4 콘텐츠 트렌드 리포트 완성. AI 관련 키워드 급상승 분석.',
-   tomorrow:'숏폼 콘텐츠 플랫폼 트렌드 심층 분석',
-   issue:'없음', pct:83, kpi:'리포트 15페이지 완성', ts:'10:15'},
-  {dept:'신규사업부', icon:'💡', color:'#6ee7b7', person:'Kane', role:'신규콘텐츠개발',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'AI 챗봇 활용 고객 상담 서비스 기획서 50% 완성.',
-   tomorrow:'기획서 마무리 및 CEO 보고 준비',
-   issue:'없음', pct:71, kpi:'기획서 50% 완성', ts:'10:55'},
-  {dept:'신규사업부', icon:'💡', color:'#6ee7b7', person:'Zoe', role:'신규콘텐츠개발',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'뉴스레터 구독 서비스 모델 기획. 타사 사례 5개 분석 완료.',
-   tomorrow:'구독 상품 가격 설계 및 랜딩 페이지 초안',
-   issue:'없음', pct:68, kpi:'사례 분석 5건', ts:'11:20'},
-  {dept:'신규사업부', icon:'💡', color:'#6ee7b7', person:'Ren', role:'신규콘텐츠개발',
-   status:'✅ 완료', stClass:'st-done',
-   today:'쿠팡 파트너스 고수익 카테고리 분석 완료. 가전/뷰티 집중 전략 수립.',
-   tomorrow:'전략 문서 팀 공유 및 콘텐츠팀 협업 요청',
-   issue:'없음', pct:74, kpi:'분석 카테고리 12개', ts:'09:50'},
-
-  // 수익화팀 (2F)
-  {dept:'수익화팀', icon:'💰', color:'#fbbf24', person:'Penny', role:'수익화팀장',
-   status:'✅ 완료', stClass:'st-done',
-   today:'9월 전채널 수익 현황 집계 완료. 쿠팡 파트너스 ₩38,400 확인.',
-   tomorrow:'10월 수익 목표 설정 및 채널별 전략 수립',
-   issue:'없음', pct:89, kpi:'수익 집계 완료', ts:'09:08'},
-  {dept:'수익화팀', icon:'📈', color:'#fbbf24', person:'Rich', role:'수익분석가',
-   status:'✅ 완료', stClass:'st-done',
-   today:'채널별 RPM/CPM 비교 분석. 블로그 AdSense 최적 광고 위치 A/B 결과 분석.',
-   tomorrow:'광고 위치 변경 적용 및 결과 모니터링',
-   issue:'없음', pct:86, kpi:'RPM 분석 완료 6채널', ts:'09:32'},
-  {dept:'수익화팀', icon:'🗃️', color:'#fbbf24', person:'Data', role:'데이터 관리',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'수익 DB 9월분 마이그레이션 및 백업 완료. 이상치 2건 발견 및 수정.',
-   tomorrow:'10월 대시보드 지표 항목 추가 작업',
-   issue:'없음', pct:82, kpi:'DB 정합성 99.8%', ts:'10:40'},
-
-  // 로비 (1F)
-  {dept:'로비', icon:'🤝', color:'#818cf8', person:'Otto', role:'로비매니저',
-   status:'🔄 진행중', stClass:'st-prog',
-   today:'외부 방문객 3건 응대. 협력사 미팅 공간 세팅 및 안내.',
-   tomorrow:'신규 파트너사 방문 준비 및 안내 자료 업데이트',
-   issue:'없음', pct:74, kpi:'방문객 응대 3건', ts:'10:00'},
-
-  // 보안팀 (B1)
-  {dept:'보안팀', icon:'🛡️', color:'#f87171', person:'Rex', role:'보안팀장',
-   status:'✅ 완료', stClass:'st-done',
-   today:'전사 보안 점검 완료. 취약점 스캔 실행 — 이상 없음. 로그 분석 완료.',
-   tomorrow:'분기별 보안 감사 준비 착수',
-   issue:'없음', pct:96, kpi:'보안 위협 0건', ts:'08:20'},
-  {dept:'보안팀', icon:'🔐', color:'#f87171', person:'Ada', role:'보안 엔지니어',
-   status:'✅ 완료', stClass:'st-done',
-   today:'서버 방화벽 규칙 업데이트 및 SSL 인증서 갱신 완료.',
-   tomorrow:'VPN 접속 로그 주간 분석 리포트 작성',
-   issue:'없음', pct:94, kpi:'SSL 갱신 완료, 취약점 0', ts:'08:35'},
-  {dept:'보안팀', icon:'🕵️', color:'#f87171', person:'Cy', role:'모니터링 담당',
-   status:'✅ 완료', stClass:'st-done',
-   today:'24시간 실시간 트래픽 모니터링. 이상 접근 시도 3건 차단 완료.',
-   tomorrow:'차단 로그 분석 및 IP 블랙리스트 갱신',
-   issue:'없음', pct:98, kpi:'이상 접근 3건 차단', ts:'08:05'},
-];
-
-// ─── STATE ───
-let currentWlDept = 'all';
-const KEY_REPORTS = 'rm_reports_v2';
-const KEY_REVENUE = 'rm_revenue_v2';
-
-// ─── INIT ───
-function init() {
-  updateClock();
-  setInterval(updateClock, 1000);
-  updateDates();
-  renderWlEntries('all');
-  loadRevenue();
-  loadReports();
-  updateStats();
-  updateAiBtn();
-  loadResearch();
-  if(getAiKey()&&lsGet(KEY_RESEARCH_DAY)!==new Date().toDateString())setTimeout(()=>runResearch(true),1500); // 하루 1회 자동 연구
-  if(!getAiKey())addCmdLog('시스템','전체','AI가 연결되지 않았습니다. 상단 🔌 버튼에서 무료 Gemini API 키를 등록하세요.');
-}
-
-function updateClock() {
-  document.getElementById('live-clock').textContent =
-    new Date().toLocaleTimeString('ko-KR',{hour12:false});
-}
-function updateDates() {
-  const d = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-  ['wl-log-date','wl-form-date'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.textContent = d;
-  });
-}
-
-// ─── TABS ───
-function switchTab(name, el) {
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-  el.classList.add('active');
-}
-
-// ─── 업무일지 ───
-function selectWlDept(el, dept) {
-  document.querySelectorAll('.wl-dept-item').forEach(d=>d.classList.remove('active'));
-  el.classList.add('active');
-  currentWlDept = dept;
-  renderWlEntries(dept);
-
-  const deptLabels = {
-    'all':'전체', 'CEO 오피스':'CEO 오피스', '경영지원팀':'경영지원팀',
-    '콘텐츠팀':'콘텐츠팀', '크리에이티브팀':'크리에이티브팀',
-    '신규사업부':'신규사업부', '수익화팀':'수익화팀', '로비':'로비', '보안팀':'보안팀'
+function defaultState(){
+  return {
+    deadline:'2026-12-31', note:'',
+    channels:[1,2,3,4].map(i=>({id:'yt'+i,type:'youtube',name:'유튜브 채널 '+i,topic:''}))
+      .concat([{id:'blog',type:'blog',name:'네이버 블로그',topic:''},{id:'ig',type:'instagram',name:'인스타그램',topic:''}]),
+    targets:{}, metrics:{}, tasks:[], feedback:[], lastRun:'', ytTurn:0
   };
-  const entries = dept === 'all' ? WL_SEED : WL_SEED.filter(e=>e.dept===dept);
-  document.getElementById('wl-log-title').textContent = `📋 오늘의 업무일지 — ${deptLabels[dept]||dept}`;
-  document.getElementById('wl-log-subtitle').textContent = `${entries.length}명 제출 완료`;
-
-  // 폼 업데이트
-  if(dept !== 'all') {
-    document.getElementById('wl-form-title').textContent = `✏️ ${dept} 업무일지 제출`;
-    const memberMap = {
-      'CEO 오피스':'Claude / Aria / Nova',
-      '경영지원팀':'Stella / Rex F / Maya / Leon',
-      '콘텐츠팀':'Kai / Milo / Lena · Finn · Zara / Jay · Sora · Nyx / Teo · Wren · Bree',
-      '크리에이티브팀':'Elle / Iris / Pip · Cleo · Sol',
-      '신규사업부':'Victor / Iris N / Kane · Zoe · Ren',
-      '수익화팀':'Penny / Rich / Data',
-      '로비':'Otto',
-      '보안팀':'Rex / Ada / Cy'
-    };
-    document.getElementById('wl-form-members').textContent = memberMap[dept] || '';
-  } else {
-    document.getElementById('wl-form-title').textContent = '✏️ 업무일지 제출';
-    document.getElementById('wl-form-members').textContent = '부서를 선택하세요';
-  }
 }
 
-function renderWlEntries(dept) {
-  const entries = dept === 'all' ? WL_SEED : WL_SEED.filter(e=>e.dept===dept);
-  const container = document.getElementById('wl-entries');
-  if(!container) return;
-
-  // 최신(ts 역순)으로 정렬
-  const sorted = [...entries].sort((a,b)=>b.ts.localeCompare(a.ts));
-
-  container.innerHTML = sorted.map(e => {
-    const issueHTML = e.issue && e.issue !== '없음'
-      ? `<div class="wl-entry-issue">⚠️ ${e.issue}</div>` : '';
-    const kpiHTML = e.kpi
-      ? `<span class="wl-entry-kpi">📌 ${e.kpi}</span>` : '';
-    const barColor = e.pct >= 90 ? '#3fb950' : e.pct >= 70 ? '#58a6ff' : '#fbbf24';
-
-    return `<div class="wl-entry">
-      <div class="wl-entry-avatar" style="background:${e.color}22;border:1.5px solid ${e.color}44">${e.icon}</div>
-      <div class="wl-entry-body">
-        <div class="wl-entry-top">
-          <span class="wl-entry-person">${e.person}</span>
-          <span class="wl-entry-dept">${e.dept} · ${e.role}</span>
-          <span class="wl-entry-status ${e.stClass}">${e.status}</span>
-        </div>
-        <div class="wl-entry-text">${e.today}</div>
-        ${issueHTML}
-        <div class="wl-entry-meta">
-          <div class="wl-entry-pct-wrap">
-            <div class="wl-entry-bar"><div class="wl-entry-bar-fill" style="width:${e.pct}%;background:${barColor}"></div></div>
-            <span class="wl-entry-pct-num">${e.pct}%</span>
-          </div>
-          ${kpiHTML}
-          <span class="wl-entry-ts">${e.ts}</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ─── 업무일지 폼 ───
-function clearLog() {
-  ['log-author','log-done','log-plan','log-issue','log-pct','log-kpi'].forEach(id=>{
-    document.getElementById(id).value='';
-  });
-  document.getElementById('log-status').value='정상 진행';
-}
-function saveDraft() { showToast('💾 임시저장 완료'); }
-function submitLog() {
-  const author = document.getElementById('log-author').value.trim()||'익명';
-  const status = document.getElementById('log-status').value;
-  const done = document.getElementById('log-done').value.trim();
-  const plan = document.getElementById('log-plan').value.trim();
-  const issue = document.getElementById('log-issue').value.trim();
-  const pct = document.getElementById('log-pct').value||'0';
-  const kpi = document.getElementById('log-kpi').value.trim();
-
-  if(!done){ showToast('⚠️ 오늘 한 일을 입력해주세요'); return; }
-
-  const deptName = currentWlDept === 'all' ? '미지정' : currentWlDept;
-  const now = new Date();
-  const ts = now.toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
-
-  const report = {id:Date.now(), dept:deptName, author, status, done, plan, issue, pct, kpi, ts, approval:'pending'};
-  const reports = getReports();
-  reports.unshift(report);
-  saveReports(reports);
-
-  addCmdLog('시스템', deptName, `${author}님의 업무일지가 CEO에게 보고되었습니다.`);
-  clearLog();
-  loadReports();
-  updateStats();
-  showToast('📤 보고서가 CEO에게 전송되었습니다!');
-}
-
-// ─── REPORTS ───
-function getReports(){ try{return JSON.parse(localStorage.getItem(KEY_REPORTS))||[];}catch(e){return[];} }
-function saveReports(r){ localStorage.setItem(KEY_REPORTS,JSON.stringify(r)); }
-function clearAllReports(){
-  if(!confirm('모든 보고서를 삭제하시겠습니까?'))return;
-  localStorage.removeItem(KEY_REPORTS); loadReports(); updateStats();
-}
-function filterReports(){ loadReports(); }
-function loadReports(){
-  const reports=getReports();
-  const fDept=document.getElementById('report-filter')?.value||'all';
-  const fApp=document.getElementById('approval-filter')?.value||'all';
-  let filtered=reports.filter(r=>{
-    const dOk=fDept==='all'||r.dept.includes(fDept);
-    const aOk=fApp==='all'||r.approval===fApp;
-    return dOk&&aOk;
-  });
-  const el=document.getElementById('reports-list');
-  if(!el)return;
-  if(filtered.length===0){
-    el.innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:40px">표시할 보고서가 없습니다.</div>';
-    return;
-  }
-  el.innerHTML=filtered.map(r=>{
-    const appBadge=r.approval==='approved'?'<span class="approval-badge app-approved">✅ 승인</span>':
-      r.approval==='rejected'?'<span class="approval-badge app-rejected">❌ 반려</span>':
-      '<span class="approval-badge app-pending">⏳ 승인 대기</span>';
-    return `<div class="report-card" data-id="${r.id}">
-      <div class="report-card-header">
-        <div class="report-meta">
-          <span class="report-dept-badge">${r.dept.split(' ')[0]}</span>
-          <span class="report-title-text">${r.dept} — ${r.author}</span>
-          <span class="emp-status s-${r.status==='완료'?'work':r.status==='긴급'?'report':'work'}" style="margin-left:4px">${r.status}</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">${appBadge}<span class="report-time">${r.ts}</span></div>
-      </div>
-      <div class="report-body">
-        <div class="report-section"><div class="report-section-label">📌 오늘 한 일</div><div class="report-section-text">${r.done}</div></div>
-        ${r.plan?`<div class="report-section"><div class="report-section-label">📅 내일 계획</div><div class="report-section-text">${r.plan}</div></div>`:''}
-        ${r.issue?`<div class="report-section"><div class="report-section-label">⚠️ 이슈</div><div class="report-section-text">${r.issue}</div></div>`:''}
-        <div class="report-kpi-row">
-          <div class="report-kpi"><div class="report-kpi-key">완료율</div><div class="report-kpi-val">${r.pct}%</div></div>
-          ${r.kpi?`<div class="report-kpi"><div class="report-kpi-key">KPI</div><div class="report-kpi-val">${r.kpi}</div></div>`:''}
-        </div>
-        <div class="report-actions-row">
-          ${r.approval==='pending'?`<button class="btn btn-success" style="font-size:11px;padding:6px 12px" onclick="approveReport(${r.id})">✅ 승인</button><button class="btn btn-danger" style="font-size:11px;padding:6px 12px" onclick="rejectReport(${r.id})">❌ 반려</button>`:''}
-          <button class="btn btn-secondary" style="font-size:11px;padding:6px 12px" onclick="deleteReport(${r.id})">🗑 삭제</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-function approveReport(id){
-  const reports=getReports(); const r=reports.find(x=>x.id===id);
-  if(r){r.approval='approved';saveReports(reports);loadReports();updateStats();
-    addCmdLog('CEO','전체',`${r.dept} ${r.author}님의 보고서를 승인했습니다.`);
-    showToast('✅ 보고서 승인 완료');}
-}
-function rejectReport(id){
-  const reports=getReports(); const r=reports.find(x=>x.id===id);
-  if(r){r.approval='rejected';saveReports(reports);loadReports();updateStats();
-    addCmdLog('CEO',r.dept,`${r.author}님의 보고서가 반려되었습니다.`);
-    showToast('❌ 보고서 반려 처리');}
-}
-function deleteReport(id){
-  saveReports(getReports().filter(x=>x.id!==id)); loadReports(); updateStats();
-  showToast('🗑 보고서 삭제됨');
-}
-
-// ─── REVENUE ───
-const CHANNELS={blog:'네이버 블로그',yt:'유튜브',cp:'쿠팡 파트너스',ig:'인스타그램',novel:'소설',other:'기타'};
-function getRevenue(){try{return JSON.parse(localStorage.getItem(KEY_REVENUE))||[];}catch(e){return[];}}
-function saveRevenue(r){localStorage.setItem(KEY_REVENUE,JSON.stringify(r));}
-function addRevenue(){
-  const ch=document.getElementById('rev-channel').value;
-  const desc=document.getElementById('rev-desc').value.trim()||'수익 입력';
-  const amt=parseInt(document.getElementById('rev-amount-input').value)||0;
-  if(amt<=0){showToast('⚠️ 금액을 입력해주세요');return;}
-  const revs=getRevenue();
-  revs.unshift({id:Date.now(),ch,desc,amt,ts:new Date().toLocaleDateString('ko-KR')});
-  saveRevenue(revs);
-  document.getElementById('rev-desc').value='';
-  document.getElementById('rev-amount-input').value='';
-  loadRevenue(); showToast(`💰 ${formatKRW(amt)} 수익 추가!`);
-}
-function loadRevenue(){
-  const revs=getRevenue();
-  const totals={blog:0,yt:0,cp:0,ig:0,novel:0,other:0};
-  revs.forEach(r=>{totals[r.ch]=(totals[r.ch]||0)+r.amt;});
-  document.getElementById('rev-blog').textContent=formatKRW(totals.blog);
-  document.getElementById('rev-yt').textContent=formatKRW(totals.yt);
-  document.getElementById('rev-cp').textContent=formatKRW(totals.cp);
-  document.getElementById('rev-ig').textContent=formatKRW(totals.ig);
-  document.getElementById('rev-novel').textContent=formatKRW(totals.novel);
-  const total=Object.values(totals).reduce((a,b)=>a+b,0);
-  document.getElementById('rev-total').textContent=formatKRW(total);
-  document.getElementById('stat-revenue').textContent=formatKRW(total);
-  const tbody=document.getElementById('rev-tbody');
-  if(revs.length===0){tbody.innerHTML='<tr><td colspan="5" style="color:var(--text3);text-align:center">수익 내역이 없습니다.</td></tr>';return;}
-  tbody.innerHTML=revs.slice(0,30).map(r=>`<tr><td>${r.ts}</td><td>${CHANNELS[r.ch]||r.ch}</td><td>${r.desc}</td><td class="amount-cell">${formatKRW(r.amt)}</td><td><button class="btn btn-danger" style="font-size:10px;padding:3px 8px" onclick="deleteRevenue(${r.id})">삭제</button></td></tr>`).join('');
-}
-function deleteRevenue(id){saveRevenue(getRevenue().filter(r=>r.id!==id));loadRevenue();}
-function formatKRW(n){return '₩'+n.toLocaleString('ko-KR');}
-
-// ─── STATS ───
-function updateStats(){
-  const reports=getReports();
-  document.getElementById('stat-logs').textContent=37+reports.length;
-  const approved=reports.filter(r=>r.approval==='approved').length;
-  document.getElementById('stat-approved').textContent=approved;
-  const pending=reports.filter(r=>r.approval==='pending').length;
-  document.getElementById('stat-pending').textContent=pending;
-}
-
-// ─── CEO CMD ───
-async function sendCmd(){
-  const dept=document.getElementById('cmd-dept-sel').value;
-  const input=document.getElementById('cmd-input');
-  const text=input.value.trim();
-  if(!text)return;
-  const ts=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});
-  addCmdLog(ts,dept,esc(text));
-  input.value='';
-  if(!getAiKey()){
-    showToast('⚠️ AI가 연결되지 않아 지시가 전달되지 않습니다. 상단 🔌 버튼에서 연결하세요');
-    openAiSettings();
-    return;
-  }
-  showToast(`📨 [${dept}] 지시 전달 중... AI 직원이 작업합니다`);
-  try{
-    const results=await runAgents(dept,text);
-    results.forEach(r=>{
-      addCmdLog(r.person||'AI',r.dept||dept,`<span class="cmd-ai">${esc(r.reply||'')}</span>`);
-      const reports=getReports();
-      reports.unshift({id:Date.now()+Math.floor(Math.random()*1000),dept:r.dept||dept,author:r.person||'AI',
-        status:r.status||'정상 진행',done:r.today||r.reply||'',plan:r.tomorrow||'',issue:(r.issue&&r.issue!=='없음')?r.issue:'',
-        pct:String(Math.max(0,Math.min(100,parseInt(r.pct)||0))),kpi:r.kpi||'',
-        ts:new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}),approval:'pending'});
-      saveReports(reports);
-    });
-    loadReports(); updateStats();
-    showToast(`✅ ${results.length}명이 업무를 수행하고 보고서를 올렸습니다`);
-  }catch(e){
-    addCmdLog('오류',dept,esc(e.message));
-    showToast('❌ AI 호출 실패: '+e.message);
-  }
-}
-
-// ─── AI 연결 (Google Gemini 무료 API) ───
-const KEY_AI='rm_gemini_key', KEY_AI_MODEL='rm_gemini_model', DEFAULT_MODEL='gemini-2.5-flash';
+// ═══════════ 저장소 ═══════════
 function lsGet(k){try{return localStorage.getItem(k)||'';}catch(e){return '';}}
 function lsSet(k,v){try{v?localStorage.setItem(k,v):localStorage.removeItem(k);}catch(e){}}
-function getAiKey(){return lsGet(KEY_AI);}
-function getAiModel(){return lsGet(KEY_AI_MODEL)||DEFAULT_MODEL;}
-function esc(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+let S=loadState();
+function loadState(){
+  try{const s=JSON.parse(lsGet(S_KEY));if(s&&s.channels)return Object.assign(defaultState(),s);}catch(e){}
+  return defaultState();
+}
+function save(){lsSet(S_KEY,JSON.stringify(S));}
+function getRev(){try{return JSON.parse(lsGet(REV_KEY))||[];}catch(e){return[];}}
+function saveRev(r){lsSet(REV_KEY,JSON.stringify(r));}
+
+// ═══════════ 유틸 ═══════════
+function esc(t){return String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function $(id){return document.getElementById(id);}
+function num(v){const n=parseFloat(String(v).replace(/,/g,''));return isFinite(n)?n:null;}
+function fmt(n){return n==null?'-':Number(n).toLocaleString('ko-KR');}
+function krw(n){return '₩'+Math.round(n||0).toLocaleString('ko-KR');}
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function nowStr(){return new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});}
+function daysBetween(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);}
+function chById(id){return S.channels.find(c=>c.id===id);}
+function latest(chId){const h=S.metrics[chId]||[];return h.length?h[h.length-1]:null;}
+function target(chId,key,def){const t=S.targets[chId+'.'+key];return t!=null?t:def;}
+function showToast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),3200);}
+function thisMonth(ts){return ts&&ts.slice(0,7)===today().slice(0,7);}
+
+// ═══════════ 탭 ═══════════
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+name));
+  try{localStorage.setItem('rm_tab',name);}catch(e){}
+}
+
+// ═══════════ 목표 화면 ═══════════
+function renderGoals(){
+  $('note').value=S.note||'';
+  $('deadline').value=S.deadline;
+  const d=daysBetween(today(),S.deadline);
+  $('s-dday').textContent=d>=0?'D-'+d:'기한 지남';
+  const done=S.tasks.filter(t=>t.status==='done'&&thisMonth(t.doneAt));
+  $('s-done').textContent=done.length+'건';
+  $('s-pending').textContent=S.tasks.filter(t=>t.status==='pending').length+'건';
+  $('s-rev').textContent=krw(getRev().reduce((a,r)=>a+r.amt,0));
+
+  $('channels').innerHTML=S.channels.map(ch=>{
+    const L=latest(ch.id), v=L?L.v:{};
+    const rows=METRICS[ch.type].map(([k,label,def])=>{
+      const cur=v[k]??null, tg=target(ch.id,k,def);
+      const pct=(cur!=null&&tg)?Math.min(100,cur/tg*100):0;
+      return `<div class="m-row"><div class="m-top"><span>${esc(label)}</span><span><b>${fmt(cur)}</b> / ${tg?fmt(tg):'목표 미설정'}</span></div>
+        <div class="bar ${pct>=100?'done':''}"><div style="width:${pct}%"></div></div></div>`;
+    }).join('');
+    const age=L?daysBetween(L.date,today()):null;
+    const posted=done.filter(t=>t.channel===ch.id).length;
+    const edits=METRICS[ch.type].map(([k,label,def])=>`
+      <div><label>${esc(label)} (현재)</label><input class="input" id="m-${ch.id}-${k}" inputmode="numeric" value="${v[k]??''}"></div>
+      <div><label>목표</label><input class="input" id="t-${ch.id}-${k}" inputmode="numeric" value="${target(ch.id,k,def)??''}"></div>`).join('');
+    return `<div class="card">
+      <div class="ch-head"><span>${TYPE_ICON[ch.type]}</span><span class="ch-name">${esc(ch.name)}</span></div>
+      <div class="ch-topic">${ch.topic?'주제: '+esc(ch.topic):'<span class="stale">주제 미정 — AI는 주제 후보만 제안합니다</span>'}</div>
+      ${rows}
+      <div class="ch-foot"><span>${L?'숫자 입력: '+L.date+(age>7?' <span class="stale">('+age+'일 전 · 업데이트 필요)</span>':''):'<span class="stale">아직 숫자 입력 없음</span>'}</span><span>이번 달 게시 ${posted}건</span></div>
+      <details><summary>✏️ 숫자 입력 · 채널 설정</summary>
+        <div class="edit-grid">
+          <div><label>채널 이름</label><input class="input" id="n-${ch.id}" value="${esc(ch.name)}"></div>
+          <div><label>채널 주제</label><input class="input" id="p-${ch.id}" value="${esc(ch.topic)}" placeholder="예: 수면 음악"></div>
+          ${edits}
+        </div>
+        <div class="row" style="margin-top:10px;justify-content:flex-end"><button class="btn btn-primary" onclick="saveChannel('${ch.id}')">💾 저장</button></div>
+      </details>
+    </div>`;
+  }).join('');
+
+  $('roles-desc').innerHTML=Object.values(ROLES).map(r=>`<div style="margin-bottom:6px"><b style="color:var(--text)">${r.name}</b> · ${r.title} — ${r.desc}</div>`).join('')+
+    '<div style="margin-top:8px">AI가 연결돼 있으면 하루 1번 자동으로 초안을 만듭니다. 결과는 모두 「📥 승인함」으로 갑니다.</div>';
+  $('last-run').textContent=S.lastRun?'마지막 실행: '+S.lastRun:'';
+}
+function saveNote(){
+  S.note=$('note').value.trim(); S.deadline=$('deadline').value||S.deadline; save(); renderAll(); showToast('💾 방향 메모 저장');
+}
+function saveChannel(id){
+  const ch=chById(id);
+  ch.name=$('n-'+id).value.trim()||ch.name;
+  ch.topic=$('p-'+id).value.trim();
+  const v={}; let any=false;
+  METRICS[ch.type].forEach(([k])=>{
+    const cur=num($(`m-${id}-${k}`).value); if(cur!=null){v[k]=cur;any=true;}
+    const tg=num($(`t-${id}-${k}`).value); S.targets[id+'.'+k]=tg;
+  });
+  if(any){
+    const L=latest(id);
+    const changed=!L||JSON.stringify(L.v)!==JSON.stringify(v);
+    if(changed){
+      S.metrics[id]=(S.metrics[id]||[]).filter(h=>h.date!==today());
+      S.metrics[id].push({date:today(),v});
+    }
+  }
+  save(); renderAll(); showToast('💾 '+ch.name+' 저장');
+}
+
+// ═══════════ 승인함 / 실행 목록 ═══════════
+function taskCard(t,actions){
+  const ch=chById(t.channel), role=ROLES[t.role];
+  return `<div class="task">
+    <div class="task-head"><span class="role">${esc(role?role.name+' · '+role.title:t.role)}</span>${ch?`<span class="chtag">${TYPE_ICON[ch.type]} ${esc(ch.name)}</span>`:''}
+      <span class="task-title">${esc(t.title)}</span><span class="task-ts">${esc(t.created)}</span></div>
+    ${t.cmd?`<div class="task-note">📨 지시: ${esc(t.cmd)}</div>`:''}
+    <div class="task-body">${esc(t.content)}</div>
+    ${t.reason?`<div class="task-note">❌ 반려 이유: ${esc(t.reason)}</div>`:''}
+    ${t.link?`<div class="task-note">🔗 <a href="${esc(t.link)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(t.link)}</a></div>`:''}
+    <div class="row">${actions}</div></div>`;
+}
+function renderTasks(){
+  const pending=S.tasks.filter(t=>t.status==='pending');
+  const todo=S.tasks.filter(t=>t.status==='approved');
+  const done=S.tasks.filter(t=>t.status==='done');
+  $('b-inbox').textContent=pending.length||'';
+  $('b-todo').textContent=todo.length||'';
+  $('inbox-list').innerHTML=pending.length?pending.map(t=>taskCard(t,
+    `<button class="btn btn-green" onclick="setTask(${t.id},'approved')">✅ 승인</button>
+     <button class="btn btn-red" onclick="rejectTask(${t.id})">❌ 반려</button>
+     <button class="btn btn-ghost" onclick="copyTask(${t.id})">📋 복사</button>`)).join('')
+    :`<div class="empty">승인 대기 중인 초안이 없습니다.${getAiKey()?'':'<br>상단 🔌 버튼에서 AI를 먼저 연결하세요.'}</div>`;
+  $('todo-list').innerHTML=todo.length?todo.map(t=>taskCard(t,
+    `<button class="btn btn-green" onclick="doneTask(${t.id})">✅ 게시 완료</button>
+     <button class="btn btn-ghost" onclick="copyTask(${t.id})">📋 복사</button>
+     <button class="btn btn-ghost" onclick="setTask(${t.id},'pending')">↩️ 승인 취소</button>`)).join('')
+    :'<div class="empty">실행할 항목이 없습니다. 승인함에서 초안을 승인하세요.</div>';
+  $('done-list').innerHTML=done.length?done.slice(0,30).map(t=>taskCard(t,
+    `<span class="muted">게시: ${esc(t.doneAt)}</span>`)).join('')
+    :'<div class="empty">아직 게시 완료 기록이 없습니다.</div>';
+}
+function findTask(id){return S.tasks.find(t=>t.id===id);}
+function setTask(id,status){const t=findTask(id);if(!t)return;t.status=status;save();renderAll();showToast(status==='approved'?'✅ 승인 — 실행 목록으로 이동':'↩️ 승인함으로 되돌림');}
+function rejectTask(id){
+  const t=findTask(id); if(!t)return;
+  const reason=prompt('반려 이유를 적어 주세요. 다음 초안부터 반영됩니다. (비워도 됨)','');
+  if(reason===null)return;
+  t.status='rejected'; t.reason=reason.trim();
+  if(t.reason){S.feedback.unshift({role:t.role,title:t.title,reason:t.reason});S.feedback=S.feedback.slice(0,15);}
+  S.tasks=S.tasks.filter(x=>x.status!=='rejected'); // 반려된 초안은 지우고, 이유만 피드백으로 보관
+  save(); renderAll(); showToast('❌ 반려 — 피드백 저장');
+}
+function doneTask(id){
+  const t=findTask(id); if(!t)return;
+  const link=prompt('게시한 링크가 있으면 붙여넣으세요. (비워도 됨)','');
+  if(link===null)return;
+  t.status='done'; t.doneAt=today(); t.link=/^https?:\/\//.test(link.trim())?link.trim():'';
+  save(); renderAll(); showToast('🎉 게시 완료로 기록했습니다');
+}
+async function copyTask(id){
+  const t=findTask(id); if(!t)return;
+  try{await navigator.clipboard.writeText(t.title+'\n\n'+t.content);showToast('📋 복사됨');}catch(e){showToast('복사 실패 — 직접 선택해서 복사하세요');}
+}
+
+// ═══════════ 수익 ═══════════
+const REV_CH={yt:'유튜브',blog:'네이버 블로그',cp:'쿠팡 파트너스',ig:'인스타그램',novel:'소설',other:'기타'};
+function renderRevenue(){
+  const sel=$('rev-ch'); if(!sel.options.length)sel.innerHTML=Object.entries(REV_CH).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  const revs=getRev(), sums={};
+  revs.forEach(r=>sums[r.ch]=(sums[r.ch]||0)+r.amt);
+  const total=revs.reduce((a,r)=>a+r.amt,0);
+  $('rev-sums').innerHTML=`<div class="card"><div class="stat-label">총 수익</div><div class="stat-val c-green">${krw(total)}</div></div>`+
+    Object.entries(REV_CH).filter(([k])=>sums[k]).map(([k,v])=>`<div class="card"><div class="stat-label">${v}</div><div class="stat-val">${krw(sums[k])}</div></div>`).join('');
+  $('rev-tbody').innerHTML=revs.length?revs.slice(0,50).map(r=>`<tr><td>${esc(r.ts)}</td><td>${esc(REV_CH[r.ch]||r.ch)}</td><td>${esc(r.desc)}</td><td class="mono">${krw(r.amt)}</td><td><button class="btn btn-red" style="padding:3px 8px;font-size:11px" onclick="delRevenue(${r.id})">삭제</button></td></tr>`).join('')
+    :'<tr><td colspan="5" class="empty">수익 내역이 없습니다.</td></tr>';
+}
+function addRevenue(){
+  const amt=num($('rev-amt').value);
+  if(!amt||amt<=0){showToast('⚠️ 금액을 입력하세요');return;}
+  const revs=getRev();
+  revs.unshift({id:Date.now(),ch:$('rev-ch').value,desc:$('rev-desc').value.trim()||'수익',amt,ts:today()});
+  saveRev(revs); $('rev-desc').value=''; $('rev-amt').value='';
+  renderAll(); showToast('💰 '+krw(amt)+' 추가');
+}
+function delRevenue(id){saveRev(getRev().filter(r=>r.id!==id));renderAll();}
+
+// ═══════════ AI (Google Gemini) ═══════════
+function getAiKey(){return lsGet(AI_KEY);}
+function getAiModel(){return lsGet(AI_MODEL)||DEFAULT_MODEL;}
 function updateAiBtn(){
-  const b=document.getElementById('ai-btn'); if(!b)return;
-  const on=!!getAiKey();
-  b.classList.toggle('off',!on);
+  const on=!!getAiKey(), b=$('ai-btn');
+  b.className='pill '+(on?'pill-green':'pill-red');
   b.textContent=on?'🟢 AI 연결됨':'🔌 AI 연결 안됨';
-}
-function openAiSettings(){
-  document.getElementById('ai-key').value=getAiKey();
-  document.getElementById('ai-model').value=lsGet(KEY_AI_MODEL);
-  document.getElementById('ai-modal').classList.add('show');
-}
-function closeAiSettings(){document.getElementById('ai-modal').classList.remove('show');}
-async function saveAiSettings(){
-  const k=document.getElementById('ai-key').value.trim();
-  const m=document.getElementById('ai-model').value.trim();
-  lsSet(KEY_AI,k); lsSet(KEY_AI_MODEL,m); updateAiBtn();
-  if(!k){showToast('🔌 AI 연결 해제됨');return;}
-  showToast('⏳ 연결 테스트 중...');
-  try{
-    const out=await callGemini('"OK"라고만 답하세요.',false);
-    showToast('✅ AI 연결 성공! ('+getAiModel()+') 응답: '+out.slice(0,20));
-    closeAiSettings();
-  }catch(e){showToast('❌ 연결 실패: '+e.message);}
-}
-function resetSession(){
-  if(!confirm('보고서·수익 데이터를 모두 지우고 새 세션으로 시작할까요? (API 키는 유지됩니다)'))return;
-  lsSet(KEY_REPORTS,''); lsSet(KEY_REVENUE,''); lsSet(KEY_RESEARCH,''); lsSet(KEY_RESEARCH_DAY,'');
-  const log=document.getElementById('cmd-log'); if(log)log.innerHTML='';
-  loadReports(); loadRevenue(); loadResearch(); updateStats();
-  addCmdLog('시스템','전체','새 세션이 시작되었습니다.');
-  showToast('🔄 새 세션 시작');
 }
 async function callGemini(prompt,json,think){
   const url=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(getAiModel())}:generateContent`;
-  const body={contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:0.8}};
+  const body={contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:0.7}};
   if(json)body.generationConfig.responseMimeType='application/json';
-  if(think&&/2\.5|thinking|-3/.test(getAiModel()))body.generationConfig.thinkingConfig={thinkingBudget:-1}; // 생각하기 모드 (모델이 알아서 깊이 조절)
+  if(think&&/2\.5|thinking|-3/.test(getAiModel()))body.generationConfig.thinkingConfig={thinkingBudget:-1}; // 생각하기 모드
   const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':getAiKey()},body:JSON.stringify(body)});
   const data=await res.json().catch(()=>({}));
   if(!res.ok){
@@ -1316,106 +479,175 @@ async function callGemini(prompt,json,think){
     if(res.status===404)throw new Error('모델 이름을 찾을 수 없습니다 ('+getAiModel()+')');
     throw new Error(msg);
   }
-  const txt=data.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'';
+  const txt=data.candidates?.[0]?.content?.parts?.filter(p=>!p.thought).map(p=>p.text||'').join('')||'';
   if(!txt)throw new Error('빈 응답 (안전 필터 또는 한도)');
   return txt;
 }
-
-// ─── 사업연구 (생각하기 모드) ───
-const KEY_RESEARCH='rm_research_v1', KEY_RESEARCH_DAY='rm_research_day';
-function getResearch(){try{return JSON.parse(lsGet(KEY_RESEARCH))||[];}catch(e){return[];}}
-function saveResearch(r){lsSet(KEY_RESEARCH,JSON.stringify(r.slice(0,50)));}
-function clearResearch(){if(!confirm('연구 기록을 모두 삭제할까요?'))return;lsSet(KEY_RESEARCH,'');loadResearch();}
-function loadResearch(){
-  const el=document.getElementById('research-list'); if(!el)return;
-  const list=getResearch();
-  if(!list.length){el.innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:40px">아직 연구 결과가 없습니다.'+(getAiKey()?'':'<br>상단 🔌 버튼에서 AI를 먼저 연결하세요.')+'</div>';return;}
-  el.innerHTML=list.map(r=>`<div class="rs-card">
-    <div class="rs-head"><span class="rs-title">💡 ${esc(r.title)}</span><span class="rs-score">수익성 ${esc(r.score)}/10</span></div>
-    <div class="rs-meta">${esc(r.person)} · ${esc(r.ts)}${r.topic?' · 주제: '+esc(r.topic):''}</div>
-    <div class="rs-body">
-      <p>${esc(r.summary)}</p>
-      <p><b>수익 구조:</b> ${esc(r.model)}<br><b>초기 비용:</b> ${esc(r.cost)} · <b>예상 월수익:</b> ${esc(r.revenue)} · <b>첫 수익까지:</b> ${esc(r.time)}</p>
-      <p><b>리스크:</b> ${esc(r.risk)}</p>
-      <b>실행 단계</b><ol class="rs-steps">${(r.steps||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ol>
-    </div></div>`).join('');
+function parseJsonArray(raw){
+  let v; try{v=JSON.parse(raw.replace(/^\s*```(json)?|```\s*$/g,'').trim());}catch(e){throw new Error('AI 응답을 해석하지 못했습니다');}
+  return Array.isArray(v)?v:[v];
 }
-async function runResearch(auto){
-  if(!getAiKey()){if(!auto){showToast('⚠️ 먼저 상단 🔌 버튼에서 AI를 연결하세요');openAiSettings();}return;}
-  const btn=document.getElementById('research-btn'); if(btn){btn.disabled=true;btn.textContent='🧠 생각하는 중...';}
-  const topic=(document.getElementById('research-topic')?.value||'').trim();
-  const past=getResearch().slice(0,15).map(r=>r.title).join(', ')||'없음';
-  const team=WL_SEED.filter(e=>e.dept==='신규사업부'||e.dept==='수익화팀').map(e=>`${e.person}(${e.role})`).join(', ');
-  const prompt=`당신은 "Relaxing Mind AI Company"의 신규사업부·수익화팀 AI 직원들입니다: ${team}.
-회사 현황: 1인 운영, AI 직원 37명. 현재 채널은 네이버 블로그, 유튜브, 쿠팡 파트너스, 인스타그램, 웹소설이며 수익은 아직 작습니다(예: 쿠팡 파트너스 월 ₩38,400). 자본이 적고, AI 도구로 할 수 있는 일에 강합니다.
-CEO 지시: 회사가 실제로 돈을 벌 수 있는 사업을 깊이 생각해서 연구하라.
-${topic?'이번 연구 주제: '+topic:'주제는 스스로 정하세요.'}
-이미 제출한 사업안(중복 금지): ${past}
 
-충분히 생각한 뒤, 한국 시장에서 현실적으로 실행 가능한 사업안 3개를 내세요. 과장 없이 보수적인 수치를 쓰고, 법·플랫폼 정책 위반 소지가 있는 안은 제외하세요.
-JSON 배열로만 답하세요. 각 원소:
-{"person":"담당 직원 이름","title":"사업명","summary":"2~3문장 설명","model":"누가 무엇에 돈을 내는지","cost":"초기 비용","revenue":"보수적 예상 월수익","time":"첫 수익까지 기간","risk":"주요 리스크","steps":["실행 단계 1","2","3","4"],"score":1~10 숫자}`;
+function contextText(){
+  const d=daysBetween(today(),S.deadline);
+  const chs=S.channels.map(ch=>{
+    const L=latest(ch.id);
+    const ms=METRICS[ch.type].map(([k,label,def])=>{
+      const cur=L?L.v[k]:null, tg=target(ch.id,k,def);
+      return `${label} ${cur!=null?fmt(cur):'데이터 없음'}${tg?' / 목표 '+fmt(tg):''}`;
+    }).join(', ');
+    const posted=S.tasks.filter(t=>t.status==='done'&&t.channel===ch.id).length;
+    return `- [${ch.id}] ${ch.name} (${ch.type}) 주제: ${ch.topic||'미정'} | ${ms} | 숫자 입력일: ${L?L.date:'없음'} | 게시 완료 누적 ${posted}건`;
+  }).join('\n');
+  const revs=getRev(); const rsum={}; revs.forEach(r=>rsum[REV_CH[r.ch]||r.ch]=(rsum[REV_CH[r.ch]||r.ch]||0)+r.amt);
+  const recent=S.tasks.slice(0,20).map(t=>`- (${t.status}) ${t.title}`).join('\n')||'없음';
+  const fb=S.feedback.map(f=>`- [${f.role}] "${f.title}" 반려 이유: ${f.reason}`).join('\n')||'없음';
+  return `오늘: ${today()} / 목표일: ${S.deadline} (D-${d})
+대표님 방향 메모 (최우선으로 따를 것):
+${S.note||'(없음)'}
+
+채널 현황 — 대표님이 직접 입력한 실제 값:
+${chs}
+
+입력된 실제 수익: ${Object.keys(rsum).length?Object.entries(rsum).map(([k,v])=>k+' '+krw(v)).join(', '):'없음'}
+
+최근 초안 (중복 금지):
+${recent}
+
+대표님 반려 피드백 (반드시 반영):
+${fb}`;
+}
+const RULES=`규칙:
+1. 숫자·성과를 절대 지어내지 마세요. 위의 실제 값만 인용하고, 없으면 "데이터 없음"이라고 쓰세요. 예상치를 쓸 때는 반드시 "추정"이라고 밝히세요.
+2. "게시했다", "조회수가 늘었다" 같은 완료 보고를 하지 마세요. 당신은 초안만 만들고, 게시 여부는 대표님이 결정합니다.
+3. 대표님 방향 메모와 반려 피드백을 따르세요. 12월 목표와 관계없는 새 사업이나 엉뚱한 방향을 제안하지 마세요.
+4. 주제가 "미정"인 채널은 콘텐츠를 만들지 말고, 그 채널에 맞는 주제 후보 3개와 각각의 장단점만 제안하세요.
+5. 바로 쓸 수 있는 실제 결과물(영상 대본, 블로그 본문, 캡션 등)을 쓰세요. 막연한 계획이나 아부성 문장은 쓰지 마세요.
+6. 플랫폼 정책·수익 조건처럼 확인이 필요한 사실은 "확인 필요"라고 표시하세요.
+7. 조회수 조작, 가짜 리뷰, 저작권 침해, 과장·허위 광고가 되는 내용은 만들지 마세요.`;
+
+function roleSpec(roleKey){
+  const r=ROLES[roleKey];
+  if(roleKey==='youtube'){
+    const ch='yt'+((S.ytTurn%4)+1);
+    return {ch,text:`- role "youtube" (${r.name}, ${r.title}): 오늘은 [${ch}] 채널 담당. 영상 1편 기획 — 제목 후보 3개, 썸네일 문구, 1분 내외 쇼츠 또는 본편 대본 초안, 업로드 설명란.`};
+  }
+  if(roleKey==='blog')return {ch:'blog',text:`- role "blog" (${r.name}, ${r.title}): [blog] 채널. 글 1편 — 제목, 검색 키워드 3개, 소제목 구성, 본문 초안(1,500자 내외), 쿠팡 파트너스 링크 넣을 위치와 대가성 문구.`};
+  if(roleKey==='insta')return {ch:'ig',text:`- role "insta" (${r.name}, ${r.title}): [ig] 채널. 게시물 또는 릴스 1개 — 캡션, 해시태그 10개 이내, 촬영·이미지 구성 컷 목록.`};
+  return {ch:'',text:`- role "analyst" (${r.name}, ${r.title}): 위 실제 값만 근거로 지금 대표님이 가장 먼저 해야 할 일 1~3개와 그 이유. 숫자가 부족하면 어떤 숫자를 입력해야 하는지 알려 주세요. channel은 "".`};
+}
+
+async function runDaily(auto){
+  if(!getAiKey()){if(!auto){showToast('⚠️ 상단 🔌 버튼에서 AI를 먼저 연결하세요');openSettings();}return;}
+  const btn=$('run-btn'); btn.disabled=true; btn.textContent='🧠 생각하는 중...';
   try{
-    const raw=await callGemini(prompt,true,true);
-    let arr; try{arr=JSON.parse(raw.replace(/^```(json)?|```$/g,'').trim());}catch(e){throw new Error('AI 응답을 해석하지 못했습니다');}
-    if(!Array.isArray(arr))arr=[arr];
-    const ts=new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
-    const items=arr.slice(0,3).map(x=>({...x,steps:Array.isArray(x.steps)?x.steps:[],ts,topic}));
-    saveResearch([...items,...getResearch()]);
-    lsSet(KEY_RESEARCH_DAY,new Date().toDateString());
-    loadResearch();
-    items.forEach(x=>addCmdLog(x.person||'신규사업부','신규사업부',`<span class="cmd-ai">🧠 사업안 제출: ${esc(x.title)} (수익성 ${esc(x.score)}/10)</span>`));
-    showToast(`🧠 사업안 ${items.length}건이 제출되었습니다 — 🧠 사업연구 탭 확인`);
+    const specs=['youtube','blog','insta','analyst'].map(k=>({k,...roleSpec(k)}));
+    const prompt=`당신은 "Relaxing Mind AI Company"의 AI 직원 4명입니다. 대표님(1인 운영)의 12월 목표는 유튜브 채널 4개, 네이버 블로그, 인스타그램의 수익화입니다.
+
+${contextText()}
+
+${RULES}
+
+오늘의 업무:
+${specs.map(s=>s.text).join('\n')}
+
+충분히 생각한 뒤, JSON 배열로만 답하세요. 원소 4개, 각 형식:
+{"role":"youtube|blog|insta|analyst","channel":"채널 id 또는 빈 문자열","title":"한 줄 제목","content":"결과물 전문 (줄바꿈 포함 가능)"}`;
+    const arr=parseJsonArray(await callGemini(prompt,true,true));
+    let n=0;
+    arr.forEach(x=>{
+      const spec=specs.find(s=>s.k===x.role); if(!spec||!x.content)return;
+      addTask(x.role, chById(x.channel)?x.channel:spec.ch, x.title, x.content, '');
+      n++;
+    });
+    S.ytTurn++; S.lastRun=nowStr(); S.lastRunDay=today(); save(); renderAll();
+    showToast(`🧠 초안 ${n}건이 승인함에 도착했습니다`);
   }catch(e){
-    addCmdLog('오류','신규사업부',esc('사업연구 실패: '+e.message));
-    if(!auto)showToast('❌ 연구 실패: '+e.message);
-  }finally{if(btn){btn.disabled=false;btn.textContent='🧠 생각하기 · 연구 시작';}}
-}
-async function runAgents(dept,cmd){
-  const pool=dept==='전체'
-    ? Object.values(WL_SEED.reduce((a,e)=>{a[e.dept]=a[e.dept]||e;return a;},{})) // 부서별 팀장급 1명
-    : WL_SEED.filter(e=>e.dept===dept);
-  const roster=pool.map(e=>`- ${e.person} (${e.dept}, ${e.role}) 최근 업무: ${e.today}`).join('\n');
-  const prompt=`당신은 "Relaxing Mind AI Company"의 AI 직원들입니다. 회사는 네이버 블로그, 유튜브, 쿠팡 파트너스, 인스타그램, 웹소설로 수익을 냅니다.
-CEO가 [${dept}]에 다음 지시를 내렸습니다:
-"""${cmd}"""
-
-담당 직원 목록:
-${roster}
-
-이 지시와 관련된 직원(최대 5명)이 각자 역할에 맞게 지시를 실제로 수행하세요. 막연한 말 대신 바로 쓸 수 있는 구체적 결과물(제목안, 개요, 체크리스트, 수치 계획 등)을 today에 담으세요.
-JSON 배열로만 답하세요. 각 원소 형식:
-{"person":"이름","dept":"부서","reply":"CEO에게 한두 문장 보고","today":"수행한 작업과 결과물 (300자 이내)","tomorrow":"다음 계획","issue":"이슈 또는 없음","pct":0~100 숫자,"kpi":"측정 지표","status":"정상 진행|완료|지연|긴급"}`;
-  const raw=await callGemini(prompt,true,true);
-  let arr;
-  try{arr=JSON.parse(raw.replace(/^```(json)?|```$/g,'').trim());}catch(e){throw new Error('AI 응답을 해석하지 못했습니다');}
-  if(!Array.isArray(arr))arr=[arr];
-  return arr.slice(0,5);
-}
-function addCmdLog(ts,dept,text){
-  const log=document.getElementById('cmd-log');
-  if(!log)return;
-  const div=document.createElement('div');
-  div.className='cmd-entry';
-  div.innerHTML=`<span class="cmd-ts">${ts}</span><span class="cmd-dept">[${dept}]</span><span class="cmd-text">${text}</span>`;
-  log.appendChild(div);
-  log.scrollTop=log.scrollHeight;
+    if(auto){S.lastRunDay=today();save();}
+    showToast('❌ AI 실패: '+e.message);
+  }finally{btn.disabled=false;btn.textContent='🧠 오늘의 초안 받기';}
 }
 
-// ─── TOAST ───
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2800);
+async function sendCmd(){
+  const roleKey=$('cmd-role').value, text=$('cmd-input').value.trim();
+  if(!text)return;
+  if(!getAiKey()){showToast('⚠️ 상단 🔌 버튼에서 AI를 먼저 연결하세요');openSettings();return;}
+  const r=ROLES[roleKey], btn=$('cmd-btn');
+  btn.disabled=true; $('cmd-input').value=''; showToast(`📨 ${r.name}에게 지시 전달 — 생각하는 중...`);
+  try{
+    const prompt=`당신은 "Relaxing Mind AI Company"의 AI 직원 ${r.name} (${r.title})입니다. 담당: ${r.desc}
+
+${contextText()}
+
+${RULES}
+
+대표님의 지시:
+"""${text}"""
+
+지시를 수행해 결과물 1개를 만드세요. 지시가 위 규칙이나 방향 메모와 충돌하면, 결과물 대신 충돌 내용과 대안을 content에 쓰세요.
+충분히 생각한 뒤 JSON으로만 답하세요:
+{"channel":"관련 채널 id 또는 빈 문자열","title":"한 줄 제목","content":"결과물 전문"}`;
+    const x=parseJsonArray(await callGemini(prompt,true,true))[0]||{};
+    if(!x.content)throw new Error('빈 결과');
+    addTask(roleKey, chById(x.channel)?x.channel:'', x.title, x.content, text);
+    save(); renderAll(); switchTab('inbox');
+    showToast(`✅ ${r.name}의 결과물이 승인함에 도착했습니다`);
+  }catch(e){
+    $('cmd-input').value=text; showToast('❌ AI 실패: '+e.message);
+  }finally{btn.disabled=false;}
+}
+function addTask(role,channel,title,content,cmd){
+  S.tasks.unshift({id:Date.now()+Math.floor(Math.random()*1000),role,channel:channel||'',title:String(title||'제목 없음').slice(0,120),content:String(content).slice(0,8000),cmd,status:'pending',created:nowStr()});
+  S.tasks=S.tasks.slice(0,200);
 }
 
-window.onload=init;
-</script>
-
-<script>
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
+// ═══════════ 설정 ═══════════
+function openSettings(){$('ai-key').value=getAiKey();$('ai-model').value=lsGet(AI_MODEL);$('settings').classList.add('show');}
+function closeSettings(){$('settings').classList.remove('show');}
+async function saveSettings(){
+  const k=$('ai-key').value.trim(), m=$('ai-model').value.trim();
+  lsSet(AI_KEY,k); lsSet(AI_MODEL,m); updateAiBtn(); renderTasks();
+  if(!k){showToast('🔌 AI 연결 해제');return;}
+  showToast('⏳ 연결 테스트 중...');
+  try{const out=await callGemini('"OK"라고만 답하세요.',false,false);showToast('✅ 연결 성공 ('+getAiModel()+'): '+out.trim().slice(0,20));closeSettings();}
+  catch(e){showToast('❌ 연결 실패: '+e.message);}
 }
+function exportData(){
+  const blob=new Blob([JSON.stringify({version:3,state:S,revenue:getRev()},null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='rm-tower-backup-'+today()+'.json'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function importData(input){
+  const f=input.files[0]; if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{const d=JSON.parse(rd.result); if(!d.state||!d.state.channels)throw 0;
+      if(!confirm('이 기기의 데이터를 백업 파일 내용으로 바꿀까요?'))return;
+      S=Object.assign(defaultState(),d.state); save(); saveRev(d.revenue||[]); renderAll(); showToast('⬆️ 백업 불러오기 완료');
+    }catch(e){showToast('❌ 올바른 백업 파일이 아닙니다');}
+    input.value='';
+  };
+  rd.readAsText(f);
+}
+function resetAll(){
+  if(!confirm('목표·숫자·초안·수익 기록을 모두 지울까요? (API 키는 유지)'))return;
+  S=defaultState(); save(); saveRev([]); renderAll(); closeSettings(); showToast('🔄 초기화 완료');
+}
+
+// ═══════════ 시작 ═══════════
+function renderAll(){renderGoals();renderTasks();renderRevenue();}
+function tick(){$('clock').textContent=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});}
+function init(){
+  $('cmd-role').innerHTML=Object.entries(ROLES).map(([k,r])=>`<option value="${k}">${r.name} · ${r.title}</option>`).join('');
+  // 이전 버전의 가짜 업무일지·AI 보고서·연구 기록은 더 이상 사용하지 않음
+  ['rm_reports_v2','rm_research_v1','rm_research_day'].forEach(k=>lsSet(k,''));
+  updateAiBtn(); renderAll(); tick(); setInterval(tick,10000);
+  const tab=lsGet('rm_tab'); if(tab&&$('panel-'+tab))switchTab(tab);
+  if(getAiKey()&&S.lastRunDay!==today())setTimeout(()=>runDaily(true),1500); // 하루 1회 자동 실행
+}
+init();
+
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
 </body>
 </html>
