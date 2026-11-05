@@ -1,5 +1,5 @@
 // Network-first: 항상 최신 파일을 먼저 받고, 오프라인일 때만 캐시 사용
-const CACHE = 'rm-office-v2';
+const CACHE = 'rm-office-v3';
 
 self.addEventListener('install', e => { self.skipWaiting(); });
 
