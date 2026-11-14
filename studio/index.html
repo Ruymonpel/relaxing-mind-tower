@@ -202,6 +202,22 @@
         <div class="progress"><div id="e-prog"></div></div>
         <div class="muted" id="e-out" style="margin-top:10px"></div>
       </div>
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:4px">📝 업로드 준비 — 제목 · 설명 · 썸네일</div>
+        <div class="muted">위 자막과 아래 줄거리로 제목 후보 3개와 설명란을 만들고, 완성 영상의 첫 장면·끝 장면을 썸네일 사진으로 저장합니다.</div>
+        <div class="row" style="margin-top:6px">
+          <div class="grow"><label class="lbl" for="e-name">편 이름</label><input class="input" id="e-name" placeholder="예: 6화③"></div>
+        </div>
+        <label class="lbl" for="e-story">이번 편 줄거리 (한두 줄)</label>
+        <textarea class="ta" id="e-story" style="min-height:60px" placeholder="예: 서아가 유라 엄마의 돈봉투를 돌려주고 나오자, 비 오는 호텔 앞에서 도윤이 우산을 들고 기다리고 있었다."></textarea>
+        <div class="row" style="margin-top:10px">
+          <button class="btn btn-pink" id="e-meta-btn" onclick="genMeta()">🧠 제목·설명 만들기</button>
+          <button class="btn btn-ghost" onclick="saveThumb('first')">🖼 첫 장면 썸네일</button>
+          <button class="btn btn-ghost" onclick="saveThumb('end')">🖼 끝 장면 썸네일</button>
+        </div>
+        <div id="e-meta" style="margin-top:12px"></div>
+        <div id="e-thumb" style="margin-top:12px"></div>
+      </div>
     </div>
     <div class="stage">
       <canvas id="stage" width="540" height="960"></canvas>
@@ -530,7 +546,7 @@ function renderEpSelect(){
 function openInEditor(id){switchTab('edit');$('e-ep').value=String(id);fillFromEpisode();}
 function fillFromEpisode(){
   const e=findEp(Number($('e-ep').value)); if(!e)return;
-  $('e-hook').value=e.hook; $('e-end').value=e.end;
+  $('e-hook').value=e.hook; $('e-end').value=e.end; $('e-name').value=e.ep||''; $('e-story').value=e.story||'';
   e.cuts.forEach((c,i)=>{if(clips[i])clips[i].dlg=c.dialogue||'';});
   renderClips(); showToast('✍️ '+e.ep+' 자막을 채웠습니다');
 }
@@ -679,7 +695,7 @@ async function runTimeline(record){
       const blob=new Blob(chunks,{type:mime.split(';')[0]});
       const ext=mime.includes('mp4')?'mp4':'webm';
       const ep=findEp(Number($('e-ep').value));
-      const name=`멜로한스푼_${ep?ep.ep:'쇼츠'}_${new Date().toISOString().slice(0,10)}.${ext}`;
+      const name=`멜로한스푼_${($('e-name').value.trim()||(ep?ep.ep:'쇼츠')).replace(/[\\/:*?"<>|]/g,'')}_${new Date().toISOString().slice(0,10)}.${ext}`;
       const url=URL.createObjectURL(blob);
       $('e-out').innerHTML=`✅ 완성 (${(blob.size/1048576).toFixed(1)}MB, ${ext.toUpperCase()}) <a class="btn btn-green" style="margin-left:6px;text-decoration:none" href="${url}" download="${esc(name)}">⬇️ 다운로드</a>
         <div style="margin-top:6px">업로드 전에 처음부터 끝까지 한 번 보세요. 실제 사람처럼 보이는 AI 영상이므로 유튜브 업로드 화면에서 "변경되었거나 합성된 콘텐츠" 항목을 확인해 표시하세요.${ext==='webm'?' (WEBM 파일도 유튜브에 그대로 올릴 수 있습니다)':''}</div>`;
@@ -690,6 +706,72 @@ async function runTimeline(record){
 }
 ['e-hook','e-end','e-hookdur','e-enddur','e-zoom'].forEach(id=>document.addEventListener('DOMContentLoaded',()=>$(id).addEventListener('input',()=>{if(!running)drawStill();})));
 
+
+// ═══════════ 업로드 준비: 제목·설명·썸네일 ═══════════
+let META=null;
+async function genMeta(){
+  const name=$('e-name').value.trim(), story=$('e-story').value.trim(), hook=$('e-hook').value.trim(), end=$('e-end').value.trim();
+  const dlg=clips.map((c,i)=>c.dlg?`${i+1}컷: ${c.dlg}`:'').filter(Boolean).join('\n')||'없음';
+  if(!hook&&!story){showToast('⚠️ 훅 자막이나 줄거리를 먼저 적어 주세요');return;}
+  if(!getAiKey()){openKey();return;}
+  const btn=$('e-meta-btn');btn.disabled=true;btn.textContent='🧠 만드는 중...';
+  try{
+    const prev=S.episodes.slice(0,5).map(e=>e.ep).filter(Boolean).join(', ')||'없음';
+    const prompt=`당신은 유튜브 쇼츠 채널 "멜로 한 스푼"(한국 로맨스 웹드라마)의 업로드 담당입니다. 이번 쇼츠의 제목과 설명란을 씁니다.
+
+${S.rules}
+
+편 이름: ${name||'(미지정)'}
+줄거리: ${story||'(없음 — 자막과 대사만 근거로)'}
+첫 1초 훅 자막: ${hook||'없음'}
+대사: 
+${dlg}
+끝 자막: ${end||'없음'}
+최근에 만든 편: ${prev}
+
+규칙:
+1. 제목 후보 3개. 각각 훅 자막과 같은 상황을 담고, 끝에 " | 멜로 한 스푼 ${name||'N화'}"를 붙입니다. 하나는 명대사를 큰따옴표로 넣고, 하나는 훅 자막을 거의 그대로, 하나는 끝 장면까지 궁금하게 만드는 문장.
+2. 영상에 없는 사건이나 과장된 낚시 문구를 만들지 마세요. 제목은 공백 포함 60자 이내.
+3. 설명란: 줄거리 2~3줄 → 빈 줄 → "💬 여러분이 OO라면?" A/B 두 선택지(답하기 쉽게, 서로 반대) + "댓글로 알려 주세요!" → 빈 줄 → 이전 편 안내 한 줄(편 이름을 알면) → 빈 줄 → 해시태그 5~7개(#멜로한스푼 포함).
+JSON으로만 답하세요: {"titles":["제목1","제목2","제목3"],"description":"설명란 전문(줄바꿈 포함)"}`;
+    const r=parseJson(await callGemini(prompt,true,true));
+    if(!Array.isArray(r.titles)||!r.description)throw new Error('결과 형식이 이상합니다');
+    META={titles:r.titles.slice(0,3).map(String),description:String(r.description)};
+    renderMeta();
+  }catch(e){showToast('❌ '+e.message);}
+  finally{btn.disabled=false;btn.textContent='🧠 제목·설명 만들기';}
+}
+function renderMeta(){
+  if(!META){$('e-meta').innerHTML='';return;}
+  $('e-meta').innerHTML='<div class="kv"><b>제목 후보</b> (눌러서 복사)</div>'+
+    META.titles.map((t,i)=>`<div class="row" style="margin:6px 0;flex-wrap:nowrap"><div class="prompt" style="margin:0;flex:1;max-height:none;font-family:inherit">${esc(t)}</div><button class="btn btn-ghost" onclick="copyMetaTitle(${i},this)">📋</button></div>`).join('')+
+    `<div class="kv" style="margin-top:10px"><b>설명란</b></div><div class="prompt" style="font-family:inherit">${esc(META.description)}</div>
+     <div class="row"><button class="btn btn-ghost" onclick="copyMetaDesc(this)">📋 설명란 복사</button><button class="btn btn-ghost" onclick="genMeta()">🔁 다시 만들기</button></div>`;
+}
+function copyMetaTitle(i,btn){if(META){copyText(META.titles[i]);flashSaved(btn);btn.innerHTML='✅';}}
+function copyMetaDesc(btn){if(META){copyText(META.description);flashSaved(btn);btn.innerHTML='✅ 복사됨';}}
+let thumbUrl='';
+async function saveThumb(which){
+  const list=activeClips();
+  if(!list.length){showToast('⚠️ 먼저 위에서 클립을 넣어 주세요');return;}
+  if(running){showToast('⚠️ 영상 만들기가 끝난 뒤 눌러 주세요');return;}
+  await document.fonts.load('900 40px "Noto Sans KR"').catch(()=>{});
+  const W=1080,H=1920,cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
+  const total=totalLen(),o=opts();
+  const c=which==='first'?list[0]:list[list.length-1];
+  const len=c.out-c.in, lt=which==='first'?Math.min(0.3,len/2):Math.max(0,len-0.4), t=which==='first'?lt:total-0.4;
+  await seek(c.video,c.in+lt);
+  await new Promise(r=>setTimeout(r,150));
+  drawFrame(ctx,W,H,c.video,t,c,lt,total,o);
+  const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',0.92));
+  if(!blob){showToast('❌ 썸네일을 만들지 못했습니다');return;}
+  if(thumbUrl)URL.revokeObjectURL(thumbUrl);thumbUrl=URL.createObjectURL(blob);
+  const nm=`썸네일_${($('e-name').value.trim()||'멜로한스푼').replace(/[\\/:*?"<>|]/g,'')}_${which==='first'?'첫장면':'끝장면'}.jpg`;
+  $('e-thumb').innerHTML=`<div class="row" style="align-items:flex-start;flex-wrap:nowrap"><img src="${thumbUrl}" alt="썸네일 미리보기" style="width:120px;border-radius:8px;border:1px solid var(--border)">
+    <div><a class="btn btn-green" style="text-decoration:none;display:inline-block" href="${thumbUrl}" download="${esc(nm)}">⬇️ 썸네일 저장</a>
+    <div class="muted" style="margin-top:8px">1080×1920 사진입니다. 유튜브 앱 업로드 화면의 썸네일에서 장면을 고르거나, 사진 올리기가 보이면 이 파일을 쓰세요.</div></div></div>`;
+  drawStill();
+}
 // ═══════════ 시작 ═══════════
 document.addEventListener('DOMContentLoaded',()=>{
   updateAi(); renderCast(); $('rules').value=S.rules; renderEpList(); renderEpSelect(); renderClips();
