@@ -280,6 +280,16 @@ body {
 }
 
 /* employee history */
+.act-feed { display:flex; flex-direction:column; gap:6px; max-height:200px; overflow-y:auto; }
+.act-row { display:flex; gap:8px; align-items:baseline; font-size:11px; color:#9a8ac0; line-height:1.5; }
+.act-row .t { color:#5a4a8a; font-family:'JetBrains Mono',monospace; font-size:10px; flex:0 0 auto; }
+.act-row .w { font-weight:700; flex:0 0 auto; }
+.act-row .x { flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.act-empty { color:#5a4a8a; font-size:11px; text-align:center; padding:24px 8px; line-height:1.8; }
+.act-empty a, .act-note a { color:#a78bfa; }
+.act-note { font-size:10.5px; color:#7a6aa0; line-height:1.6; margin-bottom:10px; }
+.emp-card.real { border-color:#4c1d95; }
+.emp-card.deco { opacity:.45; cursor:default; }
 .emp-grid {
   display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px;
   max-height:200px; overflow-y:auto;
@@ -442,13 +452,12 @@ body {
     <div class="logo-icon">🏢</div>
     <div>
       <div class="logo-name">Relaxing Mind AI Company</div>
-      <div class="logo-sub">LIVE OFFICE · 37 EMPLOYEES · 8 FLOORS</div>
+      <div class="logo-sub">OFFICE · 캐릭터 움직임은 장식입니다</div>
     </div>
   </div>
   <div class="topbar-right">
-    <div class="badge-live"><div class="dot-pulse"></div>LIVE</div>
-    <span id="clock">--:--:--</span>
-    <a class="tower-btn" href="https://ruymonpel.github.io/relaxing-mind-tower/" target="_blank">🗼 관제탑으로 이동</a>
+        <span id="clock">--:--:--</span>
+    <a class="tower-btn" href="../">🗼 관제탑으로 이동</a>
   </div>
 </div>
 
@@ -524,79 +533,32 @@ body {
 
 <!-- STATUS -->
 <div class="status-bar">
-  <div class="s-item"><div class="s-dot" style="background:#a78bfa"></div><span class="s-lbl">전체</span><span class="s-val">37명</span></div>
-  <div class="s-item"><div class="s-dot" style="background:#4ade80"></div><span class="s-lbl">업무중</span><span class="s-val" id="sv-work">0</span></div>
-  <div class="s-item"><div class="s-dot" style="background:#60a5fa"></div><span class="s-lbl">회의중</span><span class="s-val" id="sv-meet">0</span></div>
-  <div class="s-item"><div class="s-dot" style="background:#fbbf24"></div><span class="s-lbl">이동중</span><span class="s-val" id="sv-move">0</span></div>
-  <div class="s-item" style="margin-left:auto"><div class="s-dot" style="background:#34d399;animation:pulse 2s infinite"></div><span class="s-lbl">시스템</span><span class="s-val">정상</span></div>
+  <div class="s-item"><div class="s-dot" style="background:#fb923c"></div><span class="s-lbl">목표일까지</span><span class="s-val" id="sv-dday">-</span></div>
+  <div class="s-item"><div class="s-dot" style="background:#a78bfa"></div><span class="s-lbl">승인 대기</span><span class="s-val" id="sv-pending">0</span></div>
+  <div class="s-item"><div class="s-dot" style="background:#60a5fa"></div><span class="s-lbl">실행 대기</span><span class="s-val" id="sv-todo">0</span></div>
+  <div class="s-item"><div class="s-dot" style="background:#4ade80"></div><span class="s-lbl">이번 달 게시</span><span class="s-val" id="sv-done">0</span></div>
+  <div class="s-item" style="margin-left:auto"><span class="s-lbl">관제탑 실제 데이터 기준</span></div>
 </div>
 
 <!-- BOTTOM PANEL -->
 <div class="bottom-panel">
   <div class="panel-tabs">
-    <button class="ptab active" onclick="switchTab('chat',this)">💬 팀 채팅</button>
-    <button class="ptab" onclick="switchTab('history',this)">👤 직원 이력</button>
-    <button class="ptab" onclick="switchTab('cmd',this)">📢 CEO 지시</button>
+    <button class="ptab active" onclick="switchTab('activity',this)">📋 실제 활동</button>
+    <button class="ptab" onclick="switchTab('history',this)">👤 직원</button>
   </div>
 
-  <!-- 팀 채팅 -->
-  <div class="panel-body" id="tab-chat">
-    <div class="chat-wrap">
-      <div class="chat-feed" id="chat-feed"></div>
-      <div class="chat-compose">
-        <select class="chat-ch-sel" id="chat-ch">
-          <option value="전체">📢 전체 채널</option>
-          <option value="CEO 오피스">👑 CEO 오피스</option>
-          <option value="경영지원팀">⭐ 경영지원팀</option>
-          <option value="콘텐츠팀">✍️ 콘텐츠팀</option>
-          <option value="크리에이티브팀">🎨 크리에이티브팀</option>
-          <option value="신규사업부">🚀 신규사업부</option>
-          <option value="수익화팀">💰 수익화팀</option>
-        </select>
-        <textarea class="chat-inp" id="chat-inp" placeholder="메시지 입력..." rows="4"></textarea>
-        <button class="chat-send" onclick="sendChatMsg()">📨 전송</button>
-      </div>
-    </div>
+  <!-- 실제 활동: 관제탑 데이터 -->
+  <div class="panel-body" id="tab-activity">
+    <div class="act-feed" id="act-feed"></div>
   </div>
 
-  <!-- 직원 이력 -->
+  <!-- 직원 -->
   <div class="panel-body" id="tab-history" hidden>
+    <div class="act-note">실제로 일하는 AI 직원은 아래 4명입니다. 나머지 캐릭터는 오피스 분위기용 장식이며 AI가 연결돼 있지 않습니다. 지시는 <a href="../">관제탑</a> 하단 입력창에서 하세요.</div>
     <div class="emp-grid" id="emp-grid"></div>
   </div>
-
-  <!-- CEO 지시 -->
-  <div class="panel-body" id="tab-cmd" hidden>
-    <div class="wl-form" style="margin-bottom:10px">
-      <select class="wl-sel" id="cmd-dept">
-        <option>📢 전체</option><option>👑 CEO 오피스</option><option>⭐ 경영지원팀</option>
-        <option>✍️ 콘텐츠팀</option><option>🎨 크리에이티브팀</option><option>🚀 신규사업부</option>
-        <option>💰 수익화팀</option><option>🤝 로비</option><option>🛡️ 보안팀</option>
-      </select>
-      <input class="wl-ta" id="cmd-inp" style="height:auto;padding:7px 10px" placeholder="CEO 지시사항 입력 후 Enter..." onkeydown="if(event.key==='Enter')sendCmd()">
-      <button class="wl-submit" onclick="sendCmd()">📨 전송</button>
-    </div>
-    <div class="wl-log" id="cmd-log" style="max-height:120px">
-      <div class="wl-entry"><span class="wl-ts">--:--</span><span class="wl-dept">[시스템]</span><span class="wl-text">Relaxing Mind AI Company 오피스 가동.</span></div>
-    </div>
-  </div>
 </div>
 
-<!-- Employee modal -->
-<div class="emp-modal-bg" id="emp-modal" hidden onclick="if(event.target===this)closeEmpModal()">
-  <div class="emp-modal">
-    <button class="em-close" onclick="closeEmpModal()">✕</button>
-    <div class="em-header">
-      <div class="em-avatar" id="em-av">👤</div>
-      <div>
-        <div class="em-name" id="em-name"></div>
-        <div class="em-role" id="em-role"></div>
-        <div class="em-dept" id="em-dept"></div>
-      </div>
-    </div>
-    <div class="em-stats" id="em-stats"></div>
-    <div class="em-log" id="em-log"></div>
-  </div>
-</div>
 
 <script>
 // ══════════════════════════════════════
@@ -942,9 +904,13 @@ function drawAllCities(){
 // ══════════════════════════════════════
 // FLOOR INTERIORS (background canvas)
 // ══════════════════════════════════════
+// 캔버스 실제 너비 (CSS left/right 기준 — 모바일에서도 맞게)
+function floorW(el){
+  const cs=getComputedStyle(el);
+  return Math.max(0, el.parentElement.offsetWidth-(parseFloat(cs.left)||0)-(parseFloat(cs.right)||0));
+}
 function initBg(canvasEl, floorId, theme) {
-  const parent = canvasEl.parentElement;
-  const W = parent.offsetWidth - 54 - 290;
+  const W = floorW(canvasEl);
   const H = FH;
   canvasEl.width  = W;
   canvasEl.height = H;
@@ -1156,7 +1122,7 @@ function drawFloor7(ctx, W, H, theme) {
   ctx.beginPath(); ctx.roundRect(8,18,64,44,2); ctx.fill();
   ctx.fillStyle='#a78bfa'; ctx.font='bold 7px Inter'; ctx.textAlign='center';
   ctx.fillText('ANALYTICS',40,35);
-  ctx.fillStyle='#4ade80'; ctx.font='bold 11px monospace'; ctx.fillText('↑23%',40,50);
+  ctx.fillStyle='#a78bfa'; ctx.font='bold 9px monospace'; ctx.fillText('12월 목표',40,50);
   // shelves
   drawShelf(ctx, W-90, 8, 55, H-28, ['#7c3aed','#5b21b6','#4338ca','#6d28d9','#1d4ed8','#c2410c']);
   // plants
@@ -1182,11 +1148,11 @@ function drawGenericOffice(ctx, W, H, theme, floorData) {
 
   // — 왼쪽 벽면 모니터 (부서별 콘텐츠) —
   const wallDecor = {
-    '6': { bg:'#07090c', border:'rgba(251,191,36,.5)', title:'Q4 경영계획', lines:['예산 최적화 ▶ 진행중','팀 성과 리뷰 ▶ 82%','신규 채용 3명 확정'], color:'#fbbf24' },
-    '5': { bg:'#060e1a', border:'rgba(96,165,250,.5)', title:'YOUTUBE / BLOG', lines:['▶ 24,310 조회 / 1.2만 구독','쇼츠 3건 업로드 예정','블로그 인기글 5건'], color:'#60a5fa' },
-    '4': { bg:'#061208', border:'rgba(52,211,153,.5)', title:'CREATIVE BOARD', lines:['인스타 피드 12건 완료','소설 챕터 8 작업중','일러스트 시안 검토'], color:'#34d399' },
-    '3': { bg:'#0d0804', border:'rgba(251,146,60,.5)', title:'신규사업 피치', lines:['쿠팡 파트너스 ₩840K/월','네이버 광고 제안 검토중','B2B 계약 협의 중'], color:'#fb923c' },
-    '2': { bg:'#050810', border:'rgba(74,222,128,.5)', title:'REVENUE', lines:['월 수익 ₩3.2M 달성','광고 수익 전월比 +23%','목표달성률 87%'], color:'#4ade80' },
+    '6': { bg:'#07090c', border:'rgba(251,191,36,.5)', title:'Q4 경영계획', lines:['일정 메모','예산 메모','회의 노트'], color:'#fbbf24' },
+    '5': { bg:'#060e1a', border:'rgba(96,165,250,.5)', title:'YOUTUBE / BLOG', lines:['영상 아이디어','대본 초안','블로그 초안'], color:'#60a5fa' },
+    '4': { bg:'#061208', border:'rgba(52,211,153,.5)', title:'CREATIVE BOARD', lines:['인스타 기획','콘텐츠 보드','시안 스케치'], color:'#34d399' },
+    '3': { bg:'#0d0804', border:'rgba(251,146,60,.5)', title:'신규사업 피치', lines:['아이디어 메모','시장 조사','검토 목록'], color:'#fb923c' },
+    '2': { bg:'#050810', border:'rgba(74,222,128,.5)', title:'REVENUE', lines:['수익 기록판','실제 숫자는','관제탑 참조'], color:'#4ade80' },
   };
   const wd = wallDecor[floorData.id] || wallDecor['3'];
 
@@ -1290,10 +1256,10 @@ function drawFloorB1(ctx, W, H, theme) {
   const monitors=[
     {x:8,  y:10, w:50, h:36, label:'CCTV-1F', color:'rgba(200,30,30,.7)',   content:'1F 로비'},
     {x:62, y:10, w:50, h:36, label:'CCTV-B1', color:'rgba(200,30,30,.7)',   content:'서버실'},
-    {x:116,y:10, w:50, h:36, label:'SYSTEM',  color:'rgba(100,180,255,.7)', content:'CPU 42%'},
-    {x:8,  y:50, w:50, h:36, label:'NETWORK', color:'rgba(50,200,120,.7)',  content:'↑124MB/s'},
-    {x:62, y:50, w:50, h:36, label:'ANALYSIS',color:'rgba(251,191,36,.7)', content:'AI 처리중'},
-    {x:116,y:50, w:50, h:36, label:'ALERT',   color:'rgba(248,113,113,.7)',content:'정상운영'},
+    {x:116,y:10, w:50, h:36, label:'SYSTEM',  color:'rgba(100,180,255,.7)', content:'—'},
+    {x:8,  y:50, w:50, h:36, label:'NETWORK', color:'rgba(50,200,120,.7)',  content:'—'},
+    {x:62, y:50, w:50, h:36, label:'ANALYSIS',color:'rgba(251,191,36,.7)', content:'—'},
+    {x:116,y:50, w:50, h:36, label:'ALERT',   color:'rgba(248,113,113,.7)',content:'—'},
   ];
 
   monitors.forEach(m=>{
@@ -1355,14 +1321,13 @@ const chars = [];
 // Event types for movement
 const EVENTS = ['toilet','dept_visit','stretch'];
 const EVENT_INTERVALS = { toilet:5400, dept_visit:7200, stretch:4800 };
-const TALK_PHRASES = ['아이디어!','기획 중','검토 완료','수익 분석','회의 중','승인 요청','보고서 작성','데이터 확인','전략 수립','완료!'];
+const TALK_PHRASES = ['💭','☕','🎧','📚','✏️','…'];
 
 function initChars() {
   FLOORS_DATA.forEach(fl => {
     const canvasEl = document.getElementById('c'+fl.id);
     if(!canvasEl) return;
-    const parent = canvasEl.parentElement;
-    const W = parent.offsetWidth - 54 - 290;
+    const W = floorW(canvasEl);
     const H = FH;
     const dpr = window.devicePixelRatio || 1;
     canvasEl.width  = W * dpr;
@@ -1840,7 +1805,7 @@ function drawSeatedPerson(ctx, c) {
 
   // ── TALK BUBBLE ──
   if(c.talking && c.bubbleText){
-    const tw=c.bubbleText.length*5+14;
+    const tw=c.bubbleText.length*7+14;
     const bx=x-tw/2, by=headY-28;
     ctx.fillStyle='rgba(255,255,255,.96)'; ctx.beginPath(); ctx.roundRect(bx,by,tw,16,5); ctx.fill();
     ctx.beginPath(); ctx.moveTo(x-4,by+16); ctx.lineTo(x+4,by+16); ctx.lineTo(x,by+22); ctx.closePath(); ctx.fill();
@@ -2118,9 +2083,9 @@ function animate(){
           c.nextEventTimer = EVENT_INTERVALS[evType]+Math.floor(Math.random()*3600)+1800;
         } else {
           // occasional talk bubble while seated
-          if(!c.talking && Math.random()<.002){
-            c.talking=true; c.talkTimer=80;
-            c.bubbleText=TALK_PHRASES[Math.floor(Math.random()*TALK_PHRASES.length)];
+          if(!c.talking && Math.random()<(c.realBubble?.006:.002)){
+            c.talking=true; c.talkTimer=c.realBubble?160:80;
+            c.bubbleText=c.realBubble||TALK_PHRASES[Math.floor(Math.random()*TALK_PHRASES.length)];
           }
         }
       } else if(c.state==='walking'){
@@ -2171,9 +2136,6 @@ function animate(){
     ctx.restore();
   });
 
-  document.getElementById('sv-work').textContent=statWork;
-  document.getElementById('sv-meet').textContent=statMeet;
-  document.getElementById('sv-move').textContent=statMove;
   tickElev();
 }
 
@@ -2181,255 +2143,89 @@ function animate(){
 // TAB SWITCHING
 // ══════════════════════════════════════
 function switchTab(id, btn){
-  ['chat','history','cmd'].forEach(t=>{
+  ['activity','history'].forEach(t=>{
     document.getElementById('tab-'+t).hidden = (t!==id);
   });
   document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  if(id==='chat') renderChatFeed();
-  if(id==='history') renderEmpGrid();
+  refreshReal();
 }
 
 // ══════════════════════════════════════
-// CMD / CEO ORDERS
+// 관제탑 실제 데이터 (같은 사이트의 브라우저 저장소에서 읽기만 함)
 // ══════════════════════════════════════
-function sendCmd(){
-  const dept=document.getElementById('cmd-dept').value;
-  const txt=document.getElementById('cmd-inp').value.trim();
-  if(!txt)return;
-  const ts=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});
-  const log=document.getElementById('cmd-log');
-  const div=document.createElement('div');
-  div.className='wl-entry';
-  div.innerHTML=`<span class="wl-ts">${ts}</span><span class="wl-dept">[${dept}]</span><span class="wl-text">${txt}</span>`;
-  // remove empty placeholder
-  const empty=log.querySelector('.wl-empty');
-  if(empty)empty.remove();
-  log.appendChild(div); log.scrollTop=log.scrollHeight;
-  document.getElementById('cmd-inp').value='';
-  chars.filter(c=>Math.random()>.4).forEach(c=>{
-    c.talking=true; c.talkTimer=100;
-    c.bubbleText=txt.length>9?txt.slice(0,9)+'..':txt;
-  });
-  // also echo to chat
-  addChatMsg('CEO (Claude)','#7c3aed','📢 [지시] '+txt,true);
-}
-
-// ══════════════════════════════════════
-// WORKLOG
-// ══════════════════════════════════════
-let _wlDept='CEO 오피스', _wlColor='#a78bfa';
-
-
-function updateWlDate(){
-  const now=new Date();
-  const d=document.getElementById('wl-date');
-  if(d) d.textContent=now.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-}
-
-
-
-
-function sendCmd_silent(dept,txt){
-  const ts=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});
-  const log=document.getElementById('cmd-log');
-  if(!log)return;
-  const div=document.createElement('div');
-  div.className='wl-entry';
-  div.innerHTML=`<span class="wl-ts">${ts}</span><span class="wl-dept">[${dept}]</span><span class="wl-text">${txt}</span>`;
-  log.prepend(div);
-}
-
-// ══════════════════════════════════════
-// WORKLOG SEED DATA
-// ══════════════════════════════════════
-
-// ══════════════════════════════════════
-// TEAM CHAT
-// ══════════════════════════════════════
-const CHAT_MSGS = [
-  {name:'Aria', color:'#22d3ee', ch:'CEO 오피스', text:'오늘 콘텐츠 KPI 달성률 확인했습니다. 전반적으로 양호합니다 👍'},
-  {name:'Nova', color:'#34d399', ch:'CEO 오피스', text:'서버 업타임 99.98% 유지 중. 보안 패치도 완료했어요 💚'},
-  {name:'Stella', color:'#fbbf24', ch:'경영지원팀', text:'이번 주 경비 정산 완료했습니다. 보고서 공유할게요 📊'},
-  {name:'Maya', color:'#fbbf24', ch:'경영지원팀', text:'신규 직원 온보딩 준비 중입니다. 내일 오전 미팅 괜찮으세요?'},
-  {name:'Kai', color:'#60a5fa', ch:'콘텐츠팀', text:'블로그 포스팅 3건 완성! 오늘 오후 2시 예약 발행 예정 ✍️'},
-  {name:'Milo', color:'#60a5fa', ch:'콘텐츠팀', text:'유튜브 편집 거의 다 됐어요. 내일 오전까지 업로드 가능합니다'},
-  {name:'Elle', color:'#34d399', ch:'크리에이티브팀', text:'새 일러스트 초안 완성 🎨 피드백 주시면 바로 수정할게요'},
-  {name:'Pip', color:'#34d399', ch:'크리에이티브팀', text:'인스타 오늘 3포스트 예약완료! 참여율 올라가고 있어요 📸'},
-  {name:'Victor', color:'#fb923c', ch:'신규사업부', text:'파트너사 미팅 결과 공유드립니다. 긍정적인 반응이었어요!'},
-  {name:'Penny', color:'#4ade80', ch:'수익화팀', text:'이번 달 광고 수익 목표 대비 112% 달성 중입니다 💰'},
-  {name:'Rich', color:'#4ade80', ch:'수익화팀', text:'새 광고주 2곳 계약 진행 중. 다음 주 최종 확인 예정이에요'},
-  {name:'Rex', color:'#f87171', ch:'전체', text:'🛡️ 보안 점검 완료. 이상 없음.'},
-  {name:'Otto', color:'#c4b5fd', ch:'전체', text:'방문객 오늘 총 12명. 모두 안내 완료했습니다 🤝'},
-];
-let chatHistory=[];
-
-function addChatMsg(name, color, text, isMe=false){
-  const ts=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});
-  chatHistory.push({name,color,text,ts,isMe});
-  renderChatFeed();
-}
-
-function renderChatFeed(){
-  const feed=document.getElementById('chat-feed');
-  if(!feed)return;
-  if(chatHistory.length===0){
-    // seed initial messages
-    const now=new Date();
-    CHAT_MSGS.forEach((m,i)=>{
-      const d=new Date(now-1000*(CHAT_MSGS.length-i)*240);
-      const ts=d.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});
-      chatHistory.push({...m,ts,isMe:false});
-    });
-  }
-  feed.innerHTML='';
-  chatHistory.forEach(m=>{
-    const d=document.createElement('div');
-    d.className='chat-msg'+(m.isMe?' chat-me':'');
-    const initials=m.name.slice(0,2);
-    if(m.isMe){
-      d.innerHTML=`<div style="flex:1"></div><div class="chat-bubble"><div class="ch-name" style="color:${m.color}">${m.name}</div><div class="ch-text">${m.text}</div><div class="ch-time">${m.ts}</div></div><div class="chat-av" style="background:${m.color}22;color:${m.color}">${initials}</div>`;
-    } else {
-      d.innerHTML=`<div class="chat-av" style="background:${m.color}22;color:${m.color}">${initials}</div><div class="chat-bubble"><div class="ch-name" style="color:${m.color}">${m.name}</div><div class="ch-text">${m.text}</div><div class="ch-time">${m.ts}</div></div>`;
-    }
-    feed.appendChild(d);
-  });
-  feed.scrollTop=feed.scrollHeight;
-}
-
-function sendChatMsg(){
-  const txt=document.getElementById('chat-inp').value.trim();
-  if(!txt)return;
-  addChatMsg('CEO (Claude)','#a78bfa',txt,true);
-  document.getElementById('chat-inp').value='';
-  // simulate reply after 1.5s
-  setTimeout(()=>{
-    const reps=[
-      {name:'Aria',color:'#22d3ee',text:'알겠습니다! 바로 처리하겠습니다 👍'},
-      {name:'Stella',color:'#fbbf24',text:'네, 확인했습니다. 진행하겠습니다!'},
-      {name:'Kai',color:'#60a5fa',text:'반영하겠습니다. 감사합니다 ✍️'},
-      {name:'Victor',color:'#fb923c',text:'좋은 방향입니다. 팀과 공유할게요!'},
-    ];
-    const r=reps[Math.floor(Math.random()*reps.length)];
-    addChatMsg(r.name,r.color,r.text,false);
-  },1400+Math.random()*1200);
-}
-
-// ══════════════════════════════════════
-// EMPLOYEE HISTORY
-// ══════════════════════════════════════
-const EMP_INFO = {
-  'Claude': { emoji:'🧑‍💼', join:'2023-01-01', joined:730, projects:142, floor:'7F', dept:'CEO 오피스',
-    log:['2024-06 회사 창립 2주년 달성','2024-09 해외 파트너십 체결','2025-01 직원 37명 규모로 확장','2025-06 수익 목표 150% 달성'] },
-  'Aria':  { emoji:'👩‍💼', join:'2023-02-01', joined:700, projects:98, floor:'7F', dept:'CEO 오피스',
-    log:['2023-04 COO 승진','2023-10 운영체계 전면 개선','2024-03 직원 만족도 조사 1위','2025-01 조직 개편 주도'] },
-  'Nova':  { emoji:'👩‍💻', join:'2023-03-01', joined:670, projects:115, floor:'7F', dept:'CEO 오피스',
-    log:['2023-06 서버 인프라 구축','2024-01 보안 시스템 업그레이드','2024-08 클라우드 마이그레이션','2025-02 AI 파이프라인 개발'] },
-  'Stella':{ emoji:'⭐', join:'2023-04-01', joined:640, projects:80, floor:'6F', dept:'경영지원팀',
-    log:['2023-07 팀장 승진','2024-02 경영지원 프로세스 표준화','2024-11 예산 관리 시스템 도입'] },
-  'Rex F': { emoji:'💼', join:'2023-06-01', joined:580, projects:62, floor:'6F', dept:'경영지원팀',
-    log:['2023-09 재무 시스템 도입','2024-04 외부 감사 통과','2025-01 연간 예산 계획 수립'] },
-  'Maya':  { emoji:'👩‍👩‍👦', join:'2023-05-01', joined:610, projects:74, floor:'6F', dept:'경영지원팀',
-    log:['2023-08 채용 프로세스 개선','2024-01 HR 시스템 도입','2024-07 직원 복지 프로그램 신설'] },
-  'Leon':  { emoji:'⚖️', join:'2023-07-01', joined:550, projects:55, floor:'6F', dept:'경영지원팀',
-    log:['2023-10 계약 검토 체계 구축','2024-03 법무 리스크 관리 도입','2024-09 파트너 계약 협상 완료'] },
-  'Nora':  { emoji:'🧮', join:'2024-01-01', joined:360, projects:38, floor:'6F', dept:'경영지원팀',
-    log:['2024-02 회계 시스템 셋업','2024-06 분기 결산 보고','2024-10 세무 신고 완료'] },
-  'Kai':   { emoji:'✍️', join:'2023-04-15', joined:625, projects:210, floor:'5F', dept:'콘텐츠팀',
-    log:['2023-07 블로그 구독자 1만 달성','2024-01 월 포스팅 30건 달성','2024-08 검색 트래픽 300% 증가'] },
-  'Milo':  { emoji:'🎬', join:'2023-06-01', joined:580, projects:89, floor:'5F', dept:'콘텐츠팀',
-    log:['2023-09 유튜브 채널 개설','2024-02 구독자 5만 달성','2024-10 월 100만 뷰 달성'] },
-  'Lena':  { emoji:'📋', join:'2023-07-01', joined:550, projects:71, floor:'5F', dept:'콘텐츠팀',
-    log:['2023-10 콘텐츠 기획 프레임 수립','2024-04 편집 가이드라인 제작','2025-01 콘텐츠 캘린더 운영'] },
-  'Finn':  { emoji:'✂️', join:'2023-08-01', joined:520, projects:156, floor:'5F', dept:'콘텐츠팀',
-    log:['2023-11 영상 편집 파이프라인 구축','2024-05 썸네일 A/B 테스트','2024-12 쇼츠 채널 개설'] },
-  'Zara':  { emoji:'🔍', join:'2023-09-01', joined:490, projects:93, floor:'5F', dept:'콘텐츠팀',
-    log:['2023-12 SEO 전략 수립','2024-06 키워드 순위 50개 상위 진입','2025-01 오가닉 트래픽 500% 성장'] },
-  'Jay':   { emoji:'📊', join:'2024-02-01', joined:330, projects:45, floor:'5F', dept:'콘텐츠팀',
-    log:['2024-03 데이터 대시보드 구축','2024-07 A/B 테스트 프레임 도입','2024-11 성과 리포트 자동화'] },
-  'Vera':  { emoji:'🌐', join:'2024-04-01', joined:270, projects:38, floor:'5F', dept:'콘텐츠팀',
-    log:['2024-05 번역 품질 가이드 제작','2024-08 영어/일어 채널 론칭','2024-11 글로벌 트래픽 증가'] },
-  'Elle':  { emoji:'🎨', join:'2023-05-01', joined:610, projects:183, floor:'4F', dept:'크리에이티브팀',
-    log:['2023-08 디자인 시스템 구축','2024-01 리브랜딩 프로젝트','2024-07 UX 개선 프로젝트 완료'] },
-  'Iris':  { emoji:'📚', join:'2023-07-01', joined:550, projects:12, floor:'4F', dept:'크리에이티브팀',
-    log:['2023-10 첫 소설 연재 시작','2024-03 독자 수 1만 명 달성','2024-09 전자책 출판 계약 체결'] },
-  'Pip':   { emoji:'📸', join:'2023-08-01', joined:520, projects:420, floor:'4F', dept:'크리에이티브팀',
-    log:['2023-11 인스타 팔로워 1만 달성','2024-04 팔로워 5만 달성','2024-10 팔로워 15만 돌파 🎉'] },
-  'Cleo':  { emoji:'🖌️', join:'2023-09-01', joined:490, projects:234, floor:'4F', dept:'크리에이티브팀',
-    log:['2023-12 일러스트 스타일 확립','2024-05 굿즈 제작 프로젝트','2024-11 외부 콜라보 일러스트'] },
-  'Sol':   { emoji:'✂️', join:'2023-10-01', joined:460, projects:178, floor:'4F', dept:'크리에이티브팀',
-    log:['2024-01 편집 속도 2배 향상','2024-06 프리미어 프로 교육 담당','2024-10 릴스 편집 특화'] },
-  'Luna':  { emoji:'📷', join:'2024-03-01', joined:300, projects:56, floor:'4F', dept:'크리에이티브팀',
-    log:['2024-04 촬영 장비 세팅','2024-07 야외 촬영 프로젝트','2024-10 제품 사진 촬영 전담'] },
-  'Victor':{ emoji:'🚀', join:'2023-03-15', joined:655, projects:67, floor:'3F', dept:'신규사업부',
-    log:['2023-07 팀 창설 및 팀장 임명','2024-01 해외 진출 전략 수립','2024-08 B2B 파트너십 3건 체결'] },
-  'Iris N':{ emoji:'📌', join:'2023-09-01', joined:490, projects:55, floor:'3F', dept:'신규사업부',
-    log:['2023-12 신사업 기획서 5건 작성','2024-05 파일럿 프로젝트 성공','2024-11 신규 수익모델 제안'] },
-  'Kane':  { emoji:'🔬', join:'2024-01-01', joined:360, projects:42, floor:'3F', dept:'신규사업부',
-    log:['2024-02 시장 분석 보고서 작성','2024-06 경쟁사 인텔리전스 보고','2024-11 수요 예측 모델 구축'] },
-  'Zoe':   { emoji:'📣', join:'2024-02-01', joined:330, projects:61, floor:'3F', dept:'신규사업부',
-    log:['2024-03 SNS 마케팅 전략 수립','2024-07 캠페인 ROI 200% 달성','2024-11 바이럴 캠페인 기획'] },
-  'Ren':   { emoji:'💻', join:'2023-11-01', joined:430, projects:88, floor:'3F', dept:'신규사업부',
-    log:['2024-01 MVP 개발 완료','2024-05 앱 출시','2024-09 앱 사용자 1만 명 달성'] },
-  'Ami':   { emoji:'📱', join:'2024-05-01', joined:240, projects:49, floor:'3F', dept:'신규사업부',
-    log:['2024-06 SNS 채널 셋업','2024-08 팔로워 5천 달성','2024-11 바이럴 콘텐츠 제작'] },
-  'Penny': { emoji:'💰', join:'2023-06-01', joined:580, projects:78, floor:'2F', dept:'수익화팀',
-    log:['2023-09 수익화 전략 수립','2024-02 광고 수익 목표 초과 달성','2024-08 신규 수익 채널 3개 발굴'] },
-  'Rich':  { emoji:'📈', join:'2023-08-01', joined:520, projects:65, floor:'2F', dept:'수익화팀',
-    log:['2023-11 광고 네트워크 확장','2024-04 스폰서십 계약 10건','2024-10 광고 수익 200% 성장'] },
-  'Data':  { emoji:'🔢', join:'2023-10-01', joined:460, projects:94, floor:'2F', dept:'수익화팀',
-    log:['2024-01 데이터 웨어하우스 구축','2024-06 ML 기반 예측 모델 개발','2024-11 실시간 대시보드 오픈'] },
-  'Fern':  { emoji:'🗺️', join:'2024-03-01', joined:300, projects:29, floor:'2F', dept:'수익화팀',
-    log:['2024-04 중장기 수익 전략 수립','2024-08 투자자 덱 작성','2024-11 파트너십 전략 발표'] },
-  'Max':   { emoji:'⚙️', join:'2024-04-01', joined:270, projects:34, floor:'2F', dept:'수익화팀',
-    log:['2024-05 운영 지표 대시보드','2024-08 프로세스 최적화 5건','2024-11 운영비 절감 15%'] },
-  'Otto':  { emoji:'🤝', join:'2023-01-01', joined:730, projects:0, floor:'1F', dept:'로비',
-    log:['2023-02 방문객 안내 시스템 구축','2023-09 월 방문객 100명 돌파','2024-06 만족도 98% 달성','2025-01 방문객 누적 5000명'] },
-  'Mia':   { emoji:'💐', join:'2024-06-01', joined:210, projects:0, floor:'1F', dept:'로비',
-    log:['2024-07 안내 매뉴얼 작성','2024-09 방문객 응대 교육 수료','2024-11 민원 처리율 100%'] },
-  'Rex':   { emoji:'🛡️', join:'2023-01-01', joined:730, projects:310, floor:'B1', dept:'보안팀',
-    log:['2023-03 보안 시스템 구축','2023-09 첫 침투 테스트 통과','2024-03 ISO 27001 취득','2025-01 무결점 보안 기록 2년'] },
-  'Ada':   { emoji:'🤖', join:'2023-04-01', joined:640, projects:245, floor:'B1', dept:'보안팀',
-    log:['2023-07 AI 모니터링 시스템 개발','2024-01 자동화 보안 패치 도입','2024-08 이상 탐지 정확도 99%'] },
-  'Cy':    { emoji:'🌐', join:'2023-06-01', joined:580, projects:189, floor:'B1', dept:'보안팀',
-    log:['2023-09 네트워크 인프라 구축','2024-02 서버 이중화 완료','2024-09 99.99% 업타임 달성'] },
+const REAL_ROLES = {
+  youtube:{name:'Milo', title:'유튜브 기획'},
+  blog:   {name:'Lena', title:'블로그 작가'},
+  insta:  {name:'Iris', title:'인스타 기획'},
+  analyst:{name:'Penny',title:'수익 분석가'},
 };
+const REAL_NAMES = Object.values(REAL_ROLES).map(r=>r.name);
+function escH(t){return String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function towerState(){
+  try{ return JSON.parse(localStorage.getItem('rm_tower_v3')) || null; }catch(e){ return null; }
+}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 
-function renderEmpGrid(){
-  const grid=document.getElementById('emp-grid');
-  if(!grid||grid.dataset.rendered)return;
-  grid.dataset.rendered='1';
-  // Build from FLOORS_DATA
-  FLOORS_DATA.forEach(f=>{
-    f.emps.forEach(e=>{
-      const card=document.createElement('div');
-      card.className='emp-card';
-      const info=EMP_INFO[e.name]||{emoji:'👤',join:'2023-01-01',joined:365,projects:50,floor:'?',dept:'?',log:[]};
-      card.innerHTML=`<div><span class="ec-color" style="background:${e.color}"></span></div><div class="ec-name">${e.name}</div><div class="ec-role">${e.role}</div><div class="ec-floor">${info.floor} · ${info.dept}</div>`;
-      card.onclick=()=>openEmpModal(e,info);
-      grid.appendChild(card);
-    });
+function refreshReal(){
+  const S=towerState();
+  const tasks=(S&&S.tasks)||[];
+  const pending=tasks.filter(t=>t.status==='pending');
+  const todo=tasks.filter(t=>t.status==='approved');
+  const month=todayStr().slice(0,7);
+  const done=tasks.filter(t=>t.status==='done'&&t.doneAt&&t.doneAt.slice(0,7)===month);
+  const dl=(S&&S.deadline)||'2026-12-31';
+  const dd=Math.round((new Date(dl+'T00:00:00')-new Date(todayStr()+'T00:00:00'))/86400000);
+  document.getElementById('sv-dday').textContent=dd>=0?'D-'+dd:'기한 지남';
+  document.getElementById('sv-pending').textContent=pending.length+'건';
+  document.getElementById('sv-todo').textContent=todo.length+'건';
+  document.getElementById('sv-done').textContent=done.length+'건';
+
+  // 실제 활동 피드
+  const feed=document.getElementById('act-feed');
+  if(!S||!tasks.length){
+    feed.innerHTML='<div class="act-empty">아직 실제 활동이 없습니다.<br><a href="../">관제탑</a>에서 AI를 연결하고 「오늘의 초안 받기」를 누르면 여기에 표시됩니다.</div>';
+  }else{
+    const label={pending:'⏳ 초안 제출 · 승인 대기',approved:'✅ 승인됨 · 대표님 게시 대기',done:'🎉 게시 완료'};
+    feed.innerHTML=tasks.slice(0,40).map(t=>{
+      const r=REAL_ROLES[t.role]||{name:t.role,title:''};
+      const when=t.status==='done'?(t.doneAt||''):(t.created||'');
+      return `<div class="act-row"><span class="t">${escH(when)}</span><span class="w" style="color:${roleColor(r.name)}">${escH(r.name)}</span><span>${label[t.status]||escH(t.status)}</span><span class="x">— ${escH(t.title)}</span></div>`;
+    }).join('');
+  }
+
+  // 실제 직원 말풍선: 승인 대기 초안이 있으면 표시
+  chars.forEach(c=>{
+    const key=Object.keys(REAL_ROLES).find(k=>REAL_ROLES[k].name===c.name);
+    if(!key)return;
+    const n=pending.filter(t=>t.role===key).length;
+    c.realBubble=n?('초안 '+n+'건 승인 대기'):'';
   });
+
+  renderEmpGrid(tasks);
+}
+function roleColor(name){
+  for(const f of FLOORS_DATA)for(const e of f.emps)if(e.name===name)return e.color;
+  return '#a78bfa';
 }
 
-function openEmpModal(e,info){
-  document.getElementById('em-av').textContent=info.emoji;
-  document.getElementById('em-av').style.borderColor=e.color+'80';
-  document.getElementById('em-name').textContent=e.name;
-  document.getElementById('em-name').style.color=e.color;
-  document.getElementById('em-role').textContent=e.role+' · '+info.dept;
-  document.getElementById('em-dept').innerHTML=`<span style="color:${e.color};font-size:10px">${info.floor}</span> &nbsp;입사: ${info.join}`;
-  document.getElementById('em-stats').innerHTML=`
-    <div class="em-stat"><div class="em-stat-lbl">근무 일수</div><div class="em-stat-val" style="color:${e.color}">${info.joined}일</div></div>
-    <div class="em-stat"><div class="em-stat-lbl">참여 프로젝트</div><div class="em-stat-val" style="color:${e.color}">${info.projects}건</div></div>
-    <div class="em-stat"><div class="em-stat-lbl">현재 상태</div><div class="em-stat-val" style="color:#4ade80">재직중</div></div>
-    <div class="em-stat"><div class="em-stat-lbl">소속팀</div><div class="em-stat-val" style="color:${e.color};font-size:10px">${info.dept}</div></div>
-  `;
-  const logEl=document.getElementById('em-log');
-  logEl.innerHTML=info.log.map(l=>`<div style="color:${e.color+'80'}">▸ ${l}</div>`).join('');
-  document.getElementById('emp-modal').hidden=false;
+function renderEmpGrid(tasks){
+  const grid=document.getElementById('emp-grid');
+  if(!grid)return;
+  tasks=tasks||[];
+  const cards=[];
+  Object.entries(REAL_ROLES).forEach(([key,r])=>{
+    const mine=tasks.filter(t=>t.role===key);
+    const cnt=s=>mine.filter(t=>t.status===s).length;
+    cards.push(`<div class="emp-card real"><div><span class="ec-color" style="background:${roleColor(r.name)}"></span></div><div class="ec-name">${r.name}</div><div class="ec-role">${r.title} · AI 연결</div><div class="ec-floor">대기 ${cnt('pending')} · 승인 ${cnt('approved')} · 게시 ${cnt('done')}</div></div>`);
+  });
+  FLOORS_DATA.forEach(f=>f.emps.forEach(e=>{
+    if(REAL_NAMES.includes(e.name))return;
+    cards.push(`<div class="emp-card deco"><div><span class="ec-color" style="background:${e.color}"></span></div><div class="ec-name">${escH(e.name)}</div><div class="ec-role">장식 캐릭터</div></div>`);
+  }));
+  grid.innerHTML=cards.join('');
 }
-function closeEmpModal(){ document.getElementById('emp-modal').hidden=true; }
+
 
 // ══════════════════════════════════════
 // INIT
@@ -2453,16 +2249,9 @@ window.addEventListener('load',()=>{
     drawAllCities();
     initChars();
     animate();
-    updateWlDate();
-    // Auto team chat messages
-    setTimeout(()=>{
-      const m=CHAT_MSGS[Math.floor(Math.random()*CHAT_MSGS.length)];
-      addChatMsg(m.name,m.color,m.text);
-    },8000);
-    setInterval(()=>{
-      const m=CHAT_MSGS[Math.floor(Math.random()*CHAT_MSGS.length)];
-      addChatMsg(m.name,m.color,m.text);
-    },35000);
+    refreshReal();
+    setInterval(refreshReal, 15000);
+    window.addEventListener('storage', e=>{ if(e.key==='rm_tower_v3') refreshReal(); });
   });
 });
 
@@ -2471,8 +2260,7 @@ window.addEventListener('resize',()=>{
     initBg(document.getElementById('bg'+f.id), f.id, THEMES[f.id]);
     const cv=document.getElementById('c'+f.id);
     if(cv){
-      const par=cv.parentElement;
-      const W=par.offsetWidth-54-290;
+      const W=floorW(cv);
       if(W>0){cv.width=W; cv.style.width=W+'px';}
     }
   });
