@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>멜로 스튜디오</title>
+<meta name="theme-color" content="#0d1117">
+<link rel="icon" href="../icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root {
+    --bg:#0d1117; --surface:#161b22; --surface2:#1c2230; --border:#30363d;
+    --accent:#58a6ff; --accent2:#3fb950; --accent3:#d2a8ff; --accent4:#ffa657; --danger:#f85149; --pink:#f778ba;
+    --text:#e6edf3; --text2:#8b949e; --text3:#6e7681;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:'Noto Sans KR',sans-serif; min-height:100vh; overflow-x:hidden; }
+  button { font-family:inherit; }
+  .mono { font-family:'JetBrains Mono',monospace; }
+
+  .topbar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 20px; min-height:56px; background:var(--surface); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; flex-wrap:wrap; }
+  .logo { display:flex; align-items:center; gap:8px; font-weight:700; font-size:15px; }
+  .logo .dot { width:8px; height:8px; border-radius:50%; background:var(--pink); box-shadow:0 0 8px var(--pink); }
+  .pill { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; text-decoration:none; border:1px solid; }
+  .pill-blue { background:rgba(88,166,255,.12); border-color:rgba(88,166,255,.35); color:var(--accent); }
+  .pill-green { background:rgba(63,185,80,.12); border-color:rgba(63,185,80,.35); color:var(--accent2); }
+  .pill-red { background:rgba(248,81,73,.12); border-color:rgba(248,81,73,.35); color:var(--danger); }
+
+  .tabs { display:flex; padding:0 20px; background:var(--surface); border-bottom:1px solid var(--border); overflow-x:auto; }
+  .tab { padding:13px 16px; font-size:13px; color:var(--text2); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; }
+  .tab.active { color:var(--text); border-bottom-color:var(--pink); font-weight:600; }
+
+  .main { max-width:1100px; margin:0 auto; padding:20px 16px 60px; }
+  .panel { display:none; }
+  .panel.active { display:block; }
+  .h2 { font-size:15px; font-weight:700; margin:22px 0 10px; }
+  .h2:first-child { margin-top:0; }
+  .muted { color:var(--text2); font-size:12px; line-height:1.7; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:12px; }
+  .grid2 { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:12px; }
+  .notice { border:1px solid rgba(247,120,186,.35); background:rgba(247,120,186,.07); border-radius:10px; padding:12px 14px; font-size:12px; line-height:1.75; color:var(--text2); margin-bottom:16px; }
+  .notice b { color:var(--text); }
+  .warn { border-color:rgba(255,166,87,.4); background:rgba(255,166,87,.08); }
+
+  label.lbl { display:block; font-size:12px; color:var(--text2); margin:10px 0 4px; }
+  .input, .ta, select { width:100%; padding:8px 10px; border-radius:6px; border:1px solid var(--border); background:var(--surface2); color:var(--text); font-size:13px; font-family:inherit; outline:none; }
+  .input:focus, .ta:focus { border-color:var(--accent); }
+  .ta { min-height:80px; resize:vertical; line-height:1.6; }
+  .btn { padding:8px 14px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid transparent; }
+  .btn-primary { background:var(--accent); color:#0d1117; }
+  .btn-pink { background:var(--pink); color:#0d1117; }
+  .btn-green { background:var(--accent2); color:#0d1117; }
+  .btn-ghost { background:var(--surface2); color:var(--text); border-color:var(--border); }
+  .btn-red { background:rgba(248,81,73,.12); color:var(--danger); border-color:rgba(248,81,73,.35); }
+  .btn:disabled { opacity:.5; cursor:wait; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .row > .grow { flex:1 1 160px; min-width:0; }
+
+  .char-img { width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:8px; background:var(--surface2); border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; color:var(--text3); font-size:12px; overflow:hidden; }
+  .char-img img { width:100%; height:100%; object-fit:cover; }
+  .char-top { display:grid; grid-template-columns:120px 1fr; gap:12px; }
+
+  .cut { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:12px; }
+  .cut-head { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px; }
+  .cut-no { font-weight:900; color:var(--pink); }
+  .tag { font-size:11px; padding:2px 8px; border-radius:4px; background:var(--surface2); color:var(--text2); }
+  .prompt { white-space:pre-wrap; font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.65; color:var(--text); background:var(--surface2); border-radius:8px; padding:12px; margin:8px 0; word-break:break-word; max-height:300px; overflow:auto; }
+  .kv { font-size:12px; color:var(--text2); line-height:1.7; margin:4px 0; }
+  .kv b { color:var(--text); }
+  .check { color:var(--accent4); }
+
+  .ep-item { display:flex; gap:10px; align-items:center; justify-content:space-between; padding:10px 12px; border:1px solid var(--border); border-radius:8px; margin-bottom:8px; background:var(--surface); flex-wrap:wrap; }
+  .ep-item b { font-size:14px; }
+
+  .editor { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:16px; align-items:start; }
+  .stage { position:sticky; top:72px; }
+  .stage canvas { width:100%; aspect-ratio:9/16; background:#000; border-radius:10px; border:1px solid var(--border); display:block; }
+  .clip { border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:10px; background:var(--surface); }
+  .clip-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+  .clip-grid label { font-size:11px; color:var(--text2); display:block; margin-bottom:3px; }
+  .total { font-family:'JetBrains Mono',monospace; font-size:13px; }
+  .ok { color:var(--accent2); } .bad { color:var(--danger); }
+  .progress { height:6px; background:var(--surface2); border-radius:3px; overflow:hidden; margin-top:8px; }
+  .progress > div { height:100%; width:0; background:var(--pink); }
+
+  .toast { position:fixed; bottom:20px; right:16px; left:16px; margin-left:auto; max-width:420px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:12px 16px; font-size:13px; opacity:0; transform:translateY(8px); transition:all .3s; pointer-events:none; z-index:200; }
+  .toast.show { opacity:1; transform:translateY(0); }
+
+  @media (max-width:760px){
+    .editor { grid-template-columns:1fr; }
+    .stage { position:static; max-width:280px; margin:0 auto; }
+    .clip-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+  @media (max-width:600px){
+    .topbar, .tabs { padding-left:16px; padding-right:16px; }
+    .char-top { grid-template-columns:96px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo"><div class="dot"></div>멜로 한 스푼 스튜디오</div>
+  <div class="row">
+    <span class="pill pill-red" id="ai-state">🔌 AI 연결 안됨</span>
+    <a class="pill pill-blue" href="../">🗼 관제탑</a>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="cast" onclick="switchTab('cast')">👥 주인공</div>
+  <div class="tab" data-tab="gen" onclick="switchTab('gen')">🎬 컷 프롬프트</div>
+  <div class="tab" data-tab="eps" onclick="switchTab('eps')">📚 저장된 화</div>
+  <div class="tab" data-tab="edit" onclick="switchTab('edit')">✂️ 편집기</div>
+</div>
+
+<div class="main">
+
+<!-- ===== 주인공 ===== -->
+<div class="panel active" id="panel-cast">
+  <div class="notice">
+    <b>Flow에서 원하는 영상이 잘 안 나오는 가장 큰 이유는 컷마다 인물·장소 묘사가 조금씩 달라지기 때문입니다.</b>
+    여기 적은 외모 설명은 모든 컷 프롬프트에 <b>글자 하나 바꾸지 않고 그대로</b> 들어갑니다. 주인공 이미지를 올리고 「AI로 외모 설명 만들기」를 누른 뒤, 틀린 부분만 고쳐 주세요.
+    이미지는 이 브라우저에만 저장되고, 설명을 만들 때만 Google AI로 전송됩니다.
+  </div>
+  <div class="grid2" id="cast"></div>
+
+  <div class="h2">📏 채널 규칙 (모든 화에 적용)</div>
+  <div class="card">
+    <div class="muted" style="margin-bottom:8px">「멜로 한 스푼 · 쇼츠 영상 규칙」 문서 내용을 기본값으로 넣어 두었습니다. 규칙이 바뀌면 여기만 고치세요.</div>
+    <textarea class="ta" id="rules" style="min-height:150px"></textarea>
+    <div class="row" style="margin-top:8px;justify-content:flex-end"><button class="btn btn-primary" onclick="saveRules()">💾 저장</button></div>
+  </div>
+</div>
+
+<!-- ===== 컷 프롬프트 ===== -->
+<div class="panel" id="panel-gen">
+  <div class="notice">
+    <b>Milo(유튜브 기획)</b>가 이번 편 내용을 8초 컷 3개로 나누고, Flow(Veo)에 그대로 붙여넣을 영어 프롬프트와 자막을 만듭니다.
+    컷이 마음에 안 들게 나오면 그 컷 아래 「이 컷 다시 쓰기」에 무엇이 잘못 나왔는지 적으세요. 그 문제를 고친 프롬프트를 다시 씁니다.
+  </div>
+  <div class="card">
+    <div class="row">
+      <div class="grow"><label class="lbl">편 이름</label><input class="input" id="g-ep" placeholder="예: 7화①"></div>
+      <div class="grow"><label class="lbl">이번 화 공통 장소·의상·시간대 (모든 컷에 똑같이 들어감)</label><input class="input" id="g-set" placeholder="예: 고급 호텔 라운지, 밤, 여주는 흰 블라우스, 남주는 검은 정장"></div>
+    </div>
+    <label class="lbl">이번 편에서 일어나는 일 (대표님이 쓰는 이야기)</label>
+    <textarea class="ta" id="g-story" placeholder="예: 약혼자 엄마가 여주를 불러 돈봉투를 내민다. 여주는 봉투를 돌려주며 거절한다. 문 밖에서 남주가 이 대화를 다 듣고 있었다."></textarea>
+    <label class="lbl">꼭 넣을 대사 (선택 · 한 줄에 하나)</label>
+    <textarea class="ta" id="g-lines" style="min-height:60px" placeholder="예: 저, 그렇게 싸지 않아요."></textarea>
+    <div class="row" style="margin-top:12px">
+      <button class="btn btn-pink" id="g-btn" onclick="generateEpisode()">🧠 컷 프롬프트 만들기</button>
+      <span class="muted" id="g-status"></span>
+    </div>
+  </div>
+  <div id="g-result"></div>
+</div>
+
+<!-- ===== 저장된 화 ===== -->
+<div class="panel" id="panel-eps">
+  <div class="notice">만든 편은 여기 저장됩니다. 「편집기로」를 누르면 자막이 편집기에 자동으로 채워집니다.</div>
+  <div id="ep-list"></div>
+</div>
+
+<!-- ===== 편집기 ===== -->
+<div class="panel" id="panel-edit">
+  <div class="notice">
+    Flow에서 받은 클립 3개를 넣으면 채널 규칙대로 편집합니다: <b>첫 장면 얼굴 확대 + 위쪽 훅 자막 → 아래쪽 대사 자막 → 끝 자막 후 페이드 없이 끊기</b>, 총 20~25초.
+    영상은 이 컴퓨터 안에서만 처리되고 어디에도 업로드되지 않습니다. 만들 때는 실제 길이만큼(약 25초) 재생하며 녹화하니 <b>이 탭을 화면에 띄워 둔 채</b> 기다려 주세요.
+  </div>
+  <div class="editor">
+    <div>
+      <div class="card">
+        <div class="row">
+          <div class="grow"><label class="lbl">불러올 편</label><select id="e-ep" onchange="fillFromEpisode()"></select></div>
+          <div class="grow"><label class="lbl">화질</label><select id="e-res"><option value="1080">1080×1920 (업로드용)</option><option value="720">720×1280 (컴퓨터가 느릴 때)</option></select></div>
+        </div>
+        <label class="lbl">첫 1초 훅 자막 (위쪽 · "흰 줄 / 노란 줄")</label>
+        <input class="input" id="e-hook" placeholder="약혼자 엄마가 나를 불렀다 / 떠나라고?">
+        <label class="lbl">끝 자막 (아래쪽 · "흰 줄 / 노란 줄")</label>
+        <input class="input" id="e-end" placeholder="그녀가 내민 봉투, / 정말 떠나야 할까?">
+        <div class="row" style="margin-top:8px">
+          <div class="grow"><label class="lbl">훅 자막·얼굴 확대 시간(초)</label><input class="input" id="e-hookdur" type="number" step="0.1" value="1.5"></div>
+          <div class="grow"><label class="lbl">끝 자막 시간(마지막 n초)</label><input class="input" id="e-enddur" type="number" step="0.1" value="3"></div>
+          <div class="grow"><label class="lbl">첫 장면 확대 배율</label><input class="input" id="e-zoom" type="number" step="0.05" value="1.3"></div>
+        </div>
+      </div>
+      <div id="clips"></div>
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <div class="total" id="e-total">총 길이: -</div>
+          <div class="row">
+            <button class="btn btn-ghost" id="e-prev" onclick="runTimeline(false)">▶ 미리보기</button>
+            <button class="btn btn-pink" id="e-rec" onclick="runTimeline(true)">🎬 영상 만들기</button>
+            <button class="btn btn-red" id="e-stop" onclick="stopTimeline()" style="display:none">■ 멈춤</button>
+          </div>
+        </div>
+        <div class="progress"><div id="e-prog"></div></div>
+        <div class="muted" id="e-out" style="margin-top:10px"></div>
+      </div>
+    </div>
+    <div class="stage">
+      <canvas id="stage" width="540" height="960"></canvas>
+      <div class="muted" style="margin-top:6px;text-align:center">미리보기 화면 (9:16)</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════ 저장 ═══════════
+const ST_KEY='rm_studio_v1', AI_KEY='rm_gemini_key', AI_MODEL='rm_gemini_model', DEFAULT_MODEL='gemini-2.5-flash';
+const DEFAULT_RULES=`멜로 한 스푼 쇼츠 규칙 (2026-11-09 문서 기준)
+1. 길이 20~25초 고정. 8초 컷 3개(24초)가 기본. 30초 넘는 컷은 쓰지 않는다.
+2. 첫 1초 = 얼굴 클로즈업 + 한 줄 자막 + 질문. 예: "약혼자 엄마가 나를 불렀다 / 떠나라고?"
+3. 끝 → 처음 루프. 끝 자막은 첫 장면의 질문에 답하거나 그 질문을 다시 부르는 문장. 끝에 검은 화면·페이드아웃 없이 바로 끊는다.
+4. 번인 자막: 훅 자막은 위쪽 두 줄(흰+노랑), 대사 자막은 아래 1/4에 작은 흰 글씨(말하는 동안만), 끝 자막은 아래쪽 두 줄(흰+노랑).
+편집 틀: 0~1.5초 얼굴 클로즈업+훅 / 1.5~8초 1컷(대사) / 8~16초 2컷(반응) / 16~24초 3컷(끝 장면+끝 자막).
+제목은 훅 자막과 같은 상황을 담고, 설명 끝에는 답하기 쉬운 A/B 댓글 질문을 넣는다.
+분위기: 한국 로맨스 드라마(재벌·약혼·계약 연애 같은 멜로), 실사 느낌.`;
+
+function lsGet(k){try{return localStorage.getItem(k)||'';}catch(e){return '';}}
+function lsSet(k,v){try{v?localStorage.setItem(k,v):localStorage.removeItem(k);return true;}catch(e){return false;}}
+function defaultState(){
+  return {
+    rules:DEFAULT_RULES,
+    cast:[
+      {id:'female',label:'여주인공',name:'',desc:'',voice:'',img:''},
+      {id:'male',label:'남주인공',name:'',desc:'',voice:'',img:''},
+      {id:'extra',label:'조연 (선택)',name:'',desc:'',voice:'',img:''}
+    ],
+    episodes:[]
+  };
+}
+let S=(()=>{try{const s=JSON.parse(lsGet(ST_KEY));if(s&&s.cast)return Object.assign(defaultState(),s);}catch(e){}return defaultState();})();
+function save(){if(!lsSet(ST_KEY,JSON.stringify(S)))showToast('⚠️ 저장 공간이 부족합니다. 오래된 편을 지워 주세요');}
+
+// ═══════════ 유틸 ═══════════
+function $(id){return document.getElementById(id);}
+function esc(t){return String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function showToast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),3400);}
+function switchTab(n){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===n));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+n));
+  if(n==='edit')renderEpSelect();
+}
+async function copyText(t){try{await navigator.clipboard.writeText(t);showToast('📋 복사됨 — Flow에 붙여넣으세요');}catch(e){showToast('복사 실패 — 직접 선택해서 복사하세요');}}
+function nowStr(){return new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});}
+
+// ═══════════ AI (관제탑과 같은 Gemini 키 사용) ═══════════
+function getAiKey(){return lsGet(AI_KEY);}
+function getAiModel(){return lsGet(AI_MODEL)||DEFAULT_MODEL;}
+function updateAi(){const on=!!getAiKey(),b=$('ai-state');b.className='pill '+(on?'pill-green':'pill-red');b.textContent=on?'🟢 AI 연결됨':'🔌 AI 연결 안됨 — 관제탑 ⚙️에서 연결';}
+async function callGemini(parts,json,think){
+  if(!getAiKey())throw new Error('관제탑 상단 🔌 버튼에서 AI를 먼저 연결하세요');
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(getAiModel())}:generateContent`;
+  const body={contents:[{role:'user',parts:typeof parts==='string'?[{text:parts}]:parts}],generationConfig:{temperature:0.7}};
+  if(json)body.generationConfig.responseMimeType='application/json';
+  if(think&&/2\.5|thinking|-3/.test(getAiModel()))body.generationConfig.thinkingConfig={thinkingBudget:-1};
+  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':getAiKey()},body:JSON.stringify(body)});
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok){
+    const msg=data.error?.message||('HTTP '+res.status);
+    if(res.status===429)throw new Error('무료 사용량 한도 초과 — 잠시 후 다시 시도하세요');
+    if(res.status===400&&/API key/i.test(msg))throw new Error('API 키가 올바르지 않습니다');
+    throw new Error(msg);
+  }
+  const txt=data.candidates?.[0]?.content?.parts?.filter(p=>!p.thought).map(p=>p.text||'').join('')||'';
+  if(!txt)throw new Error('빈 응답 (안전 필터 또는 한도)');
+  return txt;
+}
+function parseJson(raw){try{return JSON.parse(raw.replace(/^\s*```(json)?|```\s*$/g,'').trim());}catch(e){throw new Error('AI 응답을 해석하지 못했습니다');}}
+
+// ═══════════ 주인공 ═══════════
+function renderCast(){
+  $('cast').innerHTML=S.cast.map(c=>`<div class="card">
+    <div class="char-top">
+      <label class="char-img" style="cursor:pointer">${c.img?`<img src="${c.img}" alt="${esc(c.label)}">`:'이미지 올리기'}
+        <input type="file" accept="image/*" style="display:none" onchange="loadCharImg('${c.id}',this)"></label>
+      <div>
+        <div style="font-weight:700;color:var(--pink)">${esc(c.label)}</div>
+        <label class="lbl">극 중 이름</label><input class="input" id="cn-${c.id}" value="${esc(c.name)}" placeholder="예: 서윤">
+        <label class="lbl">목소리·말투</label><input class="input" id="cv-${c.id}" value="${esc(c.voice)}" placeholder="예: 낮고 차분한 20대 후반 여성 목소리">
+      </div>
+    </div>
+    <label class="lbl">외모 설명 (영어 · 모든 프롬프트에 그대로 들어감)</label>
+    <textarea class="ta" id="cd-${c.id}" style="min-height:100px" placeholder="Korean woman in her late 20s, long straight black hair with soft side bangs, ...">${esc(c.desc)}</textarea>
+    <div class="row" style="margin-top:8px;justify-content:space-between">
+      <button class="btn btn-ghost" onclick="describeChar('${c.id}',this)" ${c.img?'':'disabled'}>🧠 AI로 외모 설명 만들기</button>
+      <button class="btn btn-primary" onclick="saveChar('${c.id}')">💾 저장</button>
+    </div>
+  </div>`).join('');
+}
+function charById(id){return S.cast.find(c=>c.id===id);}
+function loadCharImg(id,input){
+  const f=input.files[0]; if(!f)return;
+  const img=new Image();
+  img.onload=()=>{
+    const max=640, s=Math.min(1,max/Math.max(img.width,img.height));
+    const cv=document.createElement('canvas'); cv.width=Math.round(img.width*s); cv.height=Math.round(img.height*s);
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+    const c=charById(id); keepCharInputs(c); c.img=cv.toDataURL('image/jpeg',0.85); URL.revokeObjectURL(img.src);
+    save(); renderCast(); showToast('🖼️ 이미지 저장');
+  };
+  img.src=URL.createObjectURL(f);
+}
+function keepCharInputs(c){
+  if(!$('cn-'+c.id))return;
+  c.name=$('cn-'+c.id).value.trim(); c.voice=$('cv-'+c.id).value.trim(); c.desc=$('cd-'+c.id).value.trim();
+}
+function saveChar(id){const c=charById(id);keepCharInputs(c);save();showToast('💾 '+c.label+' 저장');}
+async function describeChar(id,btn){
+  const c=charById(id); keepCharInputs(c); if(!c.img)return;
+  btn.disabled=true; btn.textContent='🧠 보는 중...';
+  try{
+    const b64=c.img.split(',')[1];
+    const txt=await callGemini([
+      {text:`This image is the reference for a recurring character in a Korean romance drama YouTube Shorts series, generated with Google Veo.
+Write ONE English paragraph (60-90 words) describing only stable visual features so every video prompt renders the same person:
+apparent age range, gender, face shape, eyes, eyebrows, nose/lips if distinctive, skin tone, hairstyle and hair color/length, body build, the outfit and accessories in the image, overall vibe.
+Do not name any real person or celebrity. Do not describe the background. No preamble, output only the paragraph.`},
+      {inline_data:{mime_type:'image/jpeg',data:b64}}
+    ],false,false);
+    c.desc=txt.trim(); save(); renderCast(); showToast('✅ 외모 설명 완성 — 틀린 부분은 고쳐 주세요');
+  }catch(e){showToast('❌ '+e.message);btn.disabled=false;btn.textContent='🧠 AI로 외모 설명 만들기';}
+}
+function saveRules(){S.rules=$('rules').value.trim()||DEFAULT_RULES;save();showToast('💾 채널 규칙 저장');}
+
+// ═══════════ 컷 프롬프트 생성 ═══════════
+function castBlock(){
+  return S.cast.filter(c=>c.desc).map(c=>`- id "${c.id}" (${c.label}${c.name?', 극 중 이름 '+c.name:''}) — appearance (copy VERBATIM): ${c.desc}${c.voice?' | voice: '+c.voice:''}`).join('\n');
+}
+const VEO_RULES=`Veo 프롬프트 작성 규칙:
+- 각 컷 프롬프트는 단독으로 완결되어야 합니다. Veo는 이전 컷을 기억하지 못합니다.
+- 등장하는 인물의 appearance 문장을 한 글자도 바꾸지 말고 그대로 넣으세요. 장소·의상·조명·시간대 문장도 3컷 모두 똑같이 반복하세요.
+- 형식: 세로 9:16, 8초, 실사 한국 로맨스 드라마 영상미(cinematic, shallow depth of field, soft key light).
+- 구성: [Style] [Setting] [Characters] [Shot & camera] [Action & emotion] [Dialogue] [Audio] 순서로 짧은 문장들.
+- 한 컷에 동작은 1~2개만. 빠른 움직임, 여러 사람, 손에 든 작은 물건 클로즈업, 화면 속 글자는 피하세요(Veo가 자주 틀림).
+- 대사: 한국어로, 말하는 인물을 명시하고 큰따옴표 안에 넣으세요. 8초 안에 말할 수 있게 짧게(15자 내외 한두 문장). 말투·감정도 적으세요.
+- 오디오: 대사와 자연스러운 주변음만. 배경음악 없음.
+- 반드시 넣을 금지 문장: "No on-screen text, no subtitles, no captions, no logos." (자막은 편집기에서 따로 입힙니다)
+- 실제 연예인·유명인 이름이나 닮은 꼴을 쓰지 마세요.`;
+
+async function generateEpisode(){
+  const ep=$('g-ep').value.trim(), story=$('g-story').value.trim();
+  if(!ep||!story){showToast('⚠️ 편 이름과 이야기를 적어 주세요');return;}
+  if(!S.cast.some(c=>c.desc)){showToast('⚠️ 주인공 탭에서 외모 설명을 먼저 저장하세요');switchTab('cast');return;}
+  const btn=$('g-btn'); btn.disabled=true; btn.textContent='🧠 생각하는 중...'; $('g-status').textContent='';
+  try{
+    const prev=S.episodes.slice(0,5).map(e=>`- ${e.ep}: ${e.story.slice(0,120)} | 훅 "${e.hook}" | 끝 "${e.end}"`).join('\n')||'없음';
+    const prompt=`당신은 유튜브 쇼츠 채널 "멜로 한 스푼"의 영상 기획 담당 Milo입니다. 대표님이 쓴 이야기를 Google Veo(Flow)로 만들 8초 컷 3개로 나눕니다.
+
+${S.rules}
+
+${VEO_RULES}
+
+등장인물:
+${castBlock()}
+
+이번 화 공통 장소·의상·시간대: ${$('g-set').value.trim()||'(대표님 미지정 — 이야기에 맞게 정하고 3컷 모두 똑같이 쓰기)'}
+
+이전 편 (이어지는 이야기):
+${prev}
+
+이번 편: ${ep}
+이야기: ${story}
+꼭 넣을 대사: ${$('g-lines').value.trim()||'없음'}
+
+컷 구성: 1컷은 첫 1.5초가 얼굴 클로즈업으로 시작하고 대사가 있음 / 2컷은 상대의 반응 / 3컷은 끝 장면이며 첫 장면의 질문으로 돌아가는 여운.
+대표님 이야기를 바꾸거나 새 사건을 추가하지 마세요. 숫자나 성과를 지어내지 마세요.
+
+충분히 생각한 뒤 JSON으로만 답하세요:
+{"title":"유튜브 제목 (훅과 같은 상황)","hook":"위쪽 훅 자막 흰 줄 / 노란 줄(질문)","end":"끝 자막 흰 줄 / 노란 줄","description":"설명란 (끝에 A/B 댓글 질문)","cuts":[{"purpose":"이 컷의 역할(한국어)","refs":["이 컷에 넣을 인물 id"],"prompt":"영어 Veo 프롬프트 전문","dialogue":"자막에 쓸 한국어 대사 (없으면 빈 문자열)","check":"생성된 클립에서 꼭 확인할 점(한국어)"}]}`;
+    const r=parseJson(await callGemini(prompt,true,true));
+    if(!Array.isArray(r.cuts)||!r.cuts.length)throw new Error('컷이 없습니다');
+    const epObj={id:Date.now(),ep,story,set:$('g-set').value.trim(),lines:$('g-lines').value.trim(),created:nowStr(),
+      title:String(r.title||''),hook:String(r.hook||''),end:String(r.end||''),description:String(r.description||''),
+      cuts:r.cuts.slice(0,3).map(c=>({purpose:String(c.purpose||''),refs:Array.isArray(c.refs)?c.refs:[],prompt:String(c.prompt||''),dialogue:String(c.dialogue||''),check:String(c.check||'')}))};
+    S.episodes.unshift(epObj); S.episodes=S.episodes.slice(0,40); save();
+    renderResult(epObj); renderEpList();
+    $('g-status').textContent='저장됨 · '+epObj.created;
+  }catch(e){showToast('❌ '+e.message);}
+  finally{btn.disabled=false;btn.textContent='🧠 컷 프롬프트 만들기';}
+}
+
+function renderResult(e){
+  const el=$('g-result'); if(!e){el.innerHTML='';return;}
+  const refName=id=>{const c=charById(id);return c?(c.name||c.label):id;};
+  el.innerHTML=`<div class="card">
+      <div class="kv"><b>${esc(e.ep)}</b> · ${esc(e.created)}</div>
+      <div class="kv"><b>제목</b> ${esc(e.title)}</div>
+      <div class="kv"><b>훅 자막</b> ${esc(e.hook)}</div>
+      <div class="kv"><b>끝 자막</b> ${esc(e.end)}</div>
+      <div class="kv"><b>설명란</b> ${esc(e.description)}</div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn btn-ghost" onclick="copyMeta(${e.id})">📋 제목·설명 복사</button>
+        <button class="btn btn-primary" onclick="openInEditor(${e.id})">✂️ 편집기로</button>
+        <button class="btn btn-ghost" onclick="sendToTower(${e.id})">📥 관제탑 승인함에 올리기</button>
+      </div>
+    </div>`+
+    e.cuts.map((c,i)=>`<div class="cut">
+      <div class="cut-head"><span class="cut-no">${i+1}컷</span><span class="tag">${esc(c.purpose)}</span>
+        ${c.refs.map(r=>`<span class="tag">📎 참조 이미지: ${esc(refName(r))}</span>`).join('')}</div>
+      <div class="prompt">${esc(c.prompt)}</div>
+      ${c.dialogue?`<div class="kv"><b>대사 자막</b> ${esc(c.dialogue)}</div>`:''}
+      <div class="kv check">✔ 확인할 점: ${esc(c.check)}</div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn btn-pink" onclick="copyCut(${e.id},${i})">📋 프롬프트 복사</button>
+        <input class="input grow" id="fb-${e.id}-${i}" placeholder="잘못 나온 점 (예: 남주 얼굴이 다르게 나옴, 대사를 안 함)">
+        <button class="btn btn-ghost" onclick="refineCut(${e.id},${i},this)">🔁 이 컷 다시 쓰기</button>
+      </div>
+    </div>`).join('')+
+    `<div class="muted">Flow 사용법: 「Ingredients/Frames to Video」 같은 이미지 참조 방식을 쓰고, 📎에 적힌 주인공 이미지를 함께 넣으면 얼굴이 가장 잘 유지됩니다. 메뉴 이름은 Flow 버전에 따라 다를 수 있습니다.</div>`;
+}
+function findEp(id){return S.episodes.find(e=>e.id===id);}
+function copyMeta(id){const e=findEp(id);if(e)copyText(e.title+'\n\n'+e.description);}
+function copyCut(id,i){const e=findEp(id);if(e)copyText(e.cuts[i].prompt);}
+async function refineCut(id,i,btn){
+  const e=findEp(id); if(!e)return;
+  const fb=$(`fb-${id}-${i}`).value.trim();
+  if(!fb){showToast('⚠️ 무엇이 잘못 나왔는지 적어 주세요');return;}
+  btn.disabled=true; btn.textContent='🧠 고치는 중...';
+  try{
+    const c=e.cuts[i];
+    const prompt=`당신은 "멜로 한 스푼"의 영상 기획 담당 Milo입니다. Veo(Flow)로 만든 클립이 대표님 의도와 다르게 나왔습니다. 프롬프트를 고쳐 주세요.
+
+${VEO_RULES}
+
+등장인물:
+${castBlock()}
+
+편: ${e.ep} / 공통 장소·의상: ${e.set||'(기존 프롬프트 참고)'}
+이 컷의 역할: ${c.purpose}
+기존 프롬프트:
+${c.prompt}
+
+대표님 피드백 (실제로 잘못 나온 점): ${fb}
+
+원인을 짧게 생각하고(예: 묘사가 모호함, 동작이 너무 많음, 인물 설명 누락), 그 문제를 직접 막는 문장을 넣어 프롬프트를 다시 쓰세요. 장면의 내용과 대사는 바꾸지 마세요.
+JSON으로만 답하세요: {"why":"원인 한 줄(한국어)","prompt":"고친 영어 프롬프트 전문","check":"다시 생성 후 확인할 점(한국어)"}`;
+    const r=parseJson(await callGemini(prompt,true,true));
+    if(!r.prompt)throw new Error('빈 결과');
+    (c.history=c.history||[]).push({prompt:c.prompt,feedback:fb});
+    c.prompt=String(r.prompt); c.check=String(r.why?('원인: '+r.why+' / '):'')+String(r.check||'');
+    save(); renderResult(e); showToast(`🔁 ${i+1}컷 프롬프트를 고쳤습니다`);
+  }catch(err){showToast('❌ '+err.message);btn.disabled=false;btn.textContent='🔁 이 컷 다시 쓰기';}
+}
+function sendToTower(id){
+  const e=findEp(id); if(!e)return;
+  let T; try{T=JSON.parse(lsGet('rm_tower_v3'));}catch(x){}
+  if(!T||!T.tasks){showToast('⚠️ 관제탑을 한 번 열어 준 뒤 다시 시도하세요');return;}
+  const content=`제목: ${e.title}\n훅: ${e.hook}\n끝: ${e.end}\n\n`+e.cuts.map((c,i)=>`[${i+1}컷] ${c.purpose}\n${c.prompt}\n대사: ${c.dialogue||'-'}`).join('\n\n')+`\n\n설명란:\n${e.description}`;
+  T.tasks.unshift({id:Date.now(),role:'youtube',channel:'',title:`멜로 한 스푼 ${e.ep} — ${e.title}`.slice(0,120),content,cmd:'스튜디오에서 생성',status:'pending',created:nowStr()});
+  lsSet('rm_tower_v3',JSON.stringify(T)); showToast('📥 관제탑 승인함에 올렸습니다');
+}
+
+// ═══════════ 저장된 화 ═══════════
+function renderEpList(){
+  $('ep-list').innerHTML=S.episodes.length?S.episodes.map(e=>`<div class="ep-item">
+      <div><b>${esc(e.ep)}</b> <span class="muted">· ${esc(e.created)}</span><div class="muted">${esc(e.hook)}</div></div>
+      <div class="row">
+        <button class="btn btn-ghost" onclick="showEp(${e.id})">보기</button>
+        <button class="btn btn-primary" onclick="openInEditor(${e.id})">✂️ 편집기로</button>
+        <button class="btn btn-red" onclick="delEp(${e.id})">삭제</button>
+      </div></div>`).join('')
+    :'<div class="muted" style="text-align:center;padding:30px">아직 만든 편이 없습니다. 「🎬 컷 프롬프트」에서 만들어 주세요.</div>';
+}
+function showEp(id){const e=findEp(id);if(!e)return;renderResult(e);switchTab('gen');window.scrollTo(0,0);}
+function delEp(id){if(!confirm('이 편을 삭제할까요?'))return;S.episodes=S.episodes.filter(e=>e.id!==id);save();renderEpList();}
+
+// ═══════════ 편집기 ═══════════
+const clips=[0,1,2].map(i=>({i,file:null,url:'',video:null,dur:0,in:0,out:8,dlg:'',dStart:0,dEnd:0}));
+let running=false, stopFlag=false, audioCtx=null, audioDest=null;
+
+function renderEpSelect(){
+  const sel=$('e-ep'), cur=sel.value;
+  sel.innerHTML='<option value="">— 직접 입력 —</option>'+S.episodes.map(e=>`<option value="${e.id}">${esc(e.ep)} · ${esc(e.title).slice(0,30)}</option>`).join('');
+  if(cur)sel.value=cur;
+}
+function openInEditor(id){switchTab('edit');$('e-ep').value=String(id);fillFromEpisode();}
+function fillFromEpisode(){
+  const e=findEp(Number($('e-ep').value)); if(!e)return;
+  $('e-hook').value=e.hook; $('e-end').value=e.end;
+  e.cuts.forEach((c,i)=>{if(clips[i])clips[i].dlg=c.dialogue||'';});
+  renderClips(); showToast('✍️ '+e.ep+' 자막을 채웠습니다');
+}
+function renderClips(){
+  $('clips').innerHTML=clips.map(c=>`<div class="clip">
+    <div class="row" style="justify-content:space-between">
+      <b style="color:var(--pink)">${c.i+1}컷</b>
+      <label class="btn btn-ghost" style="margin:0">${c.file?'🎞 '+esc(c.file.name).slice(0,28):'🎞 클립 선택'}<input type="file" accept="video/*" style="display:none" onchange="loadClip(${c.i},this)"></label>
+    </div>
+    <div class="clip-grid" style="margin-top:8px">
+      <div><label>시작(초)</label><input class="input" type="number" step="0.1" min="0" value="${c.in}" onchange="setClip(${c.i},'in',this.value)"></div>
+      <div><label>끝(초)</label><input class="input" type="number" step="0.1" min="0" value="${c.out}" onchange="setClip(${c.i},'out',this.value)"></div>
+      <div><label>대사 자막 시작</label><input class="input" type="number" step="0.1" min="0" value="${c.dStart}" onchange="setClip(${c.i},'dStart',this.value)"></div>
+      <div><label>대사 자막 끝 (0=컷 끝까지)</label><input class="input" type="number" step="0.1" min="0" value="${c.dEnd}" onchange="setClip(${c.i},'dEnd',this.value)"></div>
+    </div>
+    <label class="lbl">대사 자막 (" / "로 줄바꿈)</label>
+    <input class="input" value="${esc(c.dlg)}" onchange="setClip(${c.i},'dlg',this.value)" placeholder="${c.i===1?'반응 컷은 대사가 있을 때만':'예: 이걸로 조용히 사라져요.'}">
+    ${c.dur?`<div class="muted" style="margin-top:6px">원본 길이 ${c.dur.toFixed(1)}초</div>`:''}
+  </div>`).join('');
+  updateTotal();
+}
+function setClip(i,k,v){const c=clips[i];if(k==='dlg')c.dlg=v;else c[k]=Math.max(0,parseFloat(v)||0);
+  if(c.dur&&c.out>c.dur)c.out=c.dur; if(c.out<=c.in)c.out=Math.min(c.dur||c.in+1,c.in+1); updateTotal();}
+function loadClip(i,input){
+  const f=input.files[0]; if(!f)return; const c=clips[i];
+  if(c.url)URL.revokeObjectURL(c.url);
+  c.file=f; c.url=URL.createObjectURL(f);
+  const v=document.createElement('video'); v.src=c.url; v.preload='auto'; v.playsInline=true; v.crossOrigin='anonymous';
+  v.onloadedmetadata=()=>{c.dur=v.duration; c.in=0; c.out=Math.min(v.duration,8); renderClips(); drawStill();};
+  v.onerror=()=>showToast('❌ 이 브라우저에서 열 수 없는 영상 형식입니다');
+  c.video=v; c.srcNode=null;
+}
+function activeClips(){return clips.filter(c=>c.video&&c.dur);}
+function totalLen(){return activeClips().reduce((a,c)=>a+(c.out-c.in),0);}
+function updateTotal(){
+  const t=totalLen(), el=$('e-total');
+  if(!activeClips().length){el.innerHTML='총 길이: 클립을 넣어 주세요';return;}
+  const ok=t>=20&&t<=25;
+  el.innerHTML=`총 길이: <span class="${ok?'ok':'bad'}">${t.toFixed(1)}초</span> ${ok?'✅ 규칙(20~25초) 충족':(t>25?'⚠️ 25초 초과 — 만들 때 마지막 컷 꼬리를 자동으로 자릅니다':'⚠️ 20초 미만')}`;
+}
+
+// ── 그리기 ──
+function splitLines(s){return String(s||'').split('/').map(x=>x.trim()).filter(Boolean);}
+function drawText(ctx,text,x,y,size,fill,W){
+  ctx.font=`900 ${size}px "Noto Sans KR", sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  // 너무 길면 글자 크기를 줄임
+  let s=size; while(ctx.measureText(text).width>W*0.9&&s>18){s-=2;ctx.font=`900 ${s}px "Noto Sans KR", sans-serif`;}
+  ctx.lineJoin='round'; ctx.lineWidth=Math.max(4,s*0.16); ctx.strokeStyle='#000'; ctx.strokeText(text,x,y);
+  ctx.fillStyle=fill; ctx.fillText(text,x,y);
+  return s;
+}
+function drawTwoLines(ctx,str,yTop,size,W){
+  const ls=splitLines(str); if(!ls.length)return;
+  const colors=['#ffffff','#ffd400'];
+  ls.slice(0,2).forEach((t,k)=>drawText(ctx,t,W/2,yTop+k*size*1.25,size,colors[k]||'#fff',W));
+}
+function drawFrame(ctx,W,H,v,t,c,lt,total,opt){
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+  if(v&&v.videoWidth){
+    const vw=v.videoWidth, vh=v.videoHeight;
+    // 첫 장면 확대: hookDur 동안 확대, 마지막 0.3초에 원래 크기로
+    let z=1;
+    if(t<opt.hookDur){const k=Math.min(1,Math.max(0,(opt.hookDur-t)/0.3));z=1+(opt.zoom-1)*k;}
+    const s=Math.max(W/vw,H/vh)*z, dw=vw*s, dh=vh*s;
+    const fy=z>1?0.38:0.5; // 확대할 때는 얼굴이 있는 위쪽에 맞춤
+    ctx.drawImage(v,(W-dw)/2,(H-dh)*fy,dw,dh);
+  }
+  const showHook=t<opt.hookDur, showEnd=t>=total-opt.endDur;
+  if(showHook)drawTwoLines(ctx,opt.hook,H*0.13,Math.round(W*0.068),W);
+  if(showEnd)drawTwoLines(ctx,opt.end,H*0.74,Math.round(W*0.062),W);
+  if(!showHook&&!showEnd&&c&&c.dlg){
+    const end=c.dEnd>0?c.dEnd:Infinity;
+    if(lt>=c.dStart&&lt<end){
+      const ls=splitLines(c.dlg), sz=Math.round(W*0.042);
+      ls.slice(0,2).forEach((l,k)=>drawText(ctx,l,W/2,H*0.75+k*sz*1.3,sz,'#ffffff',W));
+    }
+  }
+}
+function opts(){return{hook:$('e-hook').value,end:$('e-end').value,hookDur:Math.max(0,parseFloat($('e-hookdur').value)||1.5),endDur:Math.max(0,parseFloat($('e-enddur').value)||3),zoom:Math.max(1,parseFloat($('e-zoom').value)||1.3)};}
+function drawStill(){
+  const cv=$('stage'), ctx=cv.getContext('2d'), a=activeClips()[0];
+  if(a&&a.video.readyState<2){a.video.addEventListener('loadeddata',drawStill,{once:true});return;}
+  drawFrame(ctx,cv.width,cv.height,a?a.video:null,0,a,0,Math.max(totalLen(),1),opts());
+}
+
+// ── 재생 / 녹화 ──
+function pickMime(){
+  const c=['video/mp4;codecs=avc1.640028,mp4a.40.2','video/mp4;codecs=avc1,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
+  return c.find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m))||'';
+}
+function seek(v,t){return new Promise(res=>{if(Math.abs(v.currentTime-t)<0.01&&v.readyState>=2)return res();v.addEventListener('seeked',()=>res(),{once:true});v.currentTime=t;});}
+function stopTimeline(){stopFlag=true;}
+async function runTimeline(record){
+  if(running)return;
+  const list=activeClips(); if(!list.length){showToast('⚠️ 클립을 먼저 넣어 주세요');return;}
+  // 25초 초과 시 마지막 컷 꼬리 자르기
+  let over=totalLen()-25;
+  if(record&&over>0){const last=list[list.length-1];last.out=Math.max(last.in+1,last.out-over);renderClips();}
+  const total=totalLen(), o=opts();
+  await document.fonts.load('900 40px "Noto Sans KR"').catch(()=>{});
+  const res=Number($('e-res').value)||1080, W=record?res:540, H=Math.round(W*16/9);
+  const cv=$('stage'); cv.width=W; cv.height=H; const ctx=cv.getContext('2d');
+  running=true; stopFlag=false; $('e-stop').style.display=''; $('e-rec').disabled=true; $('e-prev').disabled=true; $('e-out').textContent=record?'🎬 녹화 중... 이 탭을 화면에 띄워 두세요':'';
+
+  // 오디오: 모든 클립 소리를 녹화 트랙으로
+  if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();audioDest=audioCtx.createMediaStreamDestination();}
+  await audioCtx.resume().catch(()=>{});
+  list.forEach(c=>{if(!c.srcNode){try{c.srcNode=audioCtx.createMediaElementSource(c.video);c.srcNode.connect(audioCtx.destination);c.srcNode.connect(audioDest);}catch(e){}}});
+
+  let rec=null, chunks=[], mime='';
+  if(record){
+    mime=pickMime();
+    if(!mime){showToast('❌ 이 브라우저는 영상 녹화를 지원하지 않습니다. 크롬을 써 주세요');finish();return;}
+    const stream=cv.captureStream(30);
+    audioDest.stream.getAudioTracks().forEach(tr=>stream.addTrack(tr));
+    rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:res>=1080?10e6:6e6});
+    rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+  }
+  // 첫 클립 준비 후 녹화 시작
+  await seek(list[0].video,list[0].in);
+  drawFrame(ctx,W,H,list[0].video,0,list[0],0,total,o);
+  if(rec)rec.start(250);
+
+  let off=0;
+  for(let k=0;k<list.length&&!stopFlag;k++){
+    const c=list[k], v=c.video;
+    await seek(v,c.in);
+    try{await v.play();}catch(e){showToast('❌ 재생 실패: '+e.message);break;}
+    // 다음 클립을 미리 준비
+    const nx=list[k+1]; if(nx)seek(nx.video,nx.in);
+    await new Promise(done=>{
+      const step=()=>{
+        const lt=v.currentTime-c.in, t=off+lt;
+        drawFrame(ctx,W,H,v,t,c,lt,total,o);
+        $('e-prog').style.width=Math.min(100,t/total*100)+'%';
+        if(stopFlag||v.ended||v.currentTime>=c.out-0.02){v.pause();done();}
+        else requestAnimationFrame(step);
+      };
+      step();
+    });
+    off+=c.out-c.in;
+  }
+  if(rec){
+    await new Promise(r=>{rec.onstop=r;rec.stop();});
+    if(!stopFlag){
+      const blob=new Blob(chunks,{type:mime.split(';')[0]});
+      const ext=mime.includes('mp4')?'mp4':'webm';
+      const ep=findEp(Number($('e-ep').value));
+      const name=`멜로한스푼_${ep?ep.ep:'쇼츠'}_${new Date().toISOString().slice(0,10)}.${ext}`;
+      const url=URL.createObjectURL(blob);
+      $('e-out').innerHTML=`✅ 완성 (${(blob.size/1048576).toFixed(1)}MB, ${ext.toUpperCase()}) <a class="btn btn-green" style="margin-left:6px;text-decoration:none" href="${url}" download="${esc(name)}">⬇️ 다운로드</a>
+        <div style="margin-top:6px">업로드 전에 처음부터 끝까지 한 번 보세요. 실제 사람처럼 보이는 AI 영상이므로 유튜브 업로드 화면에서 "변경되었거나 합성된 콘텐츠" 항목을 확인해 표시하세요.${ext==='webm'?' (WEBM 파일도 유튜브에 그대로 올릴 수 있습니다)':''}</div>`;
+    }else $('e-out').textContent='■ 멈췄습니다';
+  }
+  finish();
+  function finish(){running=false;$('e-stop').style.display='none';$('e-rec').disabled=false;$('e-prev').disabled=false;if(!record)$('e-prog').style.width='0';}
+}
+['e-hook','e-end','e-hookdur','e-enddur','e-zoom'].forEach(id=>document.addEventListener('DOMContentLoaded',()=>$(id).addEventListener('input',()=>{if(!running)drawStill();})));
+
+// ═══════════ 시작 ═══════════
+document.addEventListener('DOMContentLoaded',()=>{
+  updateAi(); renderCast(); $('rules').value=S.rules; renderEpList(); renderEpSelect(); renderClips();
+  if(S.episodes[0])renderResult(S.episodes[0]);
+  document.fonts.load('900 40px "Noto Sans KR"').then(drawStill).catch(drawStill);
+});
+</script>
+</body>
+</html>
