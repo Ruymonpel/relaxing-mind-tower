@@ -102,8 +102,8 @@
 <div class="topbar">
   <div class="logo"><div class="dot"></div>멜로 한 스푼 스튜디오</div>
   <div class="row">
-    <span class="pill pill-red" id="ai-state">🔌 AI 연결 안됨</span>
-    <a class="pill pill-blue" href="../">🗼 관제탑</a>
+    <button type="button" class="pill pill-red" id="ai-state" onclick="openKey()">🔌 AI 연결하기</button>
+    <a class="pill pill-blue" href="https://34-70-253-157.sslip.io/">🗼 관제탑</a>
   </div>
 </div>
 
@@ -209,6 +209,23 @@
 </div><!-- /main -->
 <div class="toast" id="toast"></div>
 
+<!-- AI 키 설정 (스튜디오에서 바로) -->
+<div id="key-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:300;padding:16px" onclick="if(event.target===this)closeKey()">
+  <div class="card" style="width:100%;max-width:460px;margin:0">
+    <div style="font-weight:700;font-size:16px;margin-bottom:6px">🔌 AI 연결</div>
+    <div class="muted"><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:var(--accent)">aistudio.google.com/apikey</a>에서 <b style="color:var(--text)">My First Project (무료 등급)</b> 키를 복사해 붙여넣으세요. 키는 이 브라우저에만 저장됩니다.</div>
+    <label class="lbl" for="k-key">Gemini API 키</label>
+    <input class="input" id="k-key" type="password" placeholder="AIza..." autocomplete="off">
+    <label class="lbl" for="k-model">모델 (비워 두면 자동 선택)</label>
+    <input class="input" id="k-model" placeholder="비워 두세요">
+    <div class="row" style="margin-top:14px;justify-content:space-between">
+      <button class="btn btn-green" type="button" id="k-save" onclick="saveKey()">💾 저장 후 연결 테스트</button>
+      <button class="btn btn-ghost" type="button" onclick="closeKey()">닫기</button>
+    </div>
+    <div class="muted" id="k-msg" style="margin-top:10px"></div>
+  </div>
+</div>
+
 <script>
 // ═══════════ 저장 ═══════════
 const ST_KEY='rm_studio_v1', AI_KEY='rm_gemini_key', AI_MODEL='rm_gemini_model', DEFAULT_MODEL='gemini-3.5-flash', MODEL_LIST=['gemini-3.5-flash','gemini-3.8-flash','gemini-3.5-flash-lite','gemini-3.1-flash-lite'], AI_MODEL_OK='rm_gemini_model_ok';
@@ -254,9 +271,20 @@ function getAiKey(){return lsGet(AI_KEY);}
 // 대표님이 모델을 직접 적었으면 그 모델만, 비워 두었으면 마지막으로 성공한 모델 → 목록 순서로 시도 (옛 모델이 없어져도 자동으로 다음 모델 사용)
 function modelCandidates(){const fixed=lsGet(AI_MODEL).trim();if(fixed)return [fixed];const ok=lsGet(AI_MODEL_OK);return ok?[ok].concat(MODEL_LIST.filter(m=>m!==ok)):MODEL_LIST.slice();}
 function getAiModel(){return modelCandidates()[0]||DEFAULT_MODEL;}
-function updateAi(){const on=!!getAiKey(),b=$('ai-state');b.className='pill '+(on?'pill-green':'pill-red');b.textContent=on?'🟢 AI 연결됨':'🔌 AI 연결 안됨 — 관제탑 ⚙️에서 연결';}
+function updateAi(){const on=!!getAiKey(),b=$('ai-state');b.className='pill '+(on?'pill-green':'pill-red');b.textContent=on?'🟢 AI 연결됨':'🔌 AI 연결하기';b.title=on?'눌러서 키·모델 바꾸기':'눌러서 Gemini 키 넣기';}
+function openKey(){$('k-key').value=getAiKey();$('k-model').value=lsGet(AI_MODEL);$('k-msg').textContent='';$('key-modal').style.display='flex';$('k-key').focus();}
+function closeKey(){$('key-modal').style.display='none';}
+async function saveKey(){
+  const k=$('k-key').value.trim(),m=$('k-model').value.trim();
+  lsSet(AI_KEY,k);lsSet(AI_MODEL,m);updateAi();renderCast();
+  if(!k){$('k-msg').textContent='키를 지웠습니다.';return;}
+  const b=$('k-save');b.disabled=true;$('k-msg').textContent='⏳ 연결 테스트 중...';
+  try{const out=await callGemini('"OK"라고만 답하세요.',false,false);$('k-msg').textContent='✅ 연결 성공 ('+getAiModel()+'): '+out.trim().slice(0,20);showToast('✅ AI 연결 성공');setTimeout(closeKey,900);}
+  catch(e){$('k-msg').textContent='❌ 연결 실패: '+e.message;}
+  finally{b.disabled=false;}
+}
 async function callGemini(parts,json,think){
-  if(!getAiKey())throw new Error('관제탑 상단 🔌 버튼에서 AI를 먼저 연결하세요');
+  if(!getAiKey())throw new Error('오른쪽 위 「🔌 AI 연결하기」를 눌러 키를 먼저 넣어 주세요');
   const body={contents:[{role:'user',parts:typeof parts==='string'?[{text:parts}]:parts}],generationConfig:{temperature:0.7}};
   if(json)body.generationConfig.responseMimeType='application/json';
   if(think&&/2\.5/.test(getAiModel()))body.generationConfig.thinkingConfig={thinkingBudget:-1};
@@ -298,7 +326,7 @@ function renderCast(){
     <label class="lbl">외모 설명 (영어 · 모든 프롬프트에 그대로 들어감)</label>
     <textarea class="ta" id="cd-${c.id}" style="min-height:100px" placeholder="Korean woman in her late 20s, long straight black hair with soft side bangs, ...">${esc(c.desc)}</textarea>
     <div class="row" style="margin-top:8px;justify-content:space-between">
-      <button class="btn btn-ghost" onclick="describeChar('${c.id}',this)" ${c.img?'':'disabled'}>🧠 AI로 외모 설명 만들기</button>
+      <button class="btn btn-ghost" onclick="describeChar('${c.id}',this)">🧠 AI로 외모 설명 만들기</button>
       <button class="btn btn-primary" onclick="saveChar('${c.id}')">💾 저장</button>
     </div>
   </div>`).join('');
@@ -322,7 +350,9 @@ function keepCharInputs(c){
 }
 function saveChar(id){const c=charById(id);keepCharInputs(c);save();showToast('💾 '+c.label+' 저장');}
 async function describeChar(id,btn){
-  const c=charById(id); keepCharInputs(c); if(!c.img)return;
+  const c=charById(id); keepCharInputs(c);
+  if(!c.img){showToast('⚠️ 먼저 왼쪽 「이미지 올리기」 칸을 눌러 주인공 이미지를 올려 주세요');return;}
+  if(!getAiKey()){openKey();return;}
   btn.disabled=true; btn.textContent='🧠 보는 중...';
   try{
     const b64=c.img.split(',')[1];
@@ -407,7 +437,6 @@ function renderResult(e){
       <div class="row" style="margin-top:8px">
         <button class="btn btn-ghost" onclick="copyMeta(${e.id})">📋 제목·설명 복사</button>
         <button class="btn btn-primary" onclick="openInEditor(${e.id})">✂️ 편집기로</button>
-        <button class="btn btn-ghost" onclick="sendToTower(${e.id})">📥 관제탑 승인함에 올리기</button>
       </div>
     </div>`+
     e.cuts.map((c,i)=>`<div class="cut">
