@@ -346,6 +346,8 @@ function renderCast(){
         <label class="lbl">목소리·말투</label><input class="input" id="cv-${c.id}" value="${esc(c.voice)}" placeholder="예: 낮고 차분한 20대 후반 여성 목소리">
       </div>
     </div>
+    <label class="lbl">Veo 목소리 문구 (영어 · 이 인물이 말할 때 그대로 들어감)</label>
+    <input class="input" id="cve-${c.id}" value="${esc(voiceEnOf(c))}" placeholder="예: clear, soft but firm voice of a young Korean woman in her late 20s, calm and steady">
     <label class="lbl">외모 설명 (영어 · 모든 프롬프트에 그대로 들어감)</label>
     <textarea class="ta" id="cd-${c.id}" style="min-height:100px" placeholder="Korean woman in her late 20s, long straight black hair with soft side bangs, ...">${esc(c.desc)}</textarea>
     <div class="row" style="margin-top:8px;justify-content:space-between">
@@ -369,7 +371,7 @@ function loadCharImg(id,input){
 }
 function keepCharInputs(c){
   if(!$('cn-'+c.id))return;
-  c.name=$('cn-'+c.id).value.trim(); c.voice=$('cv-'+c.id).value.trim(); c.desc=$('cd-'+c.id).value.trim();
+  c.name=$('cn-'+c.id).value.trim(); c.voice=$('cv-'+c.id).value.trim(); c.desc=$('cd-'+c.id).value.trim(); if($('cve-'+c.id))c.voiceEn=$('cve-'+c.id).value.trim();
 }
 // 저장 버튼을 누르면 1.5초 동안 '✅ 저장됨'으로 바뀌어 눌린 걸 알 수 있게
 function flashSaved(btn){if(!btn||!btn.classList)return;clearTimeout(btn._fs);if(!btn._label)btn._label=btn.innerHTML;btn.classList.add('saved');btn.innerHTML='✅ 저장됨';btn._fs=setTimeout(()=>{btn.classList.remove('saved');btn.innerHTML=btn._label;},1500);}
@@ -394,20 +396,45 @@ Do not name any real person or celebrity. Do not describe the background. No pre
 function saveRules(btn){S.rules=$('rules').value.trim()||DEFAULT_RULES;save();flashSaved(btn);showToast('💾 채널 규칙 저장');}
 
 // ═══════════ 컷 프롬프트 생성 ═══════════
+// 6화 컷 문서에서 정한 목소리 문구 (비어 있을 때 기본값)
+const DEFAULT_VOICE_EN={female:'clear, soft but firm voice of a young Korean woman in her late 20s, calm and steady',male:'low, deep, calm baritone of a mature Korean man in his early 30s, warm and unhurried'};
+function voiceEnOf(c){return (c&&c.voiceEn!=null&&c.voiceEn!=='')?c.voiceEn:(DEFAULT_VOICE_EN[c&&c.id]||'');}
 function castBlock(){
-  return S.cast.filter(c=>c.desc).map(c=>`- id "${c.id}" (${c.label}${c.name?', 극 중 이름 '+c.name:''}) — appearance (copy VERBATIM): ${c.desc}${c.voice?' | voice: '+c.voice:''}`).join('\n');
+  return S.cast.filter(c=>c.desc).map(c=>`- id "${c.id}" (${c.label}${c.name?', 극 중 이름 '+c.name:''}) — appearance (copy VERBATIM): ${c.desc}${c.voice?' | 말투: '+c.voice:''}`).join('\n');
 }
-const VEO_RULES=`Veo 프롬프트 작성 규칙:
-- 각 컷 프롬프트는 단독으로 완결되어야 합니다. Veo는 이전 컷을 기억하지 못합니다.
-- 등장하는 인물의 appearance 문장을 한 글자도 바꾸지 말고 그대로 넣으세요. 장소·의상·조명·시간대 문장도 3컷 모두 똑같이 반복하세요.
-- 형식: 세로 9:16, 8초, 실사 한국 로맨스 드라마 영상미(cinematic, shallow depth of field, soft key light).
-- 구성: [Style] [Setting] [Characters] [Shot & camera] [Action & emotion] [Dialogue] [Audio] 순서로 짧은 문장들.
-- 한 컷에 동작은 1~2개만. 빠른 움직임, 여러 사람, 손에 든 작은 물건 클로즈업, 화면 속 글자는 피하세요(Veo가 자주 틀림).
-- 대사: 한국어로, 말하는 인물을 명시하고 큰따옴표 안에 넣으세요. 8초 안에 말할 수 있게 짧게(15자 내외 한두 문장). 말투·감정도 적으세요.
-- 오디오: 대사와 자연스러운 주변음만. 배경음악 없음.
-- 반드시 넣을 금지 문장: "No on-screen text, no subtitles, no captions, no logos." (자막은 편집기에서 따로 입힙니다)
-- 실제 연예인·유명인 이름이나 닮은 꼴을 쓰지 마세요.`;
+const VEO_RULES=`Flow(Veo) 컷 작성 규칙 — 6화 컷 문서 방식:
+- 컷마다 두 단계: ① 시작 그림(image)을 먼저 만들고 ② 그 그림을 첫 장면으로 영상(action)을 만든다. 그래서 각 컷에 image와 action을 따로 쓴다.
+- image: 영어. 장면의 첫 순간을 한 장의 사진처럼 묘사. 등장 인물의 appearance 문장을 한 글자도 바꾸지 말고 그대로 넣고, 이번 화 공통 장소·의상·시간대 문장도 3컷 모두 똑같이 넣는다. 샷 크기, 자세(앉음/섬), 어디를 보는지, 표정. 9:16 같은 형식 문장이나 금지 문장은 쓰지 않는다(코드가 붙인다).
+- action: 영어. 카메라(완전히 고정 / 아주 천천히 다가감 중 하나)와 동작 1~2개, 감정만. 대사 문장, 목소리, 오디오, 금지 문장은 쓰지 않는다(코드가 붙인다).
+- 한 컷에 한 사람(또는 손만). 문·엘리베이터는 화면에 넣지 않는다. 빠른 움직임, 여러 사람, 화면 속 글자는 피한다.
+- 말하는 사람은 카메라(시청자)에게 말하지 않는다. 상대가 카메라 자리에 있다고 정하거나 화면 밖 상대를 보게 한다. 장소를 옮겨 걷게 하지 않는다.
+- 대사: 한국어 한 줄, 8초 안에 말할 수 있게 15자 내외. 화면 밖 인물이 말하면 offscreen=true.
+- 실제 연예인·유명인 이름이나 닮은 꼴, actress·idol·celebrity·K-drama star 같은 단어를 쓰지 않는다.`;
+// 코드가 항상 붙이는 막는 문장 (AI가 빠뜨려도 들어감)
+const IMG_GUARD='Photorealistic film still from a Korean drama, warm natural light, gentle film grain. Only one person in the frame (or only hands). No doors or elevators visible. Everyone shown is an original fictional character who does not resemble any real person or celebrity. No text, no subtitles, no logos, no watermark.';
+function buildImagePrompt(c){return `Generate ONE new image (vertical 9:16). ${String(c.image||'').trim()} ${IMG_GUARD}`;}
+function buildVideoPrompt(c){
+  const sp=charById(c.speaker), voice=voiceEnOf(sp)||'natural, calm voice', who=c.speakerEn||'person';
+  const parts=['Generate exactly ONE video (vertical 9:16, 8 seconds) that starts exactly from the attached image as the first frame. One continuous shot.',
+    String(c.action||'').trim(),
+    'This is a scene from a Korean drama, not a vlog, not an advertisement and not a presentation to the viewer. If anyone looks toward the camera, it is as if looking at the other character who is where the camera is, never as if talking to the viewer.',
+    'Everyone stays in the same place, posture and position as in the starting image unless the action above says otherwise; nobody walks off into a hallway or moves to another place.',
+    'Faces, hair and clothes stay exactly the same as in the starting image. Nobody else ever appears.'];
+  if(c.dialogue){
+    parts.push(c.offscreen
+      ? `SPOKEN DIALOGUE FROM OFF-SCREEN, NOT SINGING: at about 1 second the unseen ${who} speaks exactly this one line in plain, clear, natural conversational Korean, every syllable pronounced clearly, no melody, in a ${voice}: "${c.dialogue}". The person on screen does not speak. No other words are ever spoken.`
+      : `SPOKEN DIALOGUE, NOT SINGING: at about 1 second the ${who} says exactly this one line in plain, clear, natural conversational Korean, every syllable pronounced clearly, no melody, in a ${voice}: "${c.dialogue}". Before and after this line the lips stay closed; no other words are ever spoken.`);
+    parts.push('Audio: quiet ambience of the place and that single spoken line only.');
+  }else{
+    parts.push('Nobody speaks; lips stay closed the whole time. Audio: quiet ambience of the place only.');
+  }
+  parts.push('No music, no singing, no subtitles, no on-screen text.');
+  return parts.filter(Boolean).join(' ');
+}
+function isNewCut(c){return c&&c.action!=null;}
 
+function normCut(c){return {purpose:String(c.purpose||''),refs:Array.isArray(c.refs)?c.refs:[],image:String(c.image||''),action:String(c.action||''),
+  dialogue:String(c.dialogue||''),speaker:String(c.speaker||''),speakerEn:String(c.speaker_en||c.speakerEn||''),offscreen:!!c.offscreen,check:String(c.check||'')};}
 async function generateEpisode(){
   const ep=$('g-ep').value.trim(), story=$('g-story').value.trim();
   if(!ep||!story){showToast('⚠️ 편 이름과 이야기를 적어 주세요');return;}
@@ -437,12 +464,12 @@ ${prev}
 대표님 이야기를 바꾸거나 새 사건을 추가하지 마세요. 숫자나 성과를 지어내지 마세요.
 
 충분히 생각한 뒤 JSON으로만 답하세요:
-{"title":"유튜브 제목 (훅과 같은 상황)","hook":"위쪽 훅 자막 흰 줄 / 노란 줄(질문)","end":"끝 자막 흰 줄 / 노란 줄","description":"설명란 (끝에 A/B 댓글 질문)","cuts":[{"purpose":"이 컷의 역할(한국어)","refs":["이 컷에 넣을 인물 id"],"prompt":"영어 Veo 프롬프트 전문","dialogue":"자막에 쓸 한국어 대사 (없으면 빈 문자열)","check":"생성된 클립에서 꼭 확인할 점(한국어)"}]}`;
+{"title":"유튜브 제목 (훅과 같은 상황)","hook":"위쪽 훅 자막 흰 줄 / 노란 줄(질문)","end":"끝 자막 흰 줄 / 노란 줄","description":"설명란 (끝에 A/B 댓글 질문)","cuts":[{"purpose":"이 컷의 역할(한국어)","refs":["이 컷 그림에 첨부할 인물 id"],"image":"① 시작 그림 영어 묘사","action":"② 영상 영어: 카메라+동작+감정만","dialogue":"한국어 대사 한 줄 (없으면 빈 문자열)","speaker":"말하는 인물 id (없으면 빈 문자열)","speaker_en":"말하는 사람을 영어로 짧게 (예: young woman, older woman, man)","offscreen":false,"check":"생성된 클립에서 꼭 확인할 점(한국어)"}]}`;
     const r=parseJson(await callGemini(prompt,true,true));
     if(!Array.isArray(r.cuts)||!r.cuts.length)throw new Error('컷이 없습니다');
     const epObj={id:Date.now(),ep,story,set:$('g-set').value.trim(),lines:$('g-lines').value.trim(),created:nowStr(),
       title:String(r.title||''),hook:String(r.hook||''),end:String(r.end||''),description:String(r.description||''),
-      cuts:r.cuts.slice(0,3).map(c=>({purpose:String(c.purpose||''),refs:Array.isArray(c.refs)?c.refs:[],prompt:String(c.prompt||''),dialogue:String(c.dialogue||''),check:String(c.check||'')}))};
+      cuts:r.cuts.slice(0,3).map(normCut)};
     S.episodes.unshift(epObj); S.episodes=S.episodes.slice(0,40); save();
     renderResult(epObj); renderEpList();
     $('g-status').textContent='저장됨 · '+epObj.created;
@@ -467,20 +494,25 @@ function renderResult(e){
     e.cuts.map((c,i)=>`<div class="cut">
       <div class="cut-head"><span class="cut-no">${i+1}컷</span><span class="tag">${esc(c.purpose)}</span>
         ${c.refs.map(r=>`<span class="tag">📎 참조 이미지: ${esc(refName(r))}</span>`).join('')}</div>
-      <div class="prompt">${esc(c.prompt)}</div>
+      ${isNewCut(c)?`<span class="tag">${c.dialogue?'🔊 Flow: 무음 동영상 반환 끄기 (목소리 생성)':'🔇 Flow: 무음 동영상 반환 켜기'}</span>
+      <div class="kv" style="margin-top:8px"><b>① 시작 그림</b> — 📎 참조 이미지를 첨부하고 그림부터 만들기</div>
+      <div class="prompt">${esc(buildImagePrompt(c))}</div>
+      <button class="btn btn-ghost" onclick="copyCut(${e.id},${i},'image',this)">📋 ① 그림 프롬프트 복사</button>
+      <div class="kv" style="margin-top:10px"><b>② 영상</b> — ①에서 만든 그림을 첫 장면으로 첨부</div>
+      <div class="prompt">${esc(buildVideoPrompt(c))}</div>`:`<div class="prompt">${esc(c.prompt)}</div>`}
       ${c.dialogue?`<div class="kv"><b>대사 자막</b> ${esc(c.dialogue)}</div>`:''}
       <div class="kv check">✔ 확인할 점: ${esc(c.check)}</div>
       <div class="row" style="margin-top:8px">
-        <button class="btn btn-pink" onclick="copyCut(${e.id},${i})">📋 프롬프트 복사</button>
+        <button class="btn btn-pink" onclick="copyCut(${e.id},${i},'video',this)">📋 ${isNewCut(c)?'② 영상 프롬프트 복사':'프롬프트 복사'}</button>
         <input class="input grow" id="fb-${e.id}-${i}" placeholder="잘못 나온 점 (예: 남주 얼굴이 다르게 나옴, 대사를 안 함)">
         <button class="btn btn-ghost" onclick="refineCut(${e.id},${i},this)">🔁 이 컷 다시 쓰기</button>
       </div>
     </div>`).join('')+
-    `<div class="muted">Flow 사용법: 「Ingredients/Frames to Video」 같은 이미지 참조 방식을 쓰고, 📎에 적힌 주인공 이미지를 함께 넣으면 얼굴이 가장 잘 유지됩니다. 메뉴 이름은 Flow 버전에 따라 다를 수 있습니다.</div>`;
+    `<div class="muted">Flow 순서: ① 그림 프롬프트 + 📎 주인공 이미지로 시작 그림 만들기 → ② 영상 프롬프트 + 그 그림을 첫 장면(Frames to Video)으로 영상 만들기. 막는 문장(브이로그 금지·대사 한 줄·자리 고정·유명인 닮음 금지)은 자동으로 들어가 있습니다. 메뉴 이름은 Flow 버전에 따라 다를 수 있습니다.</div>`;
 }
 function findEp(id){return S.episodes.find(e=>e.id===id);}
 function copyMeta(id){const e=findEp(id);if(e)copyText(e.title+'\n\n'+e.description);}
-function copyCut(id,i){const e=findEp(id);if(e)copyText(e.cuts[i].prompt);}
+function copyCut(id,i,which,btn){const e=findEp(id);if(!e)return;const c=e.cuts[i];copyText(!isNewCut(c)?c.prompt:(which==='image'?buildImagePrompt(c):buildVideoPrompt(c)));if(btn){flashSaved(btn);btn.innerHTML='✅ 복사됨';}}
 async function refineCut(id,i,btn){
   const e=findEp(id); if(!e)return;
   const fb=$(`fb-${id}-${i}`).value.trim();
@@ -497,17 +529,18 @@ ${castBlock()}
 
 편: ${e.ep} / 공통 장소·의상: ${e.set||'(기존 프롬프트 참고)'}
 이 컷의 역할: ${c.purpose}
-기존 프롬프트:
-${c.prompt}
+기존 컷:
+${isNewCut(c)?`① 시작 그림: ${c.image}\n② 영상 동작: ${c.action}\n대사: ${c.dialogue||'없음'} (말하는 사람: ${c.speaker||'-'}, 화면 밖: ${c.offscreen?'예':'아니오'})`:c.prompt}
 
 대표님 피드백 (실제로 잘못 나온 점): ${fb}
 
-원인을 짧게 생각하고(예: 묘사가 모호함, 동작이 너무 많음, 인물 설명 누락), 그 문제를 직접 막는 문장을 넣어 프롬프트를 다시 쓰세요. 장면의 내용과 대사는 바꾸지 마세요.
-JSON으로만 답하세요: {"why":"원인 한 줄(한국어)","prompt":"고친 영어 프롬프트 전문","check":"다시 생성 후 확인할 점(한국어)"}`;
+원인을 짧게 생각하고(예: 시작 그림이 모호함, 동작이 너무 많음, 말하는 상대가 없음, 유명인처럼 보이는 묘사), 그 문제를 직접 막는 문장을 넣어 ① 시작 그림과 ② 영상 동작을 다시 쓰세요. 장면의 내용과 대사는 바꾸지 마세요. 형식·금지·대사·오디오 문장은 코드가 붙이니 쓰지 마세요.
+JSON으로만 답하세요: {"why":"원인 한 줄(한국어)","image":"고친 ① 시작 그림 영어 묘사","action":"고친 ② 영상 동작 영어","dialogue":"대사 (그대로)","speaker":"말하는 인물 id","speaker_en":"영어로 짧게","offscreen":false,"check":"다시 생성 후 확인할 점(한국어)"}`;
     const r=parseJson(await callGemini(prompt,true,true));
-    if(!r.prompt)throw new Error('빈 결과');
-    (c.history=c.history||[]).push({prompt:c.prompt,feedback:fb});
-    c.prompt=String(r.prompt); c.check=String(r.why?('원인: '+r.why+' / '):'')+String(r.check||'');
+    if(!r.image||!r.action)throw new Error('빈 결과');
+    (c.history=c.history||[]).push({prompt:isNewCut(c)?null:c.prompt,image:c.image,action:c.action,feedback:fb});
+    const n=normCut(Object.assign({},c,r,{purpose:c.purpose,refs:c.refs,dialogue:c.dialogue||r.dialogue||''}));
+    Object.assign(c,n); c.check=String(r.why?('원인: '+r.why+' / '):'')+String(r.check||'');
     save(); renderResult(e); showToast(`🔁 ${i+1}컷 프롬프트를 고쳤습니다`);
   }catch(err){showToast('❌ '+err.message);btn.disabled=false;btn.textContent='🔁 이 컷 다시 쓰기';}
 }
