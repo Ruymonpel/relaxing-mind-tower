@@ -53,6 +53,10 @@
   .btn-ghost { background:var(--surface2); color:var(--text); border-color:var(--border); }
   .btn-red { background:rgba(248,81,73,.12); color:var(--danger); border-color:rgba(248,81,73,.35); }
   .btn:disabled { opacity:.5; cursor:wait; }
+  .btn { transition:filter .12s, transform .08s, background .2s; }
+  .btn:hover:not(:disabled) { filter:brightness(1.1); }
+  .btn:active:not(:disabled) { filter:brightness(.75); transform:scale(.96); }
+  .btn.saved { background:var(--accent2) !important; color:#0d1117 !important; border-color:var(--accent2) !important; }
   .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
   .row > .grow { flex:1 1 160px; min-width:0; }
 
@@ -129,7 +133,7 @@
   <div class="card">
     <div class="muted" style="margin-bottom:8px">「멜로 한 스푼 · 쇼츠 영상 규칙」 문서 내용을 기본값으로 넣어 두었습니다. 규칙이 바뀌면 여기만 고치세요.</div>
     <textarea class="ta" id="rules" style="min-height:150px"></textarea>
-    <div class="row" style="margin-top:8px;justify-content:flex-end"><button class="btn btn-primary" onclick="saveRules()">💾 저장</button></div>
+    <div class="row" style="margin-top:8px;justify-content:flex-end"><button class="btn btn-primary" onclick="saveRules(this)">💾 저장</button></div>
   </div>
 </div>
 
@@ -330,7 +334,7 @@ function renderCast(){
     <textarea class="ta" id="cd-${c.id}" style="min-height:100px" placeholder="Korean woman in her late 20s, long straight black hair with soft side bangs, ...">${esc(c.desc)}</textarea>
     <div class="row" style="margin-top:8px;justify-content:space-between">
       <button class="btn btn-ghost" onclick="describeChar('${c.id}',this)">🧠 AI로 외모 설명 만들기</button>
-      <button class="btn btn-primary" onclick="saveChar('${c.id}')">💾 저장</button>
+      <button class="btn btn-primary" onclick="saveChar('${c.id}',this)">💾 저장</button>
     </div>
   </div>`).join('');
 }
@@ -351,7 +355,9 @@ function keepCharInputs(c){
   if(!$('cn-'+c.id))return;
   c.name=$('cn-'+c.id).value.trim(); c.voice=$('cv-'+c.id).value.trim(); c.desc=$('cd-'+c.id).value.trim();
 }
-function saveChar(id){const c=charById(id);keepCharInputs(c);save();showToast('💾 '+c.label+' 저장');}
+// 저장 버튼을 누르면 1.5초 동안 '✅ 저장됨'으로 바뀌어 눌린 걸 알 수 있게
+function flashSaved(btn){if(!btn||!btn.classList)return;clearTimeout(btn._fs);if(!btn._label)btn._label=btn.innerHTML;btn.classList.add('saved');btn.innerHTML='✅ 저장됨';btn._fs=setTimeout(()=>{btn.classList.remove('saved');btn.innerHTML=btn._label;},1500);}
+function saveChar(id,btn){const c=charById(id);keepCharInputs(c);save();flashSaved(btn);showToast('💾 '+c.label+' 저장');}
 async function describeChar(id,btn){
   const c=charById(id); keepCharInputs(c);
   if(!c.img){showToast('⚠️ 먼저 왼쪽 「이미지 올리기」 칸을 눌러 주인공 이미지를 올려 주세요');return;}
@@ -369,7 +375,7 @@ Do not name any real person or celebrity. Do not describe the background. No pre
     c.desc=txt.trim(); save(); renderCast(); showToast('✅ 외모 설명 완성 — 틀린 부분은 고쳐 주세요');
   }catch(e){showToast('❌ '+e.message);btn.disabled=false;btn.textContent='🧠 AI로 외모 설명 만들기';}
 }
-function saveRules(){S.rules=$('rules').value.trim()||DEFAULT_RULES;save();showToast('💾 채널 규칙 저장');}
+function saveRules(btn){S.rules=$('rules').value.trim()||DEFAULT_RULES;save();flashSaved(btn);showToast('💾 채널 규칙 저장');}
 
 // ═══════════ 컷 프롬프트 생성 ═══════════
 function castBlock(){
