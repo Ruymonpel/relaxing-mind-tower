@@ -211,7 +211,7 @@
 
 <script>
 // ═══════════ 저장 ═══════════
-const ST_KEY='rm_studio_v1', AI_KEY='rm_gemini_key', AI_MODEL='rm_gemini_model', DEFAULT_MODEL='gemini-2.5-flash';
+const ST_KEY='rm_studio_v1', AI_KEY='rm_gemini_key', AI_MODEL='rm_gemini_model', DEFAULT_MODEL='gemini-3.5-flash', MODEL_LIST=['gemini-3.5-flash','gemini-3.8-flash','gemini-3.5-flash-lite','gemini-3.1-flash-lite'], AI_MODEL_OK='rm_gemini_model_ok';
 const DEFAULT_RULES=`멜로 한 스푼 쇼츠 규칙 (2026-11-09 문서 기준)
 1. 길이 20~25초 고정. 8초 컷 3개(24초)가 기본. 30초 넘는 컷은 쓰지 않는다.
 2. 첫 1초 = 얼굴 클로즈업 + 한 줄 자막 + 질문. 예: "약혼자 엄마가 나를 불렀다 / 떠나라고?"
@@ -251,16 +251,26 @@ function nowStr(){return new Date().toLocaleString('ko-KR',{month:'2-digit',day:
 
 // ═══════════ AI (관제탑과 같은 Gemini 키 사용) ═══════════
 function getAiKey(){return lsGet(AI_KEY);}
-function getAiModel(){return lsGet(AI_MODEL)||DEFAULT_MODEL;}
+// 대표님이 모델을 직접 적었으면 그 모델만, 비워 두었으면 마지막으로 성공한 모델 → 목록 순서로 시도 (옛 모델이 없어져도 자동으로 다음 모델 사용)
+function modelCandidates(){const fixed=lsGet(AI_MODEL).trim();if(fixed)return [fixed];const ok=lsGet(AI_MODEL_OK);return ok?[ok].concat(MODEL_LIST.filter(m=>m!==ok)):MODEL_LIST.slice();}
+function getAiModel(){return modelCandidates()[0]||DEFAULT_MODEL;}
 function updateAi(){const on=!!getAiKey(),b=$('ai-state');b.className='pill '+(on?'pill-green':'pill-red');b.textContent=on?'🟢 AI 연결됨':'🔌 AI 연결 안됨 — 관제탑 ⚙️에서 연결';}
 async function callGemini(parts,json,think){
   if(!getAiKey())throw new Error('관제탑 상단 🔌 버튼에서 AI를 먼저 연결하세요');
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(getAiModel())}:generateContent`;
   const body={contents:[{role:'user',parts:typeof parts==='string'?[{text:parts}]:parts}],generationConfig:{temperature:0.7}};
   if(json)body.generationConfig.responseMimeType='application/json';
-  if(think&&/2\.5|thinking|-3/.test(getAiModel()))body.generationConfig.thinkingConfig={thinkingBudget:-1};
-  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':getAiKey()},body:JSON.stringify(body)});
-  const data=await res.json().catch(()=>({}));
+  if(think&&/2\.5/.test(getAiModel()))body.generationConfig.thinkingConfig={thinkingBudget:-1};
+  let res,data,model;
+  for(const cand of modelCandidates()){
+    model=cand;
+    const url=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+    const b2=JSON.parse(JSON.stringify(body));
+    if(b2.generationConfig.thinkingConfig&&!/2\.5/.test(model))delete b2.generationConfig.thinkingConfig;
+    res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':getAiKey()},body:JSON.stringify(b2)});
+    data=await res.json().catch(()=>({}));
+    if(res.status!==404)break;
+  }
+  if(res.ok&&!lsGet(AI_MODEL).trim())lsSet(AI_MODEL_OK,model);
   if(!res.ok){
     const msg=data.error?.message||('HTTP '+res.status);
     if(res.status===429)throw new Error('무료 사용량 한도 초과 — 잠시 후 다시 시도하세요');
