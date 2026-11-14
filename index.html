@@ -472,7 +472,7 @@ async function callGemini(prompt,json,think){
   const body={contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:0.7}};
   if(json)body.generationConfig.responseMimeType='application/json';
   if(think&&/2\.5/.test(getAiModel()))body.generationConfig.thinkingConfig={thinkingBudget:-1}; // 생각하기 모드
-  let res,data,model;
+  let res,data,model,busy=false;
   for(const cand of modelCandidates()){
     model=cand;
     const url=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
@@ -480,12 +480,15 @@ async function callGemini(prompt,json,think){
     if(b2.generationConfig.thinkingConfig&&!/2\.5/.test(model))delete b2.generationConfig.thinkingConfig;
     res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':getAiKey()},body:JSON.stringify(b2)});
     data=await res.json().catch(()=>({}));
-    if(res.status!==404)break;
+    // 404 없는 모델 · 429 그 모델 무료 한도 · 500/503 일시적으로 바쁨 → 다음 모델로 (모델 칸을 비워 둔 자동 모드일 때)
+    if(![404,429,500,503].includes(res.status))break;
+    if(res.status!==404)busy=true;
   }
-  if(res.ok&&!lsGet(AI_MODEL).trim())lsSet(AI_MODEL_OK,model);
+  if(res.ok&&!busy&&!lsGet(AI_MODEL).trim())lsSet(AI_MODEL_OK,model); // 잠깐 바빠서 넘어간 경우엔 기억하지 않음 (다음엔 좋은 모델부터 다시 시도)
   if(!res.ok){
     const msg=data.error?.message||('HTTP '+res.status);
     if(res.status===429)throw new Error('무료 사용량 한도 초과 — 잠시 후 다시 시도하세요');
+    if(res.status===503||res.status===500||/high demand|overloaded|UNAVAILABLE/i.test(msg))throw new Error('Google AI가 지금 바빠요 ('+model+') — 1~2분 뒤 다시 시도하거나, 모델 칸을 비워 두면 다른 모델을 자동으로 써요');
     if(res.status===400&&/API key/i.test(msg))throw new Error('API 키가 올바르지 않습니다');
     if(res.status===404)throw new Error('쓸 수 있는 모델을 찾지 못했습니다 ('+model+') — 설정의 모델 칸을 비우거나 새 모델 이름을 넣어 주세요');
     throw new Error(msg);
