@@ -235,7 +235,7 @@
     <label for="ai-key">Gemini API 키</label>
     <input class="input" id="ai-key" type="password" placeholder="AIza..." autocomplete="off">
     <label for="ai-model">모델 (보통 그대로 두세요)</label>
-    <input class="input" id="ai-model" placeholder="gemini-2.5-flash">
+    <input class="input" id="ai-model" placeholder="비워 두면 쓸 수 있는 모델을 자동으로 고릅니다">
     <div class="row" style="margin-top:12px">
       <button class="btn btn-green" onclick="saveSettings()">💾 저장 후 연결 테스트</button>
     </div>
@@ -255,7 +255,7 @@
 
 <script>
 // ═══════════ 기본 설정 ═══════════
-const S_KEY='rm_tower_v3', REV_KEY='rm_revenue_v2', AI_KEY='rm_gemini_key', AI_MODEL='rm_gemini_model', DEFAULT_MODEL='gemini-2.5-flash';
+const S_KEY='rm_tower_v3', REV_KEY='rm_revenue_v2', AI_KEY='rm_gemini_key', AI_MODEL='rm_gemini_model', DEFAULT_MODEL='gemini-3.5-flash', MODEL_LIST=['gemini-3.5-flash','gemini-3.8-flash','gemini-3.5-flash-lite','gemini-3.1-flash-lite'], AI_MODEL_OK='rm_gemini_model_ok';
 
 const METRICS={
   youtube:[['subs','구독자',1000],['hours','최근 12개월 시청시간(시간)',4000],['shorts','최근 90일 쇼츠 조회수',10000000]],
@@ -460,24 +460,34 @@ function delRevenue(id){saveRev(getRev().filter(r=>r.id!==id));renderAll();}
 
 // ═══════════ AI (Google Gemini) ═══════════
 function getAiKey(){return lsGet(AI_KEY);}
-function getAiModel(){return lsGet(AI_MODEL)||DEFAULT_MODEL;}
+// 대표님이 모델을 직접 적었으면 그 모델만, 비워 두었으면 마지막으로 성공한 모델 → 목록 순서로 시도 (옛 모델이 없어져도 자동으로 다음 모델 사용)
+function modelCandidates(){const fixed=lsGet(AI_MODEL).trim();if(fixed)return [fixed];const ok=lsGet(AI_MODEL_OK);return ok?[ok].concat(MODEL_LIST.filter(m=>m!==ok)):MODEL_LIST.slice();}
+function getAiModel(){return modelCandidates()[0]||DEFAULT_MODEL;}
 function updateAiBtn(){
   const on=!!getAiKey(), b=$('ai-btn');
   b.className='pill '+(on?'pill-green':'pill-red');
   b.textContent=on?'🟢 AI 연결됨':'🔌 AI 연결 안됨';
 }
 async function callGemini(prompt,json,think){
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(getAiModel())}:generateContent`;
   const body={contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:0.7}};
   if(json)body.generationConfig.responseMimeType='application/json';
-  if(think&&/2\.5|thinking|-3/.test(getAiModel()))body.generationConfig.thinkingConfig={thinkingBudget:-1}; // 생각하기 모드
-  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':getAiKey()},body:JSON.stringify(body)});
-  const data=await res.json().catch(()=>({}));
+  if(think&&/2\.5/.test(getAiModel()))body.generationConfig.thinkingConfig={thinkingBudget:-1}; // 생각하기 모드
+  let res,data,model;
+  for(const cand of modelCandidates()){
+    model=cand;
+    const url=`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+    const b2=JSON.parse(JSON.stringify(body));
+    if(b2.generationConfig.thinkingConfig&&!/2\.5/.test(model))delete b2.generationConfig.thinkingConfig;
+    res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':getAiKey()},body:JSON.stringify(b2)});
+    data=await res.json().catch(()=>({}));
+    if(res.status!==404)break;
+  }
+  if(res.ok&&!lsGet(AI_MODEL).trim())lsSet(AI_MODEL_OK,model);
   if(!res.ok){
     const msg=data.error?.message||('HTTP '+res.status);
     if(res.status===429)throw new Error('무료 사용량 한도 초과 — 잠시 후 다시 시도하세요');
     if(res.status===400&&/API key/i.test(msg))throw new Error('API 키가 올바르지 않습니다');
-    if(res.status===404)throw new Error('모델 이름을 찾을 수 없습니다 ('+getAiModel()+')');
+    if(res.status===404)throw new Error('쓸 수 있는 모델을 찾지 못했습니다 ('+model+') — 설정의 모델 칸을 비우거나 새 모델 이름을 넣어 주세요');
     throw new Error(msg);
   }
   const txt=data.candidates?.[0]?.content?.parts?.filter(p=>!p.thought).map(p=>p.text||'').join('')||'';
