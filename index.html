@@ -78,6 +78,9 @@
   .btn-ghost { background:var(--surface2); color:var(--text); border-color:var(--border); }
   .btn-red { background:rgba(248,81,73,.12); color:var(--danger); border-color:rgba(248,81,73,.35); }
   .btn:disabled { opacity:.5; cursor:wait; }
+  .btn { transition:filter .12s, transform .08s; }
+  .btn:hover:not(:disabled) { filter:brightness(1.1); }
+  .btn:active:not(:disabled) { filter:brightness(.75); transform:scale(.96); }
   .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
 
   .task { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:12px; }
